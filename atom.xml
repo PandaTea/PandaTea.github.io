@@ -2,11 +2,57 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.leepanda.top</id>
     <title>苟</title>
-    <updated>2021-04-11T05:09:12.114Z</updated>
+    <updated>2021-04-11T06:05:20.723Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.leepanda.top"/>
     <link rel="self" href="https://blog.leepanda.top/atom.xml"/>
     <logo>https://blog.leepanda.top/images/avatar.png</logo>
     <icon>https://blog.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 苟</rights>
+    <entry>
+        <title type="html"><![CDATA[打算在这里歇一会儿]]></title>
+        <id>https://blog.leepanda.top/post/bo-ke-li-yi/</id>
+        <link href="https://blog.leepanda.top/post/bo-ke-li-yi/">
+        </link>
+        <updated>2021-04-11T05:09:54.000Z</updated>
+        <content type="html"><![CDATA[<p>知乎、CSDN、简书、公众号...<br>
+都可以发表文章。<br>
+它们提供了博客平台的同时，也提供了流量优化、流量变现等功能。<br>
+使个人博客的运营变得简单许多。</p>
+<p>那我们为啥还要用Github Page、甚至是个人VPS来搭建博客呢<br>
+UI比主流平台更好看、独立域名？<br>
+却又要花费不少心思。</p>
+<p>似乎只适合学生使用<br>
+搭建的过程，可以学到不少git命令、https、web知识</p>
+<p>CSDN、知乎上发技术文章，你可以遇见很多同道中人给你点赞。<br>
+但个人博客，似乎是一个孤单不少的地方。</p>
+<p>没人看，没人来。<br>
+这里是数据海洋中一座荒凉的小岛。<br>
+我可以在这里过一些小日子。</p>
+<p>小岛上偶尔会来客人<br>
+护网的防守方溯源到我Github账号，便上岛看看, 希望能找到点啥信息。<br>
+搞黑产的老哥，扫描我的子域名发现了<code>blog</code>， 便上来看看博客用的啥框架， 有没有漏洞。<br>
+我的同事同学，来看看我又更新了啥Bug。</p>
+<p>再或者是一些机器人<br>
+单纯可爱的小爬虫，被刚从魔法学校毕业的召唤师通过低级召唤术驱使而来。<br>
+笨拙地咀嚼着数据    BeautifulSoup塞牙，正则表达式崩溃。<br>
+凶狠蛮横的扫描器，从业两三年的高等炼金术师的杰作。<br>
+獠牙上的红色气息是安全厂家都未曾收录的神秘魔法。</p>
+<p>但毕竟是静态网站，您扫个蛋蛋。<br>
+机器人们悻然离去，<br>
+黑产老哥继续扫下一个 ip<br>
+就连防守方的师傅们，写完小岛调查报告，拍几张照片留念，也就作罢。<br>
+再也不会回来。</p>
+<p>OK，我悟了。<br>
+个人博客超越主流平台之处，便是这个小岛属于我。<br>
+自由，不受束缚。<br>
+它也许没有那些数据大陆的热闹、繁荣。<br>
+但这里没有审核，没有压迫。<br>
+没有人在评论里，教我做事。<br>
+没有人能逼我改他看着不爽的一个字。</p>
+<p>排版 || 措辞，只听我指挥。<br>
+庸碌 || 思考，也只看我心情。<br>
+在我的虚拟王国里，唯吾独尊。</p>
+]]></content>
+    </entry>
 </feed>

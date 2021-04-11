@@ -3181,3 +3181,7 @@ ul {
     -webkit-line-clamp: 1;
   }
 }
+
+    .header {background-image: url(./images/wallhaven.png);}
+    .index-img{ background-image: url(./images/wallhaven.png);}
+    

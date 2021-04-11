@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>http://pandatea.github.io</id>
+    <id>http://blog.leepanda.top</id>
     <title>苟</title>
-    <updated>2021-04-11T02:53:35.500Z</updated>
+    <updated>2021-04-11T02:53:53.434Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="http://pandatea.github.io"/>
-    <link rel="self" href="http://pandatea.github.io/atom.xml"/>
+    <link rel="alternate" href="http://blog.leepanda.top"/>
+    <link rel="self" href="http://blog.leepanda.top/atom.xml"/>
     <subtitle>请躺平</subtitle>
-    <logo>http://pandatea.github.io/images/avatar.png</logo>
-    <icon>http://pandatea.github.io/favicon.ico</icon>
+    <logo>http://blog.leepanda.top/images/avatar.png</logo>
+    <icon>http://blog.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 苟</rights>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
-        <id>http://pandatea.github.io/post/hello-gridea/</id>
-        <link href="http://pandatea.github.io/post/hello-gridea/">
+        <id>http://blog.leepanda.top/post/hello-gridea/</id>
+        <link href="http://blog.leepanda.top/post/hello-gridea/">
         </link>
         <updated>2018-12-11T16:00:00.000Z</updated>
         <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>

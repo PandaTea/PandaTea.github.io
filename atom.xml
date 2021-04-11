@@ -2,11 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>http://blog.leepanda.top</id>
     <title>苟</title>
-    <updated>2021-04-11T02:53:53.434Z</updated>
+    <updated>2021-04-11T02:55:06.676Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="http://blog.leepanda.top"/>
     <link rel="self" href="http://blog.leepanda.top/atom.xml"/>
-    <subtitle>请躺平</subtitle>
     <logo>http://blog.leepanda.top/images/avatar.png</logo>
     <icon>http://blog.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 苟</rights>

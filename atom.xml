@@ -2,13 +2,38 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.leepanda.top</id>
     <title>苟</title>
-    <updated>2021-04-22T06:20:17.206Z</updated>
+    <updated>2021-04-22T07:05:27.329Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.leepanda.top"/>
     <link rel="self" href="https://blog.leepanda.top/atom.xml"/>
     <logo>https://blog.leepanda.top/images/avatar.png</logo>
     <icon>https://blog.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 苟</rights>
+    <entry>
+        <title type="html"><![CDATA[APEX 压枪练习]]></title>
+        <id>https://blog.leepanda.top/post/apex-ya-qiang-lian-xi/</id>
+        <link href="https://blog.leepanda.top/post/apex-ya-qiang-lian-xi/">
+        </link>
+        <updated>2021-04-22T06:26:17.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="背景">背景</h1>
+<p>练一下最喜欢的两把中远火力。</p>
+<h3 id="喷火轻机枪">喷火轻机枪</h3>
+<p>喷火轻机枪 无弹匣 35发子弹，630点伤害</p>
+<p>35 -&gt; 28，共126点伤害，向右下方向用力拉枪</p>
+<p>28 -&gt; 25 , 累计180点伤害，向左 稍稍拉枪</p>
+<p>25 -&gt; 11，累计432点伤害，向右下用力拉枪，</p>
+<p>最后11发，向左用力拉枪。</p>
+<h3 id="r301卡宾枪">R301卡宾枪</h3>
+<p>R301卡宾枪 无弹匣 18发子弹，共252点伤害</p>
+<p>前14发子弹，196点伤害，用力向6点半方向拉枪</p>
+<p>最后4发子弹，向右稍稍收枪。</p>
+<h1 id="心得">心得</h1>
+<p>这个过程有点像练字，<br>
+可以现研究一下 第几发子弹开始改变后坐力方向，</p>
+<p>然后分为多个笔画，一步一步练。</p>
+<p>实战中能站着不动让我压枪对着头打得敌人，根本没有..</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[星际争霸2 人族两船兵流程]]></title>
         <id>https://blog.leepanda.top/post/xing-ji-zheng-ba-2-ren-zu-liang-chuan-bing-liu-cheng/</id>
@@ -18,7 +43,6 @@
         <content type="html"><![CDATA[<pre><code>将 生产 计作 :
 将 移动 计作 -&gt; 
 </code></pre>
-<h3 id="开局">开局</h3>
 <ul>
 <li>
 <p>主基地:scv1</p>

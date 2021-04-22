@@ -2,13 +2,78 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.leepanda.top</id>
     <title>苟</title>
-    <updated>2021-04-15T05:23:05.208Z</updated>
+    <updated>2021-04-22T06:16:13.438Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.leepanda.top"/>
     <link rel="self" href="https://blog.leepanda.top/atom.xml"/>
     <logo>https://blog.leepanda.top/images/avatar.png</logo>
     <icon>https://blog.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 苟</rights>
+    <entry>
+        <title type="html"><![CDATA[星际争霸2 人族两船兵流程]]></title>
+        <id>https://blog.leepanda.top/post/xing-ji-zheng-ba-2-ren-zu-liang-chuan-bing-liu-cheng/</id>
+        <link href="https://blog.leepanda.top/post/xing-ji-zheng-ba-2-ren-zu-liang-chuan-bing-liu-cheng/">
+        </link>
+        <updated>2021-04-22T06:09:08.000Z</updated>
+        <content type="html"><![CDATA[<pre><code>将 生产 计作 :
+将 移动 计作 -&gt; 
+</code></pre>
+<h3 id="开局">开局</h3>
+<ul>
+<li>
+<p>主基地:scv1</p>
+</li>
+<li>
+<p>scv1:补给站</p>
+</li>
+<li>
+<p>scv1:BB  scv2:瓦斯  基地:scv</p>
+</li>
+<li>
+<p>when 瓦斯 is ready:<br>
+scvs -&gt; 瓦斯  BB:死神(1),枪兵(14)</p>
+</li>
+<li>
+<p>死神-&gt; 地方基地</p>
+</li>
+<li>
+<p>when 150 矿:<br>
+主基地:星轨</p>
+</li>
+<li>
+<p>when 400 矿:<br>
+scv:二基地</p>
+</li>
+<li>
+<p>when 150 矿:<br>
+scv:BB2   BB1:挂件  scv:补给站2,补给站3</p>
+</li>
+<li>
+<p>when BB2 快好了:<br>
+scv:重工厂 BB2:挂件 星轨:兴奋剂</p>
+</li>
+<li>
+<p>when 重工厂 is ready:<br>
+重工厂:双倍挂件  scv:机场  二基地:星轨</p>
+</li>
+<li>
+<p>when 星轨 is ready:<br>
+星轨:矿骡 矿骡 -&gt; 挖矿  scv:补给站3 补给站4</p>
+</li>
+<li>
+<p>when 机场 is ready:<br>
+机场 -&gt; 重工厂 重工厂 -&gt; 机场</p>
+</li>
+<li>
+<p>机场: 运输机<br>
+scv -&gt; 运输机 重工厂:寡妇雷</p>
+</li>
+<li>
+<p>运输机 -&gt; 对方基地</p>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[被认可的诱惑]]></title>
         <id>https://blog.leepanda.top/post/cheng-jiu-gan-de-you-huo/</id>

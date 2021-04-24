@@ -2,13 +2,38 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.leepanda.top</id>
     <title>戏</title>
-    <updated>2021-04-22T10:00:41.616Z</updated>
+    <updated>2021-04-24T17:00:22.873Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.leepanda.top"/>
     <link rel="self" href="https://blog.leepanda.top/atom.xml"/>
     <logo>https://blog.leepanda.top/images/avatar.png</logo>
     <icon>https://blog.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 戏</rights>
+    <entry>
+        <title type="html"><![CDATA[巧克力雪糕菜谱]]></title>
+        <id>https://blog.leepanda.top/post/qiao-ke-li-xue-gao-cai-pu/</id>
+        <link href="https://blog.leepanda.top/post/qiao-ke-li-xue-gao-cai-pu/">
+        </link>
+        <updated>2021-04-24T16:47:06.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="食材">食材</h3>
+<ul>
+<li>淡奶油 500 g</li>
+<li>炼乳 170 g</li>
+<li>可可粉 80 g</li>
+</ul>
+<h3 id="步骤">步骤</h3>
+<ol>
+<li>淡奶油打发</li>
+<li>倒入炼乳 和 可可粉</li>
+<li>搅拌均匀<br>
+<img src="https://blog.leepanda.top/post-images/1619283085773.png" alt="打发搅拌均匀" loading="lazy"></li>
+<li>抹平冷冻4个小时<br>
+<img src="https://blog.leepanda.top/post-images/1619283213239.png" alt="冷冻后取出效果" loading="lazy"></li>
+</ol>
+<h3 id="最终效果">最终效果</h3>
+<figure data-type="image" tabindex="1"><img src="https://blog.leepanda.top/post-images/1619283248170.png" alt="最终效果" loading="lazy"></figure>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[按摩]]></title>
         <id>https://blog.leepanda.top/post/an-mo/</id>

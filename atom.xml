@@ -2,13 +2,64 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.leepanda.top</id>
     <title>戏</title>
-    <updated>2021-04-25T13:14:22.465Z</updated>
+    <updated>2021-04-25T14:58:22.783Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.leepanda.top"/>
     <link rel="self" href="https://blog.leepanda.top/atom.xml"/>
     <logo>https://blog.leepanda.top/images/avatar.png</logo>
     <icon>https://blog.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 戏</rights>
+    <entry>
+        <title type="html"><![CDATA[青椒虾仁+香菇猪肉]]></title>
+        <id>https://blog.leepanda.top/post/qing-jiao-xia-ren-xiang-gu-zhu-rou/</id>
+        <link href="https://blog.leepanda.top/post/qing-jiao-xia-ren-xiang-gu-zhu-rou/">
+        </link>
+        <updated>2021-04-25T14:22:15.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="香菇猪肉">香菇猪肉</h3>
+<ul>
+<li>猪肉切片
+<ul>
+<li>装入碗中</li>
+<li>加入生抽、料酒、胡椒粉、辣椒粉、油?</li>
+<li>揉捏 至 搅拌均匀</li>
+</ul>
+</li>
+<li>开始热锅
+<ul>
+<li>倒油</li>
+<li>等油烧热 倒入猪肉</li>
+<li>等猪肉熟了 倒入葱姜蒜</li>
+<li>炒一会 倒入蘑菇</li>
+<li>炒一会 出锅</li>
+</ul>
+</li>
+</ul>
+<h3 id="青椒虾仁">青椒虾仁</h3>
+<ul>
+<li>虾仁剥皮
+<ul>
+<li>装入碗中</li>
+<li>加入 胡椒粉、生粉、生抽</li>
+<li>揉捏 至 搅拌均匀</li>
+</ul>
+</li>
+<li>热锅
+<ul>
+<li>热油</li>
+<li>倒入虾仁 炒红后捞出</li>
+</ul>
+</li>
+<li>葱姜蒜 炝锅
+<ul>
+<li>倒入青椒</li>
+<li>炒一会</li>
+<li>倒入虾仁</li>
+<li>翻炒一会 出锅</li>
+</ul>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[巧克力雪糕菜谱]]></title>
         <id>https://blog.leepanda.top/post/qiao-ke-li-xue-gao-cai-pu/</id>

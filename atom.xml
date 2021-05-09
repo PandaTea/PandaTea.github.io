@@ -2,13 +2,35 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.leepanda.top</id>
     <title>戏</title>
-    <updated>2021-04-29T03:51:13.794Z</updated>
+    <updated>2021-05-09T15:30:28.426Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.leepanda.top"/>
     <link rel="self" href="https://blog.leepanda.top/atom.xml"/>
     <logo>https://blog.leepanda.top/images/avatar.png</logo>
     <icon>https://blog.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 戏</rights>
+    <entry>
+        <title type="html"><![CDATA[我要内卷]]></title>
+        <id>https://blog.leepanda.top/post/xuan-ze-nei-juan/</id>
+        <link href="https://blog.leepanda.top/post/xuan-ze-nei-juan/">
+        </link>
+        <updated>2021-05-09T15:07:25.000Z</updated>
+        <content type="html"><![CDATA[<p>我之前困惑的不能算是 “职业生涯规划” 而是 “懒惰和欲望的矛盾”<br>
+随着时间发展，清心寡欲的我，必然面对越来越多的刚需欲望。<br>
+车子、房子、父母的养老钱。<br>
+我的生活开销，枸杞茶。</p>
+<p>我错误的以为，工作时间越久，我的价值越高，工资越高<br>
+但是对于大多数工程师而言，刚入职的那一刻，或许是工资最高的时候。<br>
+未来，可能会越来越难<br>
+身上的担子可能会越来越重。我的收入 不涨就是下降。<br>
+别被知乎里面 宣传 人生无须努力的论调洗了脑</p>
+<p>我需要努力一下子 做一些更有价值的事情。或者更努力一些。<br>
+趁着我的身体还苟的住，<br>
+多积累一些资产。</p>
+<p>我内卷的理由：<br>
+让未来的自己能轻松一些，有更多的选择空间。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[太阳和冥王星应该互相包容]]></title>
         <id>https://blog.leepanda.top/post/tai-yang-he-ming-wang-xing-ying-gai-hu-xiang-bao-rong/</id>

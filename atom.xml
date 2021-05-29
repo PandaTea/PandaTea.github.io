@@ -2,13 +2,1123 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.leepanda.top</id>
     <title>戏</title>
-    <updated>2021-05-29T11:31:06.942Z</updated>
+    <updated>2021-05-29T11:39:10.235Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.leepanda.top"/>
     <link rel="self" href="https://blog.leepanda.top/atom.xml"/>
     <logo>https://blog.leepanda.top/images/avatar.png</logo>
     <icon>https://blog.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 戏</rights>
+    <entry>
+        <title type="html"><![CDATA[Defcon 2019 Qualify: redacted puzzle Writeup]]></title>
+        <id>https://blog.leepanda.top/post/defcon-2019-qualify-redacted-puzzle-writeup/</id>
+        <link href="https://blog.leepanda.top/post/defcon-2019-qualify-redacted-puzzle-writeup/">
+        </link>
+        <updated>2021-05-29T11:38:26.000Z</updated>
+        <content type="html"><![CDATA[<p><ul class="markdownIt-TOC">
+<li><a href="#defcon-2019-qualify-redacted-puzzle">Defcon 2019 Qualify: redacted-puzzle</a>
+<ul>
+<li><a href="#1attachments">1.Attachments</a></li>
+<li><a href="#2source-code">2.source code</a></li>
+<li><a href="#3author-bboe">3.author: bboe</a></li>
+<li><a href="#4writeups">4.writeups</a></li>
+<li><a href="#5%E7%9F%A5%E8%AF%86%E7%82%B9">5.知识点</a>
+<ul>
+<li><a href="#51-%E5%9B%BE%E5%83%8F%E6%A8%A1%E5%BC%8F">5.1 图像模式</a></li>
+<li><a href="#52-pallete">5.2 pallete</a></li>
+<li><a href="#53-python-pil%E5%8C%85%E4%BD%BF%E7%94%A8">5.3 Python PIL包使用</a></li>
+<li><a href="#54-base%E7%B3%BB%E5%88%97%E7%BC%96%E7%A0%81%E5%8E%9F%E7%90%86">5.4 Base系列编码原理</a></li>
+</ul>
+</li>
+<li><a href="#6-defcon-2020q-uploooadit">6 Defcon 2020q uploooadit</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+</p>
+<h1 id="defcon-2019-qualify-redacted-puzzle">Defcon 2019 Qualify: redacted-puzzle</h1>
+<p>ctftime link: <a href="https://ctftime.org/task/8526">https://ctftime.org/task/8526</a></p>
+<h2 id="1attachments">1.Attachments</h2>
+<p><a href="https://s3.us-west-2.amazonaws.com/archive-ooo-public/public_files/0a0403756b188cd2a2aefa29121ec565802095297a357998064bf4135e0713e5/redacted-puzzle.gif">redacted-puzzle.gif</a><br>
+Everything you need is in this file.</p>
+<h2 id="2source-code">2.source code</h2>
+<p><a href="https://github.com/o-o-overflow/dc2019q-puzzle">dc2019q-puzzle</a></p>
+<h2 id="3author-bboe">3.author: bboe</h2>
+<p><strong>Bryce Boe</strong>是defcon的组织者，AppFolio公司的软件工程师\Tech Leader，加州大学圣巴巴拉分校 助教。</p>
+<ul>
+<li>Social Media
+<ul>
+<li><a href="https://twitter.com/bboe">twitter</a></li>
+<li><a href="http://www.bryceboe.com/">Blog</a></li>
+<li><a href="https://github.com/bboe">Github</a></li>
+<li><a href="https://scholar.google.com/citations?user=T83k-n8AAAAJ&amp;hl=zh-CN">Google Scholar</a></li>
+</ul>
+</li>
+</ul>
+<p>这位老师最后一篇论文发表于2014年，其博客也停更于2014年。<br>
+其主要贡献在于可视化的编程工具与教育事业的结合。<br>
+在论文<a href="https://seclab.bu.edu/papers/large_scale_hacking-dimva2010.pdf">Organizing large scale hacking competitions</a>中提出了大规模黑客技术比赛的设想。<br>
+身为人父的他已经在享受生活了，羡慕。<br>
+<img src="https://img-blog.csdnimg.cn/20210426181900111.png" alt="" loading="lazy"><br>
+另外，可以找到他在defcon2020q中出的另一道题目<a href="https://github.com/o-o-overflow/dc2020q-uploooadit">Defcon 2020q uploooadit</a></p>
+<h2 id="4writeups">4.writeups</h2>
+<ul>
+<li><a href="https://ctftime.org/writeup/15359">ThreatLevelMidnight</a></li>
+<li><a href="https://ctftime.org/writeup/15290">OSUSEC</a></li>
+<li><a href="https://ctftime.org/writeup/15252">IDontHaveATeam</a></li>
+<li><a href="https://ctftime.org/writeup/15247">ThreatLevelMidnight</a></li>
+<li><a href="https://xi4or0uji.github.io/2019/05/19/defcon-ctf-%E5%AD%A6%E4%B9%A0/#redacted-puzzle">2019 defcon 学习</a></li>
+</ul>
+<p>题目给出一个全黑的gif。分析发现图片的调色板为纯黑。<br>
+我们逐帧修改其调色板，让画面变得多彩一些。</p>
+<pre><code class="language-python">from PIL import Image
+imageObject = Image.open(&quot;./redacted-puzzle.gif&quot;)
+for frame in range(0,imageObject.n_frames):
+    imageObject.seek(frame)
+    imageObject.putpalette([255,0,0,0,255,0,0,0,255])
+    imageObject.save(&quot;./tmp/output-%02u.png&quot; % frame)
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20210426181959537.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></figure>
+<p>可以得到一组 类似八边形的图片。<br>
+其中给出了一个长32的字母表 <code>flag_alphabet = &quot;+-=ABCDEFGHIJKLMNOPQRSTUVWXYZ_{}&quot;</code><br>
+<img src="https://img-blog.csdnimg.cn/20210426182026283.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></p>
+<p>每一张图都是一个8bit的2进制数字。</p>
+<pre><code class="language-python">verticies = ['10001100', '01100011', '11100100', '01000110', '10000101', '00111101', '01000010', '10011000', '11100000',
+                 '11110100', '10000000', '00101101', '01110010', '00011100', '00001000', '10100101', '11010111', '01101110',
+                 '10100110', '10010001', '10111100', '10000100', '10000001', '10111001', '11010100', '00111011', '11001110',
+                 '11110010', '00011110', '10011101', '11001001', '11000111', '01100101', '00011110', '10011111']
+</code></pre>
+<p>由于<code>flag_alphabet</code>中有32个可见字符，想到Base32编码方式。<br>
+用符号表中的字母编码gif，得到flag。<br>
+<img src="https://img-blog.csdnimg.cn/20210426182047563.png" alt="" loading="lazy"></p>
+<pre><code class="language-python">verticies = ['10001100', '01100011', '11100100', '01000110', '10000101', '00111101', '01000010', '10011000', '11100000',
+                 '11110100', '10000000', '00101101', '01110010', '00011100', '00001000', '10100101', '11010111', '01101110',
+                 '10100110', '10010001', '10111100', '10000100', '10000001', '10111001', '11010100', '00111011', '11001110',
+                 '11110010', '00011110', '10011101', '11001001', '11000111', '01100101', '00011110', '10011111']
+   
+alphabet = '+-=ABCDEFGHIJKLMNOPQRSTUVWXYZ_{}'
+
+def solve(verticies):
+    combined = ''
+    for v in verticies:
+        combined += v
+
+    indicies = []
+    for x in range (0, len(combined)//5):
+        indicies.append(combined[x * 5:x * 5 + 5])
+
+    answer = ''
+    for x in indicies:
+        answer += alphabet[int(x, 2)]
+
+    print (answer)
+
+def twist(verticies):
+    newverticies = []
+
+    for v in verticies:
+        # v = abcdefgh -&gt; habcdefg
+        newv = ''
+        newv+=v[7]
+        newv+=v[0:7]        
+        newverticies.append(newv)
+
+    return newverticies
+
+for x in range (0,8):
+    solve(verticies)
+    verticies = twist(verticies)
+    
+print(&quot;Finished Program&quot;)
+</code></pre>
+<h2 id="5知识点">5.知识点</h2>
+<h3 id="51-图像模式">5.1 图像模式</h3>
+<p><a href="https://www.osgeo.cn/pillow/handbook/concepts.html#modes">https://www.osgeo.cn/pillow/handbook/concepts.html#modes</a></p>
+<p>这个 mode 是一个字符串，它定义图像中像素的类型和深度。每个像素使用位深度的全部范围。所以1位像素的范围是0-1，8位像素的范围是0-255，依此类推。<br>
+当前版本支持以下标准模式：</p>
+<ul>
+<li>1 （1位黑白像素，每字节存储一个像素）</li>
+<li>L （8位像素，黑白）</li>
+<li>P （8位像素，使用调色板映射到任何其他模式）</li>
+<li>RGB （3x8位像素，真彩色）</li>
+<li>RGBA （4x8位像素，带透明蒙版的真彩色）</li>
+<li>CMYK （4x8位像素，分色）</li>
+<li>YCbCr （3x8位像素，彩色视频格式）</li>
+<li>LAB （3x8位像素，L A B颜色空间）</li>
+<li>HSV （3x8位像素、色调、饱和度、值颜色空间）</li>
+<li>I （32位有符号整数像素）</li>
+<li>F （32位浮点像素）</li>
+</ul>
+<p>Image库还支持一些特殊模式:</p>
+<ul>
+<li>LA （L和阿尔法）</li>
+<li>PA （P与阿尔法）</li>
+<li>RGBX （带填充的真彩色）</li>
+<li>RGBa （带预乘alpha的真彩色）</li>
+<li>La （L带预乘α）</li>
+<li>I;16 （16位无符号整数像素）</li>
+<li>I;16L （16位小端无符号整数像素）</li>
+<li>I;16B （16位大端无符号整数像素）</li>
+<li>I;16N （16位本机端无符号整数像素）</li>
+<li>BGR;15 （15位反转真彩色）</li>
+<li>BGR;16 （16位反转真彩色）</li>
+<li>BGR;24 （24位反转真彩色）</li>
+<li>BGR;32 （32位反转真彩色）</li>
+</ul>
+<blockquote>
+<p>我怀疑MISC题目的常用工具 stegsolve 就是在各种Mode之间做切换。</p>
+</blockquote>
+<h3 id="52-pallete">5.2 pallete</h3>
+<p><a href="https://mathpretty.com/12731.html#Imageputpalette">使用PIL库 改变图片的调色板</a><br>
+当图片模式选择<code>P</code>时，ImageObject有pallete参数。<br>
+pallete默认为<code>RGB</code>格式，是一个长度为768的list对象。<br>
+在<code>RGB</code>格式下，pallete的list对象被3个一组，表示RGB颜色。<br>
+最多记录256个<code>RGB</code>颜色。</p>
+<pre><code class="language-python">palette = []
+for i in range(256):
+    palette.extend((i, i, i)) # grayscale wedge
+
+assert len(palette) == 768
+
+im.putpalette(palette)
+</code></pre>
+<h3 id="53-python-pil包使用">5.3 Python PIL包使用</h3>
+<p><a href="https://www.osgeo.cn/pillow/reference/Image.html">PIL包文档</a></p>
+<h3 id="54-base系列编码原理">5.4 Base系列编码原理</h3>
+<p><a href="https://zhuanlan.zhihu.com/p/51316306">Base64, Base32 和 Base16，用通俗的语言深入到内部</a></p>
+<h2 id="6-defcon-2020q-uploooadit">6 <a href="https://github.com/o-o-overflow/dc2020q-uploooadit">Defcon 2020q uploooadit</a></h2>
+<p><code>uploooadit</code>是一道<code>WEB</code>题，主要考点是<code>haproxy 1.9.10</code>中存在的<code>HTTP smuggling</code>漏洞。<br>
+Writeup可以看这篇<a href="https://www.xiaozzz.xyz/2020/05/22/Defcon-CTF-Qual-2020-Web-WP/">文章</a></p>
+<h1 id="总结">总结</h1>
+<p>Bryce Boe 老师总共出过两道Defcon的题目。<br>
+我没有找到他在题目上线之前对考点的研究痕迹。<br>
+其社交媒体或发布的论文中也没有对应的体现。<br>
+因此无法预测在2021 defcon中，bboe老师将带来什么样的题目。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Defcon 2018 Qualify: Easy Pisy writeup]]></title>
+        <id>https://blog.leepanda.top/post/defcon-2018-qualify-easy-pisy-writeup/</id>
+        <link href="https://blog.leepanda.top/post/defcon-2018-qualify-easy-pisy-writeup/">
+        </link>
+        <updated>2021-05-29T11:37:23.000Z</updated>
+        <content type="html"><![CDATA[<p><ul class="markdownIt-TOC">
+<li><a href="#defcon-2018-qualify-easy-pisy">Defcon 2018 Qualify: Easy Pisy</a>
+<ul>
+<li><a href="#1-source-code">1. Source Code</a></li>
+<li><a href="#2-writeup">2. Writeup</a></li>
+<li><a href="#3-info">3. Info</a></li>
+<li><a href="#4-analysis-of-author">4. Analysis of Author</a>
+<ul>
+<li><a href="#41-janmasarik">4.1 janmasarik</a></li>
+<li><a href="#42-nneonneo-robert-xiao">4.2 nneonneo (Robert Xiao)</a></li>
+<li><a href="#43-marc-stevens">4.3 Marc Stevens</a></li>
+<li><a href="#44-elie-bursztein-google">4.4 Elie Bursztein (Google)</a></li>
+</ul>
+</li>
+<li><a href="#5-%E8%AF%AD%E8%A8%80%E4%B8%AD%E7%9A%84%E7%AD%BE%E5%90%8D%E5%87%BD%E6%95%B0">5. 语言中的签名函数</a>
+<ul>
+<li><a href="#51-php">5.1 php</a>
+<ul>
+<li><a href="#511-standards-library">5.1.1 standards library</a>
+<ul>
+<li><a href="#5111-hash">5.1.1.1 Hash</a></li>
+<li><a href="#5112-%E5%AF%86%E7%A0%81%E6%95%A3%E5%88%97%E7%AE%97%E6%B3%95%E5%87%BD%E6%95%B0">5.1.1.2 密码散列算法函数</a></li>
+</ul>
+</li>
+<li><a href="#512-%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93">5.1.2 第三方库</a>
+<ul>
+<li><a href="#5121-openssl">5.1.2.1 OpenSSL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#52-python">5.2 python</a>
+<ul>
+<li><a href="#521-standards-library">5.2.1 standards library</a>
+<ul>
+<li><a href="#5211-hashlib">5.2.1.1 hashlib</a></li>
+<li><a href="#5212-hmac">5.2.1.2 hmac</a></li>
+</ul>
+</li>
+<li><a href="#522-%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93">5.2.2 第三方库</a>
+<ul>
+<li><a href="#5221-cryptography">5.2.2.1 cryptography</a></li>
+<li><a href="#5222-voidspace">5.2.2.2 VoidSpace</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#53-go">5.3 go</a>
+<ul>
+<li><a href="#531-standards-library">5.3.1 standards library</a>
+<ul>
+<li><a href="#5311-crypto">5.3.1.1 crypto</a></li>
+<li><a href="#5312-crypto%E5%8C%85%E4%B8%8B%E5%85%B6%E4%BB%96%E5%8A%A0%E5%AF%86%E5%8C%85">5.3.1.2 crypto包下其他加密包</a></li>
+</ul>
+</li>
+<li><a href="#532-%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93">5.3.2 第三方库</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#6-%E5%AF%86%E7%A0%81%E5%AD%A6%E7%9F%A5%E8%AF%86%E7%82%B9">6. 密码学知识点</a>
+<ul>
+<li><a href="#md5">md5</a></li>
+<li><a href="#%E6%85%A2%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0">慢哈希函数</a></li>
+<li><a href="#argon2">ARGON2</a></li>
+<li><a href="#rc2_40">RC2_40</a></li>
+<li><a href="#smime">SMIME</a></li>
+<li><a href="#s%E7%9B%92">S盒</a></li>
+<li><a href="#rc4">RC4</a></li>
+<li><a href="#sha1">SHA1</a></li>
+<li><a href="#pkcs7_detached">PKCS7_DETACHED</a></li>
+<li><a href="#openssl_pkcs1_padding">OPENSSL_PKCS1_PADDING</a></li>
+<li><a href="#ecdsa">ecdsa</a></li>
+<li><a href="#subtle">subtle</a></li>
+</ul>
+</li>
+<li><a href="#7-bucket-%E9%85%8D%E7%BD%AE%E9%94%99%E8%AF%AF">7. Bucket 配置错误</a></li>
+<li><a href="#8-non-interactive-cryptographic-timestamping-based-on-verifiable-delay-functions">8. 《Non-interactive cryptographic timestamping based on verifiable delay functions》</a></li>
+<li><a href="#9-sha1collisiondetection">9. sha1collisiondetection</a></li>
+<li><a href="#10-on-immutability-of-blockchains">10. 《On immutability of blockchains》</a></li>
+<li><a href="#11-collect-crypto-2021-paper">11. collect Crypto 2021 Paper</a></li>
+<li><a href="#12-a-hackers-guide-to-reducing-side-channel-attack-surfaces-using-deep-learning">12. A Hacker’s guide to reducing side-channel attack surfaces using deep-learning</a></li>
+<li><a href="#13-%E5%9F%BA%E4%BA%8E%E6%97%81%E8%B7%AF%E6%94%BB%E5%87%BB%E7%9A%84aes%E7%AE%97%E6%B3%95%E4%B8%AD%E9%97%B4%E5%8F%98%E9%87%8F%E8%84%86%E5%BC%B1%E7%82%B9">13. 基于旁路攻击的AES算法中间变量脆弱点</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+</p>
+<h1 id="defcon-2018-qualify-easy-pisy">Defcon 2018 Qualify: Easy Pisy</h1>
+<h2 id="1-source-code">1. Source Code</h2>
+<p>题目给了俩PHP：</p>
+<ul>
+<li><code>execute.php</code></li>
+</ul>
+<pre><code class="language-php">&lt;?php
+
+include 'common.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+  print highlight_string(file_get_contents(&quot;execute.php&quot;), TRUE);
+  exit(0);
+}
+
+$keys = get_keys();
+$privkey = $keys[0];
+$pubkey = $keys[1];
+
+$file_info = $_FILES['userfile'];
+check_uploaded_file($file_info);
+
+$data = file_get_contents($file_info['tmp_name']);
+$signature = hex2bin($_POST['signature']);
+if (openssl_verify($data, $signature, $pubkey)) {
+  print 'Signature is OK.&lt;br/&gt;';
+} else {
+  die('Bad signature.');
+}
+
+$text = pdf_to_text($file_info['tmp_name']);
+print &quot;Text: \&quot;$text\&quot;&lt;br/&gt;&quot;;
+
+$execute_query = &quot;EXECUTE &quot;;
+$echo_query = &quot;ECHO &quot;;
+if (substr($text, 0, strlen($execute_query)) === $execute_query) {
+  $payload = substr($text, strlen($execute_query));
+  print &quot;About to execute: \&quot;$payload\&quot;.&lt;br/&gt;&quot;;
+  $out = shell_exec($payload);
+  print &quot;Output: $out&quot;;
+} else if (substr($text, 0, strlen($echo_query)) === $echo_query) {
+  $payload = substr($text, strlen($echo_query));
+  print &quot;About to echo: \&quot;$payload\&quot;.&lt;br/&gt;&quot;;
+  echo $payload;
+} else {
+  print &quot;I can't recognize the command type. Go away.&lt;br/&gt;&quot;;
+}
+
+?&gt;
+</code></pre>
+<ul>
+<li><code>shellme.php</code></li>
+</ul>
+<pre><code class="language-php">&lt;?php
+
+include 'common.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+  print highlight_string(file_get_contents(&quot;sign.php&quot;), TRUE);
+  exit(0);
+}
+
+$keys = get_keys();
+$privkey = $keys[0];
+$pubkey = $keys[1];
+
+if ($privkey === FALSE || $pubkey === FALSE) {
+  die(&quot;Could not load keys. Contact admin.&lt;br/&gt;&quot;);
+}
+
+$file_info = $_FILES['userfile'];
+check_uploaded_file($file_info);
+
+$text = pdf_to_text($file_info['tmp_name']);
+print &quot;Extracted text: \&quot;$text\&quot;&lt;br/&gt;&quot;;
+
+$execute_query = &quot;EXECUTE &quot;;
+$echo_query = &quot;ECHO &quot;;
+if (substr($text, 0, strlen($execute_query)) === $execute_query) {
+  print &quot;I don't sign EXECUTE commands. Go away.&lt;br/&gt;&quot;;
+} else if (substr($text, 0, strlen($echo_query)) === $echo_query) {
+  print &quot;I'm OK with ECHO commands. Here is the signature: &lt;br/&gt;&quot;;
+  $data = file_get_contents($file_info['tmp_name']);
+  openssl_sign($data, $signature, $privkey);
+  print bin2hex($signature);
+} else {
+  print &quot;I can't recognize the command type. Go away.&lt;br/&gt;&quot;;
+}
+
+?&gt;
+</code></pre>
+<h2 id="2-writeup">2. Writeup</h2>
+<ul>
+<li>
+<p>shellme.php是入口，用户将首位为<code>ECHO</code>的pdf上传，得到<code>signature</code></p>
+</li>
+<li>
+<p>将<code>signature</code>和pdf上传给<code>execute.php</code></p>
+<ul>
+<li>首先检查<code>signature</code>一致性</li>
+<li>如果pdf首位为<code>ECHO</code>则显示PDF内容</li>
+<li>如果pdf首位为<code>EXECUTE</code>则执行PDF内容</li>
+</ul>
+</li>
+</ul>
+<p>这道题的考点在<code>检查signature一致性</code>这里，<br>
+注意题目中验证签名用的函数是<code>openssl_verify</code><br>
+该函数默认使用<code>sha1</code>算法进行签名<br>
+由于<code>sha1</code><a href="https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html">不安全</a>，我们可以使用<a href="https://github.com/nneonneo/sha1collider">工具</a>碰撞出首位为<code>EXECUTE</code>而非<code>ECHO</code>,但<code>signature</code>一致的pdf内容,从而RCE。</p>
+<h2 id="3-info">3. Info</h2>
+<p>challenge source code <a href="https://gist.github.com/janmasarik/232381eec3918313b5b4d2c20ca1ed0f">https://gist.github.com/janmasarik/232381eec3918313b5b4d2c20ca1ed0f</a></p>
+<p>CTF Time writeup <a href="https://ctftime.org/task/6094">https://ctftime.org/task/6094</a></p>
+<p>Writeup provider teams:</p>
+<ul>
+<li>mhackeroni</li>
+<li>EmpireCTF</li>
+<li>tuna$laves</li>
+</ul>
+<p>Author：Not Found, But Maybe</p>
+<ul>
+<li><a href="https://gist.github.com/janmasarik/">https://gist.github.com/janmasarik/</a> 就这哥们儿有题目源码</li>
+<li><a href="https://github.com/nneonneo">https://github.com/nneonneo/</a> 这位哥在题目之前写了对应的工具</li>
+<li>Marc Stevens(CWI Amsterdam) 这位是《Announcing the first SHA1 collision》一作</li>
+<li>Elie Bursztein (Google) 《Announcing the first SHA1 collision》二作</li>
+</ul>
+<p>writeup for study: <a href="https://github.com/0e85dc6eaf/CTF-Writeups/tree/05ad6a9ecbc19ceb8890f4581dfee36f16d164aa/DEF%20CON%20CTF%20Qualifier%202018/Easy%20Pisy#easy-pisy">https://github.com/0e85dc6eaf/CTF-Writeups/tree/05ad6a9ecbc19ceb8890f4581dfee36f16d164aa/DEF%20CON%20CTF%20Qualifier%202018/Easy%20Pisy#easy-pisy</a></p>
+<p>tools used:</p>
+<ul>
+<li><a href="https://github.com/nneonneo/sha1collider">https://github.com/nneonneo/sha1collider</a></li>
+<li><a href="https://github.com/cr-marcstevens/sha1collisiondetection">https://github.com/cr-marcstevens/sha1collisiondetection</a></li>
+</ul>
+<h2 id="4-analysis-of-author">4. Analysis of Author</h2>
+<p>由于还不能确定这道题的出题人是谁，就先面向目前可能性比较大的前四位分析。</p>
+<h3 id="41-janmasarik">4.1 janmasarik</h3>
+<ul>
+<li>languages
+<ul>
+<li>python\go\php</li>
+</ul>
+</li>
+<li>社交媒体
+<ul>
+<li>https://twitter.com/s14ve</li>
+<li>https://masarik.sh/</li>
+</ul>
+</li>
+<li>Recent
+<ul>
+<li><a href="https://github.com/janmasarik/resolvers">resolvers</a> DNS拦截的检查工具？20210416</li>
+<li><a href="https://github.com/janmasarik/low-hanging">low-hanging</a> 漏洞扫描器</li>
+<li><a href="https://github.com/janmasarik/bucketsperm">bucketsperm</a> 用上面的low-hanging做的 云存储桶 权限 漏洞扫描器？</li>
+<li><a href="https://is.muni.cz/th/de05t/master_thesis_final.pdf">Automating Bug Bounty</a> 论文:自动挖漏洞？这个好像专门挖云存储漏洞，应该和bucketsperm有联动</li>
+</ul>
+</li>
+</ul>
+<p>jan.masarik先生19年至今的动态主要在云存储漏洞的自动挖掘上。</p>
+<h3 id="42-nneonneo-robert-xiao">4.2 nneonneo (Robert Xiao)</h3>
+<ul>
+<li>languages
+<ul>
+<li>python</li>
+</ul>
+</li>
+<li>社交媒体
+<ul>
+<li>https://twitter.com/nneonneo</li>
+<li>https://www.robertxiao.ca</li>
+</ul>
+</li>
+<li>Recent
+<ul>
+<li><a href="https://github.com/nneonneo/ghidra">Ghidra 逆向工具</a></li>
+<li><a href="https://github.com/nneonneo/iOS-Torrent-Client">iOS-Torrent-Client</a></li>
+<li><a href="https://github.com/nneonneo/iOS-SOCKS-Server">ios-sock</a></li>
+<li><a href="https://github.com/nneonneo/ntfsrecover">ntfsrecover</a></li>
+</ul>
+</li>
+</ul>
+<p>nneonneo 大佬2020年底的github动态都是在搞RE和PWN，做的研究工作都比较偏底层。应该不会出web的题目⑧<br>
+而且nneonneo大佬似乎是CTFer而非出题人，但他是怎么在出题之前设计出做题工具的呢<br>
+说明他看了Marc的文章..</p>
+<h3 id="43-marc-stevens">4.3 Marc Stevens</h3>
+<ul>
+<li>
+<p>languages</p>
+<ul>
+<li>C/C++</li>
+</ul>
+</li>
+<li>
+<p>社交媒体</p>
+<ul>
+<li><a href="https://github.com/cr-marcstevens">Github</a></li>
+<li><a href="https://scholar.google.nl/citations?user=ObZrtPYAAAAJ&amp;hl=nl">google学术</a></li>
+<li><a href="https://marc-stevens.nl/research/">个人博客</a></li>
+</ul>
+</li>
+<li>
+<p>Recent</p>
+<ul>
+<li><a href="https://eprint.iacr.org/2019/197.pdf">Non-interactive cryptographic timestamping based on verifiable delay functions 2020</a></li>
+<li><a href="https://ir.cwi.nl/pub/29339/29339.pdf">Real World Cryptanalysis 2019</a></li>
+<li><a href="https://www.h2020prometheus.eu/sites/default/files/2019-11/The%20General%20Sieve%20Kernel%20and%20New%20Records%20in%20Lattice%20Reduction.pdf">The general sieve kernel and new records in lattice reduction</a></li>
+<li><a href="https://github.com/cr-marcstevens/sha1collisiondetection">sha1collisiondetection</a> 但这个似乎还是18年defcon的EasyPisy考点</li>
+<li><a href="https://github.com/cr-marcstevens/snippets">snippets</a> Marc个人的脚本收集仓库</li>
+</ul>
+</li>
+<li>
+<p>学习一下<code>Non-interactive cryptographic timestamping based on verifiable delay functions</code></p>
+</li>
+<li>
+<p>仔细看一下<code>sha1collisiondetection</code>的更新细节，也许更新了新的知识点可以出题？</p>
+</li>
+<li>
+<p>这位老师还写了一篇区块链的文章 <a href="https://dl.eusset.eu/bitstream/20.500.12015/3160/1/blockchain2018_04.pdf">On immutability of blockchains</a></p>
+</li>
+</ul>
+<h3 id="44-elie-bursztein-google">4.4 Elie Bursztein (Google)</h3>
+<ul>
+<li>languages
+<ul>
+<li>Python/PHP</li>
+</ul>
+</li>
+<li>社交媒体
+<ul>
+<li><a href="https://elie.net">个人博客</a></li>
+<li><a href="https://github.com/ebursztein?tab=repositories">Github</a></li>
+<li><a href="https://scholar.google.com/citations?hl=zh-CN&amp;user=Ayw4GsAAAAAJ&amp;view_op=list_works&amp;sortby=pubdate">Google Scholar</a></li>
+</ul>
+</li>
+<li>Recent
+<ul>
+<li><a href="https://research.google/pubs/pub49786.pdf">Sok: Hate, harassment, and the changing landscape of online abuse 2021</a></li>
+<li><a href="https://research.google/pubs/pub49626.pdf">Spotlight: Malware Lead Generation at Scale</a></li>
+<li><a href="https://research.google/pubs/pub49775.pdf">Who is targeted by email-based phishing and malware? Measuring factors that differentiate risk</a></li>
+<li><a href="https://arxiv.org/pdf/2006.10861">Coinpolice: Detecting hidden cryptojacking attacks with neural networks</a></li>
+</ul>
+</li>
+</ul>
+<p>尽管是《Announcing the first SHA1 collision》二作，Elie的主要精力还是投入在了Phishing、Malware、Abuse等领域。</p>
+<blockquote>
+<p>我比较喜欢他博客里这些没有数学公式的科普文章，像看小说一样欢乐。我女朋友则喜欢有逻辑推导、数学演算的东西，会更优美、更艺术一些...</p>
+</blockquote>
+<p>从领域相匹配度的角度分析,Elie也比较符合EasyPisy出题人的画像。<br>
+不过博客里几乎没看到有关CTF的内容。</p>
+<ul>
+<li><a href="https://elie.net/talk/a-hacker-guide-to-side-channel-attack-surface-reduction-using-deep-learning/">A Hacker’s guide to reducing side-channel attack surfaces using deep-learning</a></li>
+</ul>
+<p>这个&quot;基于深度学习来防御旁路攻击&quot;的思路宣讲于<code>Defcon 28</code>&amp;<code>Black Hat USA 2020</code> // TODO<br>
+密码学旁路攻击: <a href="http://www.arocmag.com/getarticle?aid=93341d415ab5a106">基于旁路攻击的AES算法中间变量脆弱点</a> // TODO</p>
+<h2 id="5-语言中的签名函数">5. 语言中的签名函数</h2>
+<p>先找一下各语言标准库中的签名函数，再进一步找第三方库中引入的签名函数。</p>
+<h3 id="51-php">5.1 php</h3>
+<p>https://www.php.net/manual/zh/function.hash-hmac-file.php<br>
+https://segmentfault.com/a/1190000020201103<br>
+https://www.php.net/manual/zh/ref.openssl.php</p>
+<h4 id="511-standards-library">5.1.1 <a href="https://www.php.net/manual/zh/refs.crypto.php">standards library</a></h4>
+<h5 id="5111-hash">5.1.1.1 <a href="https://www.php.net/manual/zh/book.hash.php">Hash</a></h5>
+<p>PHP 5.1.2开始，Hash成为内置拓展。<br>
+PHP 7.4.0开始，Hash成为核心拓展，可以直接使用其函数。<br>
+Hash 函数</p>
+<ul>
+<li>hash_algos — 返回已注册的哈希算法列表</li>
+<li>hash_copy — 拷贝哈希运算上下文</li>
+<li>hash_equals — 可防止时序攻击的字符串比较</li>
+<li>hash_file — 给指定文件的内容生成哈希值</li>
+<li>hash_final — 结束增量哈希，并且返回摘要结果</li>
+<li>hash_hkdf — Generate a HKDF key derivation of a supplied key input</li>
+<li>hash_hmac_algos — Return a list of registered hashing algorithms suitable for hash_hmac</li>
+<li>hash_hmac_file — 使用 HMAC 方法和给定文件的内容生成带密钥的哈希值</li>
+<li>hash_hmac — 使用 HMAC 方法生成带有密钥的哈希值</li>
+<li>hash_init — 初始化增量哈希运算上下文</li>
+<li>hash_pbkdf2 — 生成所提供密码的 PBKDF2 密钥导出</li>
+<li>hash_update_file — 从文件向活跃的哈希运算上下文中填充数据</li>
+<li>hash_update_stream — 从打开的流向活跃的哈希运算上下文中填充数据</li>
+<li>hash_update — 向活跃的哈希运算上下文中填充数据</li>
+<li>hash — 生成哈希值 （消息摘要）</li>
+</ul>
+<blockquote>
+<p>Hash系列函数的<code>algo</code>参数没有默认值。</p>
+</blockquote>
+<h5 id="5112-密码散列算法函数">5.1.1.2 <a href="https://www.php.net/manual/zh/ref.password.php">密码散列算法函数</a></h5>
+<p>下列函数可以直接调用</p>
+<blockquote>
+<p>如果要使用 Argon2 密码哈希，PHP 必须用 --with-password-argon2[=DIR] 配置选项和 libargon2 构建。<br>
+密码散列算法函数</p>
+</blockquote>
+<ul>
+<li>password_algos — Get available password hashing algorithm IDs</li>
+<li>password_get_info — 返回指定散列（hash）的相关信息</li>
+<li>password_hash — 创建密码的散列（hash）</li>
+<li>password_needs_rehash — 检测散列值是否匹配指定的选项</li>
+<li>password_verify — 验证密码是否和散列值匹配<br>
+<code>password_hash</code>所有可用的签名算法<a href="https://www.php.net/manual/zh/password.constants.php">如下</a></li>
+<li>PASSWORD_BCRYPT (default) <a href="https://en.wikipedia.org/wiki/Bcrypt">学习链接</a></li>
+<li>PASSWORD_ARGON2I <a href="https://zhuanlan.zhihu.com/p/80490980">学习链接</a></li>
+<li>PASSWORD_ARGON2ID</li>
+<li>PASSWORD_ARGON2_DEFAULT_MEMORY_COST</li>
+<li>PASSWORD_ARGON2_DEFAULT_TIME_COST</li>
+<li>PASSWORD_ARGON2_DEFAULT_THREADS<br>
+慢哈希函数<a href="https://tate-young.github.io/2019/05/21/bcrypt.html">学习链接</a> // 这啥啊，看不懂...等女朋友看完讲一下吧...<br>
+ARGON2<a href="https://github.com/P-H-C/phc-winner-argon2/raw/master/argon2-specs.pdf">学习链接</a></li>
+</ul>
+<h4 id="512-第三方库">5.1.2 第三方库</h4>
+<h5 id="5121-openssl">5.1.2.1 <a href="https://www.php.net/manual/zh/ref.openssl.php">OpenSSL</a></h5>
+<p>要使用 PHP 的 OpenSSL 模块时，须使用 --with-openssl[=DIR] 参数来编译 PHP。<br>
+OpenSSL库所有的函数如下</p>
+<pre><code>openssl_cipher_iv_length — 获取密码iv长度
+openssl_cms_decrypt — Decrypt a CMS message
+openssl_cms_encrypt — Encrypt a CMS message
+openssl_cms_read — Export the CMS file to an array of PEM certificates
+openssl_cms_sign — Sign a file
+openssl_cms_verify — Verify a CMS signature
+openssl_csr_export_to_file — 将CSR导出到文件
+openssl_csr_export — 将CSR作为字符串导出
+openssl_csr_get_public_key — 返回CSR的公钥
+openssl_csr_get_subject — 返回CSR的主题
+openssl_csr_new — 生成一个 CSR
+openssl_csr_sign — 用另一个证书签署 CSR (或者本身) 并且生成一个证书
+openssl_decrypt — 解密数据
+openssl_dh_compute_key — 计算远程DH密钥(公钥)和本地DH密钥的共享密钥
+openssl_digest — 计算摘要
+openssl_encrypt — 加密数据
+openssl_error_string — 返回 openSSL 错误消息
+openssl_free_key — 释放密钥资源
+openssl_get_cert_locations — 检索可用的证书位置
+openssl_get_cipher_methods — 获取可用的加密算法
+openssl_get_curve_names — 获得ECC的可用曲线名称列表
+openssl_get_md_methods — 获取可用的摘要算法
+openssl_get_privatekey — 别名 openssl_pkey_get_private
+openssl_get_publickey — 别名 openssl_pkey_get_public
+openssl_open — 打开密封的数据
+openssl_pbkdf2 — 生成一个 PKCS5 v2 PBKDF2 字符串
+openssl_pkcs12_export_to_file — 输出一个 PKCS#12 兼容的证书存储文件
+openssl_pkcs12_export — 将 PKCS#12 兼容证书存储文件导出到变量
+openssl_pkcs12_read — 将 PKCS#12 证书存储区解析到数组中
+openssl_pkcs7_decrypt — 解密一个 S/MIME 加密的消息
+openssl_pkcs7_encrypt — 加密一个 S/MIME 消息
+openssl_pkcs7_read — 将PKCS7文件导出为PEM格式证书的数组
+openssl_pkcs7_sign — 对一个 S/MIME 消息进行签名
+openssl_pkcs7_verify — 校验一个已签名的 S/MIME 消息的签名
+openssl_pkey_derive — Computes shared secret for public value of remote and local DH or ECDH key
+openssl_pkey_export_to_file — 将密钥导出到文件中
+openssl_pkey_export — 将一个密钥的可输出表示转换为字符串
+openssl_pkey_free — 释放一个私钥
+openssl_pkey_get_details — 返回包含密钥详情的数组
+openssl_pkey_get_private — 获取私钥
+openssl_pkey_get_public — 从证书中解析公钥，以供使用。
+openssl_pkey_new — 生成一个新的私钥
+openssl_private_decrypt — 使用私钥解密数据
+openssl_private_encrypt — 使用私钥加密数据
+openssl_public_decrypt — 使用公钥解密数据
+openssl_public_encrypt — 使用公钥加密数据
+openssl_random_pseudo_bytes — 生成一个伪随机字节串
+openssl_seal — 密封 (加密) 数据
+openssl_sign — Generate signature
+openssl_spki_export_challenge — 导出与签名公钥和挑战相关的挑战字符串
+openssl_spki_export — 通过签名公钥和挑战导出一个可用的PEM格式的公钥
+openssl_spki_new — 生成一个新的签名公钥和挑战
+openssl_spki_verify — 验证签名公钥和挑战。
+openssl_verify — 验证签名
+openssl_x509_check_private_key — 检查私钥是否对应于证书
+openssl_x509_checkpurpose — 验证是否可以为特定目的使用证书
+openssl_x509_export_to_file — 导出证书至文件
+openssl_x509_export — 以字符串格式导出证书
+openssl_x509_fingerprint — 计算一个给定的x.509证书的指纹或摘要
+openssl_x509_free — 释放证书资源
+openssl_x509_parse — 解析一个X509证书并作为一个数组返回信息
+openssl_x509_read — 解析一个x.509证书并返回一个资源标识符
+openssl_x509_verify — Verifies digital signature of x509 certificate against a public key
+</code></pre>
+<p>以默认算法对openssl库函数进行分类,如下:<br>
+默认加密算法: <code>OPENSSL_CIPHER_RC2_40</code>的函数</p>
+<ul>
+<li>openssl_cms_encrypt</li>
+<li>openssl_pkcs7_encrypt</li>
+</ul>
+<p>默认编码方法:<code>OPENSSL_ENCODING_SMIME</code>的函数</p>
+<ul>
+<li>openssl_cms_verify</li>
+<li>openssl_cms_sign</li>
+</ul>
+<p>默认加解密方法:<code>RC4</code>的函数</p>
+<ul>
+<li>openssl_open</li>
+<li>openssl_seal</li>
+</ul>
+<p>默认签名算法: <code>SHA1</code>的函数</p>
+<ul>
+<li>openssl_pbkdf2</li>
+<li>openssl_sign</li>
+<li>openssl_verify</li>
+<li>openssl_x509_fingerprint</li>
+</ul>
+<p>默认签名Flag: <code>PKCS7_DETACHED</code>的函数</p>
+<ul>
+<li>openssl_​pkcs7_​sign</li>
+</ul>
+<p>默认Padding:<code>OPENSSL_PKCS1_PADDING</code>的函数</p>
+<ul>
+<li>openssl_private_decrypt</li>
+<li>openssl_private_encrypt</li>
+<li>openssl_public_decrypt</li>
+<li>openssl_public_encrypt</li>
+</ul>
+<h3 id="52-python">5.2 python</h3>
+<h4 id="521-standards-library">5.2.1 standards library</h4>
+<h5 id="5211-hashlib">5.2.1.1 <a href="https://docs.python.org/3.6/library/hashlib.html">hashlib</a></h5>
+<p>hashlib底层代码为openssl开源库，openssl支持的方法，hashlib都能支持。<br>
+所有支持的方法有:</p>
+<pre><code>DSA, DSA-SHA, MD4, MD5, RIPEMD160, SHA, SHA1, SHA224, SHA256,
+SHA384, SHA512, blake2b, blake2s, dsaEncryption, dsaWithSHA,
+ecdsa-with-SHA1, md4, md5, ripemd160, sha, sha1, sha224, sha256,
+sha384, sha3_224, sha3_256, sha3_384, sha3_512, sha512,
+shake_128, shake_256, whirlpool
+</code></pre>
+<p>其中，无论执行运行环境是什么操作系统，都必然可用的方法有:</p>
+<pre><code>blake2b, blake2s, md5, sha1, sha224, sha256, sha384, sha3_224, sha3_256, sha3_384, sha3_512, sha512, shake_128, shake_256
+</code></pre>
+<blockquote>
+<p>不同环境的<code>algorithms_guaranteed</code>不同<br>
+这里的环境为<code>Python3.7.7 MacOS 10.14.6</code></p>
+</blockquote>
+<p>hashlib使用方法如下:</p>
+<pre><code class="language-python">import hashlib
+h = hashlib.md5()
+h.update(&quot;hello&quot;.encode('utf-8'))
+print(h.hexdigest())
+
+h = hashlib.sha1()
+h.update(&quot;hello&quot;.encode('utf-8'))
+print(h.hexdigest())
+</code></pre>
+<p>hashlib用方法名初始化,代码如下:</p>
+<pre><code>hash_name = &quot;sha1&quot;
+h = hashlib.new(hash_name)
+h.update(args.data.encode('utf-8'))
+print(h.hexdigest())
+</code></pre>
+<p>这种不明说用了什么hash的写法更方便出题。</p>
+<h5 id="5212-hmac">5.2.1.2 hmac</h5>
+<p>规范hmac的<a href="https://tools.ietf.org/html/rfc2104.html">RFC标准</a><br>
+hmac是一个检查通信过程中消息完整性的标准化实现</p>
+<p>使用方法如下</p>
+<pre><code class="language-python">import hmac
+import hashlib
+
+h = hmac.new(b'secret-shared-key', 'hello', hashlib.sha1)
+digest = h.hexdigest()
+print(digest)
+</code></pre>
+<p>hmac.new函数的参数有三个：秘钥、消息、签名算法<br>
+其中，签名算法默认为<code>md5</code></p>
+<h4 id="522-第三方库">5.2.2 第三方库</h4>
+<h5 id="5221-cryptography">5.2.2.1 cryptography</h5>
+<p><a href="https://pypi.org/project/cryptography/">Cryptography</a>：一个提供了加密算法和原语的 python 包。</p>
+<h5 id="5222-voidspace">5.2.2.2 VoidSpace</h5>
+<p><a href="http://www.voidspace.org.uk/python/weblog/arch_d7_2006_10_07.shtml#e497">VoidSpace</a> 是 适用于IronPython的Hashlib装饰器</p>
+<h3 id="53-go">5.3 go</h3>
+<h4 id="531-standards-library">5.3.1 standards library</h4>
+<h5 id="5311-crypto">5.3.1.1 crypto</h5>
+<p>所有可用的Hash方法如下</p>
+<pre><code class="language-go">const (
+    MD4         Hash = 1 + iota // import golang.org/x/crypto/md4
+    MD5                         // import crypto/md5
+    SHA1                        // import crypto/sha1
+    SHA224                      // import crypto/sha256
+    SHA256                      // import crypto/sha256
+    SHA384                      // import crypto/sha512
+    SHA512                      // import crypto/sha512
+    MD5SHA1                     // no implementation; MD5+SHA1 used for TLS RSA
+    RIPEMD160                   // import golang.org/x/crypto/ripemd160
+    SHA3_224                    // import golang.org/x/crypto/sha3
+    SHA3_256                    // import golang.org/x/crypto/sha3
+    SHA3_384                    // import golang.org/x/crypto/sha3
+    SHA3_512                    // import golang.org/x/crypto/sha3
+    SHA512_224                  // import crypto/sha512
+    SHA512_256                  // import crypto/sha512
+    BLAKE2s_256                 // import golang.org/x/crypto/blake2s
+    BLAKE2b_256                 // import golang.org/x/crypto/blake2b
+    BLAKE2b_384                 // import golang.org/x/crypto/blake2b
+    BLAKE2b_512                 // import golang.org/x/crypto/blake2b
+)
+</code></pre>
+<p>使用方法，以<code>MD5举例</code></p>
+<pre><code class="language-go">func GetMd5String(s string) string {
+    h := md5.New()
+    h.Write([]byte(s))
+    return hex.EncodeToString(h.Sum(nil))
+}
+</code></pre>
+<h5 id="5312-crypto包下其他加密包">5.3.1.2 crypto包下其他加密包</h5>
+<pre><code>aes,cipher,des,dsa,ecdsa,elliptic,hmac,md5,rand,rc4,rsa,sha1,sha256,sha512,subtle,tls,x509
+</code></pre>
+<h4 id="532-第三方库">5.3.2 第三方库</h4>
+<p>Golang似乎没有特别主流的第三方加密库，标准库已经可以解决大部分需求。</p>
+<h2 id="6-密码学知识点">6. 密码学知识点</h2>
+<h3 id="md5">md5</h3>
+<p><a href="https://en.wikipedia.org/wiki/MD5">https://en.wikipedia.org/wiki/MD5</a><br>
+<a href="https://zhuanlan.zhihu.com/p/37257569">https://zhuanlan.zhihu.com/p/37257569</a></p>
+<h3 id="慢哈希函数">慢哈希函数</h3>
+<p><a href="https://tate-young.github.io/2019/05/21/bcrypt.html">https://tate-young.github.io/2019/05/21/bcrypt.html</a><br>
+对了对抗用字典暴破的攻击者，设计出了这种慢哈希函数。<br>
+除了所有哈希函数都具备的&quot;给hash，让反着算，算不出来原文&quot;的特性外，同时“有原文，正着算Hash,特别特别慢”<br>
+比如<code>bcrypt</code>,<code>scrypt</code>,<code>PBKDF2</code>等<br>
+python的bcrypt写法如下:</p>
+<pre><code class="language-python">import bcrypt
+
+passwd = b's$cret12'
+
+salt = bcrypt.gensalt()
+hashed = bcrypt.hashpw(passwd, salt)
+
+print(salt)
+print(hashed)
+</code></pre>
+<h3 id="argon2">ARGON2</h3>
+<p><a href="https://github.com/P-H-C/phc-winner-argon2/raw/master/argon2-specs.pdf">https://github.com/P-H-C/phc-winner-argon2/raw/master/argon2-specs.pdf</a><br>
+<a href="https://eprint.iacr.org/2016/759.pdf">Towards Practical Attacks on Argon2i and Balloon Hashing</a><br>
+也是一种慢哈希函数。<br>
+<code>Memory-hard hash function</code>：通过提高算法中内存的使用量，来提高算法的Hash的耗时。</p>
+<h3 id="rc2_40">RC2_40</h3>
+<p>http://cryptowiki.net/index.php?title=RC2/40_english<br>
+https://github.com/SaschaWessel/rc2-40-cbc</p>
+<h3 id="smime">SMIME</h3>
+<p><a href="https://www.cse.scu.edu/~tschwarz/coen350_03/Lectures/smime.html">https://www.cse.scu.edu/~tschwarz/coen350_03/Lectures/smime.html</a><br>
+<a href="https://zh.wikipedia.org/zh-hans/S/MIME">https://zh.wikipedia.org/zh-hans/S/MIME</a><br>
+安全的电子邮件加密方式<br>
+<a href="https://4hou.win/wordpress/?p=15890">如何使用SMIME</a></p>
+<h3 id="s盒">S盒</h3>
+<p><a href="https://zh.wikipedia.org/wiki/S%E7%9B%92">https://zh.wikipedia.org/wiki/S%E7%9B%92</a><br>
+通常，S-Box接受特定数量的输入比特m，并将其转换为特定数量的输出比特n，其中n 不一定等于m[1]。一个m×n的S盒可以通过包含2m条目，每条目n比特的查找表实现。<br>
+S盒通常是固定的（例如DES和AES加密算法）, 也有一些加密算法的S盒是基于密钥动态生成的（例如Blowfish和双鱼算法加密算法）。</p>
+<h3 id="rc4">RC4</h3>
+<p>https://zh.wikipedia.org/zh-hans/RC4</p>
+<h3 id="sha1">SHA1</h3>
+<p>https://zh.wikipedia.org/wiki/SHA-1</p>
+<h3 id="pkcs7_detached">PKCS7_DETACHED</h3>
+<p>https://segmentfault.com/a/1190000019793040</p>
+<h3 id="openssl_pkcs1_padding">OPENSSL_PKCS1_PADDING</h3>
+<p>https://blog.csdn.net/liuxianbing119/article/details/7405628</p>
+<h3 id="ecdsa">ecdsa</h3>
+<p>https://zhuanlan.zhihu.com/p/97953640</p>
+<h3 id="subtle">subtle</h3>
+<blockquote>
+<p>subtle不仅是golang加密包的名字，还是一个男士挎包品牌。<br>
+看上去是那种明明很奢华，但在我身上就被穿成地摊货的款式...<br>
+诶，又走神了<br>
+<img src="https://img-blog.csdnimg.cn/20210426135026387.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></p>
+</blockquote>
+<p>https://documentation.help/Golang/crypto_subtle.htm</p>
+<h2 id="7-bucket-配置错误">7. Bucket 配置错误</h2>
+<p>jan.masarik先生19年至今的动态主要在云存储漏洞的自动挖掘上。<br>
+- <a href="https://github.com/janmasarik/bucketsperm">bucketsperm</a><br>
+- <a href="https://is.muni.cz/th/de05t/master_thesis_final.pdf">Automating Bug Bounty</a></p>
+<p>先来学习一下Bucket错误配置漏洞是咋回事。<br>
+<a href="https://www.cyclonis.com/zh-hans/thousands-of-patients-data-been-breached-misconfigured-amazon-s3-buckets/">由于配置错误的Amazon S3存储桶导致成千上万的患者数据遭到破坏</a><br>
+使用OSS时须先创建Bucket存储空间。<br>
+<a href="https://help.aliyun.com/document_detail/31885.html">阿里云如何创建Bucket</a><br>
+在jan.masarik先生的论文中，总结了用户在创建buckets时经常犯的错误：</p>
+<ul>
+<li><strong>不配置权限限制ACL，所有内容public</strong><a href="https://help.aliyun.com/document_detail/66168.html">导致敏感信息泄露</a></li>
+<li>同时很多人会像命名变量那样，<strong>以bucket的用途来命名bucket</strong>。<br>
+使得很多存储敏感信息的Bucket可以通过暴破子域名的方式被访问到。<br>
+jan.masarik先生将这些可能存储敏感信息的bucket name汇总成了 下表中的Group2<br>
+同时给出了，经常被使用 但一般不存储敏感信息的Bucket name Group 1<br>
+<img src="https://img-blog.csdnimg.cn/20210426135054483.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"><br>
+在论文的最后，jan.masarik建议这些OSS 提供商设置bucket name黑名单。<br>
+查阅文档，阿里云的OSS就没有这个限制。<br>
+<img src="https://img-blog.csdnimg.cn/20210426135116978.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"><br>
+我在google和github上面随便找了几个oss的教程，<br>
+访问了一下教程中的oss链接。</li>
+<li>当bucket存在，path存在，但ACL private时，报如下错误。<br>
+<img src="https://img-blog.csdnimg.cn/20210426135200857.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></li>
+<li>当bucket存在，但是path不存在时，报如下错误<br>
+<img src="https://img-blog.csdnimg.cn/20210426135224307.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></li>
+<li>当bucket不存在时，报如下错误<br>
+<img src="https://img-blog.csdnimg.cn/20210426135312511.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></li>
+<li>当bucket存在，path存在，同时还有访问权限时，就可以访问对应的文件或文件夹。<br>
+<img src="https://img-blog.csdnimg.cn/20210426135330408.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"><br>
+暂时还没有找到ACL错误配置的oss bucket<br>
+通过子域名解析的方式搜集了一些oss的链接，确实有Group2中的关键字。看上去的确诱人。<br>
+<img src="https://img-blog.csdnimg.cn/20210426135351135.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"><br>
+然而访问结果欠佳，应该是bucket对应的子域名注销了oss服务。<br>
+<img src="https://img-blog.csdnimg.cn/20210426135405976.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"><br>
+暂时没有遇到jan先生论文里说的oss配置错误漏洞实例。</li>
+</ul>
+<h2 id="8-non-interactive-cryptographic-timestamping-based-on-verifiable-delay-functions">8. <a href="https://eprint.iacr.org/2019/197.pdf">《Non-interactive cryptographic timestamping based on verifiable delay functions》</a></h2>
+<p>我们平常在web应用中的时间戳校验，都是依赖于某个权威服务器。<br>
+为了实现去中心化，Marc Stevens提出了这种基于VDF的去中心化时间戳方案。</p>
+<h2 id="9-sha1collisiondetection">9. <a href="https://github.com/cr-marcstevens/sha1collisiondetection">sha1collisiondetection</a></h2>
+<p>TODO</p>
+<h2 id="10-on-immutability-of-blockchains">10. <a href="https://dl.eusset.eu/bitstream/20.500.12015/3160/1/blockchain2018_04.pdf">《On immutability of blockchains》</a></h2>
+<p>TODO</p>
+<h2 id="11-collect-crypto-2021-paper">11. collect Crypto 2021 Paper</h2>
+<p>TODO</p>
+<h2 id="12-a-hackers-guide-to-reducing-side-channel-attack-surfaces-using-deep-learning">12. <a href="https://elie.net/talk/a-hacker-guide-to-side-channel-attack-surface-reduction-using-deep-learning/">A Hacker’s guide to reducing side-channel attack surfaces using deep-learning</a></h2>
+<p>这个&quot;基于深度学习来防御旁路攻击&quot;的思路宣讲于<code>Defcon 28</code>&amp;<code>Black Hat USA 2020</code> // TODO</p>
+<h2 id="13-基于旁路攻击的aes算法中间变量脆弱点">13. 基于旁路攻击的AES算法中间变量脆弱点</h2>
+<p>密码学旁路攻击: <a href="http://www.arocmag.com/getarticle?aid=93341d415ab5a106">基于旁路攻击的AES算法中间变量脆弱点</a> // TODO</p>
+<h1 id="总结">总结</h1>
+<p>EasyPisy可能的出题人有四位，每个人可能的出题方向如下</p>
+<ul>
+<li>janmasarik: <strong>buckets未授权访问漏洞</strong>(WEB)</li>
+<li>nneonneo (Robert Xiao): <strong>ios逆向</strong>(RE)</li>
+<li>Marc Stevens: <strong>基于VDF的去中心化时间戳</strong>(BLOCKCHAIN)</li>
+<li>Elie Bursztein (Google): <strong>AES旁路攻击</strong>(CRYPTO)</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Real Wolrd CTF 3rd Writeup | Easy Defi]]></title>
+        <id>https://blog.leepanda.top/post/real-wolrd-ctf-3rd-writeup-or-easy-defi/</id>
+        <link href="https://blog.leepanda.top/post/real-wolrd-ctf-3rd-writeup-or-easy-defi/">
+        </link>
+        <updated>2021-05-29T11:36:27.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="题目环境架构">题目环境架构</h3>
+<p>EasyDefi是一道面向去中心化金融服务的智能合约题目。<br>
+题目代码通过<a href="https://github.com/chaitin/Real-World-CTF-3rd-Challenge-Attachments/tree/main/Easy%20Defi">附件</a>的形式给出。<br>
+<img src="https://img-blog.csdnimg.cn/20210324162404145.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></p>
+<p>同时我们可以通过题目描述了解到<br>
+ChaitinSwap的逻辑和Uniswap基本类似，只是更改了手续费比例。<br>
+<img src="https://img-blog.csdnimg.cn/20210324162415188.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>ChaitinBank听上去是某种提供了借贷服务的Defi项目，<br>
+我们看一下代码:<br>
+<img src="https://img-blog.csdnimg.cn/20210324162424480.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"><br>
+Bank仅提供了两个功能接口，一个用FeiCoin换Flag，另一个使用Flag换FeiCoin。<br>
+但是这个FeiCoin又是个啥？我们到ERC20.sol里面确认一下：<br>
+<img src="https://img-blog.csdnimg.cn/2021033012521262.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>可见这里Panda币的合约名称叫FeiToken，看来FeiCoin和PandaToken是一个东西:</p>
+<p>至此我们可以得到题目大概的组织框架如下:<br>
+<img src="https://img-blog.csdnimg.cn/20210324162439372.png" alt="在这里插入图片描述" loading="lazy"></p>
+<p>一共存在三种代币: 长亭币、Panda币和FLAG<br>
+在ChaitinSwap中，长亭币 和 Panda币可以互换<br>
+在ChaitinBank中，Panda币和FLAG可以互换</p>
+<h3 id="代码审计">代码审计</h3>
+<h4 id="vuln1-k值不守恒">vuln1 K值不守恒</h4>
+<p>我们来审计合约代码，根据题目描述中的提示。<br>
+chaitinSwap和uniswap的区别主要在手续费。<br>
+chaitinSwap仅收取0.25%的手续费。<br>
+所以我们来看定义手续费附近的代码<br>
+<img src="https://img-blog.csdnimg.cn/20210324162450985.png" alt="在这里插入图片描述" loading="lazy"></p>
+<p>这里getAmountIn/Out函数中，有对0.25%的描述。<br>
+除此之外，在Factory合约的swap中也有相关描述。<br>
+<img src="https://img-blog.csdnimg.cn/202103241624587.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>于是我们发现了第一个漏洞点，这个ChaitinSwap的K值 不守恒。<br>
+为了表示0.25%的手续费，除数从1000改成了10000。<br>
+但是在377行进行比较时， 还是和Uniswap代码中原本的<code>1000**2</code>进行比较。<br>
+这导致最后的这个K值守恒的检查，很容易通过。<br>
+Uniswap的K值守恒是用大于等于号检查的，这个比较神奇，可以阅读这篇文章来详细分析一下。<code>https://zhuanlan.zhihu.com/p/272241656</code></p>
+<p>这里我们需要做的只是让amount1In或者amount0In为正数。我们稍稍向合约中转账(比如题目给我们准备的1个长亭币)就可以满足此限制。<br>
+之后我们将取出的amount0Out和amount1Out写得大一些，只要balance0Ajusted和balance1Adjusted相乘不要过小即可。</p>
+<p>这样我们就可以用1个长亭币换出了大量的PandaToken和长亭币。</p>
+<p>具体操作如下，<br>
+第一步把1 个长亭币转到chaitinToken-feiToken pair 合约中<br>
+<img src="https://img-blog.csdnimg.cn/20210324162514165.png" alt="" loading="lazy"></p>
+<p>第二步 调用pair合约的swap函数，把钱从流通池里掏出来<br>
+<img src="https://img-blog.csdnimg.cn/20210324162523406.png" alt="" loading="lazy"></p>
+<p>至此， 我们成功从交易所中 盗取了90个PandaToken和 88个长亭币</p>
+<h4 id="vuln2-bank没有用预言机可以操纵币价">vuln2 Bank没有用预言机，可以操纵币价</h4>
+<p>然而题目要求我们搞到80个Flag币<br>
+<img src="https://img-blog.csdnimg.cn/20210324162535783.png" alt="" loading="lazy"></p>
+<p>我们知道能得到FLAG的地方只有，BANK合约<br>
+<img src="https://img-blog.csdnimg.cn/20210324162544286.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>而且我们可以看到，用户能得到多少个flag币，和存入的PandaToken的币价有关系<br>
+<img src="https://img-blog.csdnimg.cn/20210324162551258.png" alt="在这里插入图片描述" loading="lazy"></p>
+<p>所以PandaToken价格越高，我们能得到的Flag越多。<br>
+此时的PandaToken币价为 11<br>
+<img src="https://img-blog.csdnimg.cn/20210324162557978.png" alt="在这里插入图片描述" loading="lazy"></p>
+<p>阅读代码我们发现，这里Bank合约没有使用预言机来防止恶意操纵币价。<br>
+所以很明显这里便是第二个漏洞点。<br>
+攻击者可以通过恶意操纵市场，来抬高PandaToken的币价。<br>
+我们通过Router合约可以实现该目的。</p>
+<p>具体操作如下:<br>
+这里先Approve给Router全部的长亭币<br>
+<img src="https://img-blog.csdnimg.cn/20210324162609945.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>然后调用Router.swapExactTokensForTokens 函数来拉动币价。<br>
+我们使用长亭币疯狂购买PandaToken，从而抬高PandaToken的币价。<br>
+<img src="https://img-blog.csdnimg.cn/20210324162620177.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></p>
+<p>接着我们来到Bank合约，查看PandaToken的价格<br>
+<img src="https://img-blog.csdnimg.cn/20210324162627944.png" alt="" loading="lazy"></p>
+<p>发现PandaToken的币价已经高达829了</p>
+<p>看到这么高的币价， 我们直接<br>
+调用depositFeiCointoFlag函数， 用手中全部的PandaToken来换取Flag<br>
+<img src="https://img-blog.csdnimg.cn/20210324162648561.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20210324162656142.png" alt="在这里插入图片描述" loading="lazy"></figure>
+<p>接下来，我们看看自己有多少个FlagToken<br>
+<img src="https://img-blog.csdnimg.cn/2021032416270331.png" alt="" loading="lazy"></p>
+<p>82.9个FLAG，满足题目要求。</p>
+<h3 id="获取flag">获取FLAG</h3>
+<p>最后我们回到命令行界面，选择option3 并输入token<br>
+<img src="https://img-blog.csdnimg.cn/20210324162714503.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>得到FLAG<br>
+<code>rwctf{axelytxtdznhahsebhk}</code></p>
+<h3 id="相关链接">相关链接</h3>
+<ul>
+<li>题目介绍和附件 https://github.com/chaitin/Real-World-CTF-3rd-Challenge-Attachments/tree/main/Easy%20Defi</li>
+<li>为什么说Uniswap的K值不那么守恒 https://zhuanlan.zhihu.com/p/272241656</li>
+<li>Uniswap文档 https://uniswap.org/docs/v2/</li>
+<li>AMM自动做市商原理 https://www.jianshu.com/p/5bb44a9cd220</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[《Formal Analysis of Composable DeFi Protocols》组合型DeFi项目的形式化验证]]></title>
+        <id>https://blog.leepanda.top/post/lesslessformal-analysis-of-composable-defi-protocolsgreatergreater-zu-he-xing-defi-xiang-mu-de-xing-shi-hua-yan-zheng/</id>
+        <link href="https://blog.leepanda.top/post/lesslessformal-analysis-of-composable-defi-protocolsgreatergreater-zu-he-xing-defi-xiang-mu-de-xing-shi-hua-yan-zheng/">
+        </link>
+        <updated>2021-05-29T11:35:28.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="前言">前言</h3>
+<p>Palina Tolmach的《组合型Defi项目的形式化验证》(Formal Analysis of Composable DeFi Protocols)论文原文链接如下<a href="https://arxiv.org/pdf/2103.00540.pdf">https://arxiv.org/pdf/2103.00540.pdf</a></p>
+<p>论文尝试使用形式化验证的方法，分析Defi智能合约项目应符合的安全约束。 帮助项目开发人员进行自动化的安全审计。</p>
+<ul>
+<li>会翻译得口语一些；</li>
+<li>部分术语将不会翻译，比如Protocol、token、pool啥的；</li>
+<li><code>CSP#Process</code>会翻译成<code>动作</code>而非<code>行为</code>或<code>过程</code>，因为我觉得<code>动作</code>更口语一些。</li>
+<li><code>requirement</code> 翻译成<code>约束</code>。表1中的<code>property</code>也翻译为<code>约束</code></li>
+</ul>
+<h2 id="3-方法论">3 方法论</h2>
+<h3 id="31-protocol形式化建模">3.1 Protocol形式化建模</h3>
+<p>在这一部分，我们定义Dex和Loaning的关键模块token和pool。<br>
+通过关注状态改变，token和pool的行为可以被形式化的建模。<br>
+本小节主要记录一下如何建模。</p>
+<p>我们用CSP#中的全局变量<code>global varibles</code>来描述用户状态、外部合约状态、链环境变量(如block.number)。<br>
+用CSP#中的<code>process</code>来描述token或pool的函数。<br>
+为什么这么表示可以参考<a href="">Bartoletti, M., Chiang, J.H., Lluch-Lafuente, A.: Sok: Lending pools in decentralizedfinance (2020)</a><br>
+假设有一组用户 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span></span></span></span>,一组Token <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span></span></span></span>.<br>
+除了链原生代币ETH外，Defi项目中使用到的大部分Token是按照ERC20标准实现的。ERC20代币通过特定接口完成铸币等行为，这些行为均会触发相应的Event。我们将依据这些Event来进行形式化建模。<br>
+比方说token的定义如下:</p>
+<p><strong>Definition 1 (Token):</strong><br>
+有token t ∈ <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span></span></span></span>, t是一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mi>u</mi><mi>p</mi><mi>l</mi><mi>e</mi><mo>(</mo><mi>U</mi><mo separator="true">,</mo><mi>T</mi><mi>S</mi><mo separator="true">,</mo><mi>B</mi><mo separator="true">,</mo><mi>A</mi><mo separator="true">,</mo><mi>F</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">tuple(U,TS,B,A,F)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">t</span><span class="mord mathdefault">u</span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mclose">)</span></span></span></span>。<br>
+其中<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span></span></span></span>是用户的集合，<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi><mi>S</mi><mo>∈</mo><mi>Z</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">TS∈Z&gt;0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span> 是 token的总发行量totalSupply<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mo>:</mo><mi>U</mi><mo>→</mo><mi>Z</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">B:U→Z&gt;0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span> 是 保存了 {user:balance} 的 mapping<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><mo>:</mo><mi>U</mi><mo>×</mo><mi>U</mi><mo>→</mo><mi>Z</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">A:U×U→Z&gt;0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span> 是 allowances，user1 允许 user2 transferFrom的额度。<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>F</mi></mrow><annotation encoding="application/x-tex">F</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span></span></span></span> 是 可以修改<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span></span></span></span>、<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi></mrow><annotation encoding="application/x-tex">B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span></span>、<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi><mi>S</mi></mrow><annotation encoding="application/x-tex">TS</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span>的所有函数的集合,如<code>approve(),transfer(),transferFrom(),mint(),burn()</code></p>
+<p>当给出 token t ∈ <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span></span></span></span>, 我们可以用t.<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi><mi>S</mi></mrow><annotation encoding="application/x-tex">TS</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span>表示总发行量。其他参数也是一样。综上我们可以得到等式:</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mi mathvariant="normal">.</mi><mi>T</mi><mi>S</mi><mo>=</mo><munder><mo>∑</mo><mrow><mi>u</mi><mo>∈</mo><mi>U</mi></mrow></munder><mi>t</mi><mi mathvariant="normal">.</mi><mi>B</mi><mo>(</mo><mi>u</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">t.TS=\sum_{u∈U}t.B(u)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">t</span><span class="mord">.</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.3717110000000003em;vertical-align:-1.321706em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.050005em;"><span style="top:-1.8556639999999998em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">u</span><span class="mrel mtight">∈</span><span class="mord mathdefault mtight" style="margin-right:0.10903em;">U</span></span></span></span><span style="top:-3.0500049999999996em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.321706em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">t</span><span class="mord">.</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mopen">(</span><span class="mord mathdefault">u</span><span class="mclose">)</span></span></span></span></span></p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20210322120033978.png" alt="" loading="lazy"></figure>
+<p><strong>Definition 2 (Pool):</strong><br>
+有pool p <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>∈</mo><mi>P</mi></mrow><annotation encoding="application/x-tex">\in P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span></span></span></span>, p是一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mi>u</mi><mi>p</mi><mi>l</mi><mi>e</mi><mo>(</mo><msub><mi>T</mi><mi>P</mi></msub><mo separator="true">,</mo><msubsup><mi>T</mi><mi>P</mi><mi>R</mi></msubsup><mo separator="true">,</mo><msub><mi>F</mi><mi>P</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">tuple(T_P,T_P^R,F_P)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1166619999999998em;vertical-align:-0.275331em;"></span><span class="mord mathdefault">t</span><span class="mord mathdefault">u</span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.424669em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.275331em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>。<br>
+其中<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>T</mi><mi>P</mi></msub><mo>⊂</mo><mi>T</mi></mrow><annotation encoding="application/x-tex">T_P \subset T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">⊂</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span></span></span></span> 是 p中包含的token集合。<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>T</mi><mi>P</mi><mi>R</mi></msubsup><mo>⊂</mo><mi>T</mi></mrow><annotation encoding="application/x-tex">T_P^R \subset T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1166619999999998em;vertical-align:-0.275331em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.424669em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.275331em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">⊂</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span></span></span></span> 是 p中包含的所有流动性凭证LPToken的集合。<br>
+<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>F</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">F_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是 所有能改变<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>T</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">T_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>T</mi><mi>R</mi><mi>P</mi></msubsup></mrow><annotation encoding="application/x-tex">T_R^P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1166619999999998em;vertical-align:-0.275331em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.424669em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.275331em;"><span></span></span></span></span></span></span></span></span></span>的函数的集合。f <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>∈</mo><msub><mi>F</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">\in F_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>可以表示为</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>{</mo><mo>(</mo><msub><mi>T</mi><mi>P</mi></msub><mo>×</mo><msubsup><mi>T</mi><mi>P</mi><mi>R</mi></msubsup><mo>)</mo><mo>→</mo><mo>(</mo><msub><mi>T</mi><mi>P</mi></msub><mo>×</mo><msubsup><mi>T</mi><mi>P</mi><mi>R</mi></msubsup><mo>)</mo><msub><mo>}</mo><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\{(T_P×T_P^R) → (T_P×T_P^R)\}_i
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.1413309999999999em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8913309999999999em;"><span style="top:-2.4530000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.1413309999999999em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8913309999999999em;"><span style="top:-2.4530000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/2021032212005583.png" alt="在这里插入图片描述" loading="lazy"></figure>
+<p>Defi项目中的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>T</mi><mi>P</mi><mi>R</mi></msubsup></mrow><annotation encoding="application/x-tex">T_P^R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1166619999999998em;vertical-align:-0.275331em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.424669em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.275331em;"><span></span></span></span></span></span></span></span></span></span> 一般被用来刺激交易、投资、借贷行为。<br>
+有些Defi项目的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>T</mi><mi>P</mi><mi>R</mi></msubsup></mrow><annotation encoding="application/x-tex">T_P^R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1166619999999998em;vertical-align:-0.275331em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.424669em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.275331em;"><span></span></span></span></span></span></span></span></span></span>一般表示所有者拥有一定量的两三种Token，<br>
+也有些项目允许用户只抵押一种Token，即可获得<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>T</mi><mi>P</mi><mi>R</mi></msubsup></mrow><annotation encoding="application/x-tex">T_P^R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1166619999999998em;vertical-align:-0.275331em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.424669em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.275331em;"><span></span></span></span></span></span></span></span></span></span>。<br>
+但总的来说，所有项目中的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>T</mi><mi>P</mi><mi>R</mi></msubsup></mrow><annotation encoding="application/x-tex">T_P^R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1166619999999998em;vertical-align:-0.275331em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.424669em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.275331em;"><span></span></span></span></span></span></span></span></span></span>都意味着，流动性提供者可以赎回抵押的Token并获得一定奖励。</p>
+<p>同时，为了模拟ethereum中的原子性交易，我们规定上文中提到的所有<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>F</mi></mrow><annotation encoding="application/x-tex">F</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span></span></span></span>均为原子性操作。不可逆、不可并发、不可交错。</p>
+<h3 id="32-如何处理protocol的组合">3.2 如何处理Protocol的组合</h3>
+<p>这一小节将介绍如何形式化描述<code>Protocol和user</code>之间 和 <code>Protocol和Protocol</code>之间的交互。<br>
+这两个情景，都限定是sender支付一些token到Protocol中，同时从Protocol中转出来一些token。<br>
+以<code>Protocol和user之间</code>这个场景为例，<br>
+我们在描述一连串有序执行的动作(process)时，用<code>;</code>间隔。每一个动作都对应一个被用户调用的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>F</mi></mrow><annotation encoding="application/x-tex">F</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span></span></span></span><br>
+如下图，我们来描述Curve中用户deposit的动作。<br>
+<img src="https://img-blog.csdnimg.cn/20210322120110633.png" alt="在这里插入图片描述" loading="lazy"></p>
+<p>有些动作之间没有严格的执行顺序，完全取决于用户本人想按照什么顺序来执行。对于这些可交错进行的动作，我们用 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">|||</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord">∣</span><span class="mord">∣</span></span></span></span> 间隔，如下图:<br>
+<img src="https://img-blog.csdnimg.cn/20210322120123662.png" alt="在这里插入图片描述" loading="lazy"></p>
+<p>另一方面，我们以相同的思路来描述 <code>Protocol和Protocol</code>之间的交互。<br>
+我们把Protocol与Token合约，Protocol与Protocol合约之间的外部调用函数定义为原子动作。</p>
+<blockquote>
+<p>译者注: 比如MasterChef 中 有函数deposit调用unsiwap.addLiquidity，那这一步deposit被认为有原子性，类似于上文中Curve_Depositor()这种不可拆分的动作。</p>
+</blockquote>
+<h2 id="4-评估">4 评估</h2>
+<p>本小节将通过实际的项目(Curve和Compound.Finance)来测试评估一下我们的理论模型是否正确。<br>
+本次评估的工具是PAT（Process Analysis Toolkit）和合约过程的最终执行结果。<br>
+PAT运行环境如下:</p>
+<ul>
+<li>Windows10虚拟机: 8G内存、1核CPU、PAT版本3.5.0</li>
+<li>宿主机: MacOS Catalina v.10.15.7、 32GB RAM、 2GHz quad-coreIntel Core i5 processor</li>
+</ul>
+<p>Curve下的Compound Pool提供USDC和DAI代币的即时交易。<br>
+Curve交易池添加流动性的过程如下图所示:<br>
+<img src="https://img-blog.csdnimg.cn/20210322120132765.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<ul>
+<li>① 用户将USDC和DAI投入Curve Compound Pool中</li>
+<li>② ③ ④ ⑤ Curve Compound Pool再把这写USDC和DAI质押到Compound Protocol中，并获得cUSDC和cDAI。</li>
+<li>⑥ Curve Compound Pool保留cUSDC和cDAI，并给用户一定量的cCrv代币作为流动性凭证。</li>
+</ul>
+<p>这个过程中包含的状态改变动作包括: 在Curve和Compound中添加、删除流动性；在Curve中进行交易；在Compound中借钱和赎回。<br>
+在Curve的流动性提供者抵押或赎回代币时<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>F</mi><mrow><mi>c</mi><mi>u</mi><mi>r</mi><mi>v</mi><mi>e</mi></mrow></msub></mrow><annotation encoding="application/x-tex">F_{curve}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">v</span><span class="mord mathdefault mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，Compound的放贷人和借钱人也在进行着借贷操作<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>F</mi><mrow><mi>c</mi><mi>o</mi><mi>m</mi><mi>p</mi><mi>o</mi><mi>u</mi><mi>n</mi><mi>d</mi></mrow></msub></mrow><annotation encoding="application/x-tex">F_{compound}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span>。<br>
+为了描述Curve中可能遇到的滑点、Front-Running等问题，我们在描述USDC和DAI的swap时要标明方向(是USDC-&gt;DAI还是DAI-&gt;USDC)。<br>
+最后，我们使用PAT工具将solidity或Vyper这种高级语言的合约翻译成C#或CSP#。在PAT中，高级语言的翻译，数据结构和操作实现的翻译都很方便。如果需要PAT的实现方式，可以查看项目代码<a href="https://github.com/polinatolmach/DeFi-csp-models/">https://github.com/polinatolmach/DeFi-csp-models/</a></p>
+<p>基于上述验证模型，我们来研究一下Defi项目中那些独立交易所项目、金融借贷项目、代币合约以及这三者的任意组合。下表是形式化验证的结果，即所有组合型Defi项目需要满足的约束(requirement)。<br>
+<img src="https://img-blog.csdnimg.cn/20210322120145107.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<ul>
+<li>约束1:  所有Token拥有者的余额总和等于Token的总发行量。</li>
+<li>约束2：用户质押的Token应和获得的凭证数量成比例。且项目任何时候不应mint(0)。</li>
+<li>约束3：Compound.ExchangeRate 保持递增</li>
+<li>约束4：Compound用户赎回质押时产生的收益非负。</li>
+<li>约束5：用户无法赎回资产时，损失不应超过本金的20%。</li>
+</ul>
+<blockquote>
+<p>译者注: 这篇论文研究的是Curve的Compound池 和 Compound本身。Compound存在一点点supplier Token无法赎回的风险（对原理感兴趣的读者可以学习一下Guantlet团队的金融风险<a href="https://gauntlet.network/reports/compound">分析文章</a>）。再加上Exchange可能存在的滑点、套利等安全问题，最终使得<code>约束5:资产无法赎回</code>成为一个不可忽视的安全风险点。</p>
+</blockquote>
+<p>最终，我们使用PAT工具的可达性分析，得到上述结论。<br>
+任何部署在以太坊上的Defi智能合约项目，均需要满足这5个约束。否则一定存在可以利用的安全漏洞。<br>
+我们的实验证明了，形式化验证语言CSP，可以很好的检验智能合约的安全性。它可以自动化地挖掘组合型Defi智能合约项目中存在的安全漏洞。</p>
+<h2 id="5-相关工作">5 相关工作</h2>
+<p>Defi合约分析是一个比较新的领域，现有的Defi分析大多关于在野漏洞和实际攻击事件。<br>
+例如，Liu和Szalachowski探讨了4个主要DeFi平台Oracle使用不当导致的安全问题<a href=""> Liu, B., Szalachowski, P.: A first look into DeFi oracles (2020)</a></p>
+<p>也有很多文章讨论了闪电贷Flashloan的安全风险。<br>
+例如<a href="">Wang, D., Wu, S., Lin, Z., Wu, L., Yuan, X., Zhou, Y., Wang, H., Ren, K.: Towardsunderstanding flash loan and its applications in DeFi ecosystem (2020)</a>分析了如何发现基于闪电贷的套利机会。</p>
+<p>还有几篇文章从Defi项目本身状态的变化来研究安全风险。<br>
+例如</p>
+<ul>
+<li><a href="">Gudgeon,  L.,  Werner,  S.M.,  Perez,  D.,  Knottenbelt,  W.J.:  DeFi  protocols  forloanable funds: Interest rates, liquidity and market efficiency (2020)</a></li>
+<li><a href="https://scfab.github.io/2020/FAB2020_p5.pdf">Kao, H.T., Chitra, T., Chiang, R., Morrow, J.: An Analysis of the Market Riskto Participants in the Compound Protocol. Retrieved November 18, 2020</a></li>
+<li><a href="">Perez, D., Werner, S.M., Xu, J., Livshits, B.: Liquidations: DeFi on a knife-edge(2020)</a></li>
+<li><a href="">Bartoletti, M., Chiang, J.H., Lluch-Lafuente, A.: Sok: Lending pools in decentralizedfinance (2020)</a></li>
+</ul>
+<p>最近还有两篇文章，使用形式化验证来探讨Defi Protocol的安全性。</p>
+<ul>
+<li><a href="">Perez, D., Werner, S.M., Xu, J., Livshits, B.: Liquidations: DeFi on a knife-edge(2020)</a></li>
+<li><a href="">Bartoletti, M., Chiang, J.H., Lluch-Lafuente, A.: Sok: Lending pools in decentralizedfinance (2020)</a></li>
+</ul>
+<p>其中Perez的研究中，提出了更为通解的形式化验证模型。Bartoletti则是研究了更多的Defi项目。<br>
+相比于上述研究，本文的做出的贡献主要是提出了更为通解的Pool模型。</p>
+<h2 id="6-后期工作">6 后期工作</h2>
+<p>本文中，我们使用形式化验证的方法，总结出了Defi Protocol应满足的5个约束。在未来的工作中，我们将致力于丰富约束内容，并将模型的使用场景向加密金融和其他Defi项目进行适配。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[随想：记忆与时间]]></title>
         <id>https://blog.leepanda.top/post/sui-xiang-ji-yi-yu-shi-jian/</id>
@@ -792,375 +1902,6 @@ Swap的K值守恒也只是限制<code>user</code>别换走额外的钱，<br>
 <li><a href="https://hackmd.io/@HaydenAdams/HJ9jLsfTz#Providing-Liquidity">Uniswap Whitepaper</a></li>
 <li><a href="https://github.com/Uniswap/uniswap-v2-core/">Uniswap Core</a></li>
 <li><a href="https://github.com/Uniswap/uniswap-v2-periphery">Uniswap Periphery</a></li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[合约安全[3]: BurgerSwap重入漏洞]]></title>
-        <id>https://blog.leepanda.top/post/he-yue-an-quan-3-burgerswap-chong-ru-lou-dong/</id>
-        <link href="https://blog.leepanda.top/post/he-yue-an-quan-3-burgerswap-chong-ru-lou-dong/">
-        </link>
-        <updated>2021-05-29T11:14:47.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="前言">前言</h1>
-<p>2020年10月22日，<a href="https://burgerswap.org">Zengo</a>团队的Oded Leiba，发表了他在<a href="https://burgerswap.org">BurgerSwap</a>中发现的<a href="https://zengo.com/burgerswap-vulnerability/">重入漏洞</a>。<br>
-本文将翻译并解读漏洞的原理。</p>
-<p><ul class="markdownIt-TOC">
-<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
-<li><a href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86">基础知识</a>
-<ul>
-<li><a href="#amm">AMM</a></li>
-<li><a href="#%E6%B5%81%E5%8A%A8%E6%80%A7">流动性</a></li>
-<li><a href="#%E5%B8%81%E5%AF%B9">币对</a></li>
-<li><a href="#weth">WETH</a></li>
-</ul>
-</li>
-<li><a href="#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%BF%B0">漏洞概述</a></li>
-<li><a href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86">漏洞原理</a></li>
-<li><a href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88">修复方案</a>
-<ul>
-<li><a href="#checks-effects-interactions-%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83">Checks-Effects-Interactions 编码规范</a></li>
-<li><a href="#%E5%87%BD%E6%95%B0%E9%94%81-lock-modifier">函数锁 lock modifier</a></li>
-</ul>
-</li>
-<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
-<li><a href="#%E5%BC%95%E7%94%A8">引用</a></li>
-</ul>
-</p>
-<h1 id="基础知识">基础知识</h1>
-<h2 id="amm">AMM</h2>
-<p>自动做市商(AMM)是一种即时兑换模式。<br>
-通常的交易所(中心化/去中心化)，需要买卖双方对价格达成一致，才能完成交易；<br>
-而AMM 只需买方认可流通池中的Token价格即可立刻完成交易。</p>
-<h2 id="流动性">流动性</h2>
-<p>用户将资产转入交易平台之中获得收益，而在平台中的总资产额度，就构成了流通池。<br>
-流通池中代币总额越多，深度越好，大额交易带来的影响也就更小，不至于因为一笔几十万美元的交易就让价格产生大幅波动。<br>
-Defi的一个风险点就是流通池不够大，容易产生较大滑点。</p>
-<h2 id="币对">币对</h2>
-<p>币对是用于记录流通池相关信息的变量。<br>
-例如，用户想使用<code>A</code>币换取<code>B</code>币，那么就会涉及到币对 <code>A-B</code>。<br>
-用户将一些<code>A</code>币转入币对<code>A-B</code>中，并从中取出若干<code>B币</code>，即可完成兑换。<br>
-币对<code>A-B</code>中可被取出的<code>A</code>币和<code>B</code>币总量，就对应着币对的<code>流动性</code>。<br>
-剩余币总量越大，<code>流动性</code>越大。</p>
-<h2 id="weth">WETH</h2>
-<p>为了让ETH能跟其他ERC20标准的Token进行交易，<br>
-实现了满足ERC20标准的WETH合约，作为ETH和Token之间兑换的桥梁。</p>
-<h1 id="漏洞概述">漏洞概述</h1>
-<p>这是一个典型的<a href="https://swcregistry.io/docs/SWC-107">重入漏洞</a>，<br>
-攻击者只需付出少量的ETH、一点点<code>WETH-BSC</code>流动性，即可掏空<code>WETH-BSC</code>币对中所有的ETH。</p>
-<h1 id="漏洞原理">漏洞原理</h1>
-<p>漏洞出现在<code>withdrawFromBSC</code>方法中,<br>
-该方法用于赎回<code>Token</code>或<code>ETH</code></p>
-<pre><code class="language-javascript">    function withdrawFromBSC(bytes calldata _signature, bytes32 _paybackId, address _token, uint _amount) external payable {
-        require(executedMap[_paybackId] == false, &quot;ALREADY_EXECUTED&quot;);
-        
-        require(_amount &gt; 0, &quot;NOTHING_TO_WITHDRAW&quot;);
-        require(msg.value == developFee, &quot;INSUFFICIENT_VALUE&quot;);
-        
-        bytes32 message = keccak256(abi.encodePacked(_paybackId, _token, msg.sender, _amount));
-        require(_verify(message, _signature), &quot;INVALID_SIGNATURE&quot;);
-        
-        if(_token == WETH) {
-            IWETH(WETH).withdraw(_amount);
-            TransferHelper.safeTransferETH(msg.sender, _amount);
-        } else {
-            TransferHelper.safeTransfer(_token, msg.sender, _amount);
-        }
-        totalFee = totalFee.add(developFee);
-        
-        executedMap[_paybackId] = true;
-        
-        emit Withdraw(_paybackId, msg.sender, _token, _amount);
-    }
-</code></pre>
-<ol>
-<li>函数先检查了<code>executedMap[_paybackId]</code>是否为<code>false</code>，从而判断这笔赎回交易是否已经被处理。</li>
-<li>然后检查了用户所支付的<code>feeValue</code>数量和提供的<code>签名</code>是否有效。</li>
-<li>接着便是调用<code>TransferHelper</code>进行转账操作。</li>
-<li>最后更改<code>executedMap[_paybackId]</code>的值为<code>true</code>，以表明该赎回交易处理完成。</li>
-</ol>
-<p>到这里，漏洞的本质就浮出水面了。<br>
-<strong><code>withdrawFromBSC</code>方法的实现，没有遵循<code>Checks-Effects-Interactions</code>编码规范。</strong></p>
-<p>根据<a href="https://fravoll.github.io/solidity-patterns/checks_effects_interactions.html">CEI规范</a>合约函数在实现时，应该</p>
-<ol>
-<li>先检查输入是否符合条件</li>
-<li>再修改合约状态</li>
-<li>最后和用户交互<br>
-举个正确的例子:</li>
-</ol>
-<pre><code class="language-javascript">    function withdraw(uint amount) public {
-        require(balances[msg.sender] &gt;= amount);
-
-        balances[msg.sender] -= amount;
-
-        msg.sender.transfer(amount);
-    }
-</code></pre>
-<p>很明显，对于<code>withdrawFromBSC</code>方法<br>
-<code>调用TransferHelper进行转账</code>的操作, 应发生在<code>executedMap[_paybackId] = true;</code>之后。</p>
-<p>由于<code>TransferHelper.safeTransferETH</code>的实现，使用的是原生的<code>.call.value</code>方法。</p>
-<pre><code class="language-javascript">    function safeTransferETH(address to, uint value) internal {
-        (bool success,) = to.call{value:value}(new bytes(0));
-        require(success, 'TransferHelper: ETH_TRANSFER_FAILED');
-    }
-</code></pre>
-<p>函数调用者的<code>fallback</code>方法将会被调用，<br>
-攻击者合约可以通过实现<code>fallback</code>方法，并在其中再次调用<code>withdrawFromBSC</code>来实现重入攻击。<br>
-转走<code>BurgerSwap</code>合约中所有的<code>ETH</code>。</p>
-<h1 id="修复方案">修复方案</h1>
-<h2 id="checks-effects-interactions-编码规范">Checks-Effects-Interactions 编码规范</h2>
-<p>最有效、简单的解决方案，就是将<code>withdrawFromBSC</code>方法中的</p>
-<pre><code class="language-javascript">        if(_token == WETH) {
-            IWETH(WETH).withdraw(_amount);
-            TransferHelper.safeTransferETH(msg.sender, _amount);
-        } else {
-            TransferHelper.safeTransfer(_token, msg.sender, _amount);
-        }
-</code></pre>
-<p>放到<code>executedMap[_paybackId] = true;</code>之后。<br>
-只要符合CEI规范，攻击合约就会因为通不过check，而无法改变函数控制流。</p>
-<h2 id="函数锁-lock-modifier">函数锁 lock modifier</h2>
-<p>通过实现一个<code>lock modifier</code>来添加函数锁概念。<br>
-当在交易中第一次进入函数时，<br>
-更新全局变量<code>lock</code>的值,使得<code>modifier</code>验证无法通过<br>
-从而限制函数之间的相互调用。</p>
-<p>简单举例如下:</p>
-<pre><code class="language-javascript">pragma solidity ^0.4.0;
-
-contract SingleCall {
-  address public lock = false;
-
-  modifier onlyOnce {
-    if (this.lock != false) throw;
-    _;
-  }
-
-  function withdrawFromBSC(bytes _someParams)
-  onlyOnce
-  {
-    lock = true;
-    //some command...;
-    lock = false;
-  }
-}
-</code></pre>
-<h1 id="总结">总结</h1>
-<p><code>BurgerSwap</code>合约由于没有遵循<code>Checks-Effects-Interactions 编码规范</code>，导致了严重的重入漏洞。<br>
-作为合约的开发人员，应以此为戒，把<code>用户交互</code>放到<code>修改合约状态</code>后面。<br>
-同时，不要盲目相信市面上第三方代码的实现。<br>
-也许底层函数本身没有问题，却由于开发时不安全地调用，引入了风险。</p>
-<p>另一方面，合约项目方可以通过赏金计划、漏洞平台等方式吸引社区中的白帽黑客来发现项目中的安全漏洞<br>
-帮助项目的完善和安全性的提升。<br>
-最后，项目方可以联系国内有<code>区块链合约安全</code>相关服务的厂家(比如<a href="https://www.chaitin.cn/zh/review">长亭科技</a>)来支持代码审计工作，对项目进行系统、全面的安全性检查。</p>
-<h1 id="引用">引用</h1>
-<ul>
-<li><a href="https://leepanda.blog.csdn.net/article/details/107137462">合约安全(1):Balancer中通货紧缩货币的套利攻击详解</a></li>
-<li><a href="https://zengo.com/burgerswap-vulnerability/">Reentering the Reentrancy Bug: Disclosing BurgerSwap’s Vulnerability</a></li>
-<li><a href="https://etherscan.io/address/0xaf5dcebba2f8bec8729117336b2fe8b4e0d99b0b#code">Source Code of BurgerSwap</a></li>
-<li><a href="https://swcregistry.io/docs/SWC-107">SWC-107 Reentrancy</a></li>
-<li><a href="https://consensys.github.io/smart-contract-best-practices/known_attacks/">Ethereum Smart Contract Best Practices#Reentrancy</a></li>
-<li><a href="https://fravoll.github.io/solidity-patterns/checks_effects_interactions.html">solidity-patterns Checks Effects Interactions</a></li>
-<li><a href="https://www.chaitin.cn/">长亭科技 Chaitin</a></li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[所有基于cosmos的区块链项目的测试网启动方法]]></title>
-        <id>https://blog.leepanda.top/post/suo-you-ji-yu-cosmos-de-qu-kuai-lian-xiang-mu-de-ce-shi-wang-qi-dong-fang-fa/</id>
-        <link href="https://blog.leepanda.top/post/suo-you-ji-yu-cosmos-de-qu-kuai-lian-xiang-mu-de-ce-shi-wang-qi-dong-fang-fa/">
-        </link>
-        <updated>2021-05-29T11:13:04.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="abstract">Abstract</h1>
-<p>基于cosmos框架的区块链项目，在启动脚本上都大同小异。<br>
-这里做一下整理记录。方便后面的测试使用。</p>
-<h1 id="genesis-file-format">genesis file format</h1>
-<h3 id="init">init</h3>
-<p><code>serverd init --gen-txs --home=$HOME/.gaiad1 --chain-id=test-chain</code></p>
-<h3 id="gentx">gentx</h3>
-<p><code>serverd gentx --name validator --amount 1000000000ucsdt</code></p>
-<h3 id="add-genesis-account">add-genesis-account</h3>
-<p><code>serverd add-genesis-account $(client keys show validator -a) 10000000000ucsdt</code></p>
-<h3 id="collect-gentxs">Collect-gentxs</h3>
-<p><code>serverd collect-gentxs</code></p>
-<h3 id="start">start</h3>
-<p><code>serverd start</code></p>
-<h1 id="总结">总结</h1>
-<p>这边用<code>xar-network</code>来举例</p>
-<pre><code class="language-shell"># You can run all of these commands from your home directory
-cd $HOME
-
-# Initialize the genesis.json file that will help you to bootstrap the network
-xard init --chain-id=testing testing
-
-# Create a key to hold your validator account
-xarcli keys add validator
-
-# Add that key into the genesis.app_state.accounts array in the genesis file
-# NOTE: this command lets you set the number of coins. Make sure this account has some coins
-# with the genesis.app_state.staking.params.bond_denom denom, the default is staking
-xard add-genesis-account $(xarcli keys show validator -a) 10000000000000uftm,10000000000ucsdt
-
-# Generate the transaction that creates your validator
-xard gentx --name validator --amount 1000000000ucsdt
-
-# Add the generated bonding transaction to the genesis file
-xard collect-gentxs
-
-# Now its safe to start `xard`
-xard start
-
-</code></pre>
-<p>这样就初始化了 validator并给了一些初始代币。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[GoFuzz自定义语料输入流程记录]]></title>
-        <id>https://blog.leepanda.top/post/gofuzz-zi-ding-yi-yu-liao-shu-ru-liu-cheng-ji-lu/</id>
-        <link href="https://blog.leepanda.top/post/gofuzz-zi-ding-yi-yu-liao-shu-ru-liu-cheng-ji-lu/">
-        </link>
-        <updated>2021-05-29T11:11:21.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="背景">背景</h1>
-<p>在使用gofuzz的过程中，发现自己输入的corpus好像没有被执行。<br>
-遂审计一下代码，追踪一下输入的corpus的处理流程。</p>
-<h1 id="正文">正文</h1>
-<p>在一次测试过程中，我输入的初始语料如下</p>
-<pre><code>{&quot;Name&quot;:&quot;AjWwhT&quot;,&quot;Symbol&quot;:&quot;HctcuA&quot;,&quot;TotalSupply&quot;:100}
-</code></pre>
-<p>但进化出的可崩溃语料却是这些</p>
-<pre><code>        &quot;:&quot;
-        &quot;{\&quot;\&quot;1&quot;
-        &quot;{1&quot;
-        &quot;{:&quot;
-        &quot;\&quot;\&quot;,&quot;
-        &quot;\&quot;\&quot;:&quot;
-        &quot;{0&quot;
-        &quot;{,&quot;
-        &quot;,&quot;
-        &quot;{2&quot;
-        &quot;{\&quot;\&quot;:0\&quot;0&quot;
-        &quot;{\&quot;\&quot;T&quot;
-        &quot;0T&quot;
-        &quot;0\&quot;0&quot;
-        &quot;{\&quot;\&quot;2&quot;
-        &quot;{\&quot;\&quot;\&quot;&quot;
-        &quot;{T&quot;
-        &quot;{\&quot;\&quot;}&quot;
-        &quot;{\&quot;\&quot;:\&quot;\&quot;:&quot;
-        &quot;{\&quot;\&quot;:\&quot;\&quot;T&quot;
-        &quot;{\&quot;\&quot;,&quot;
-        &quot;02&quot;
-        &quot;{}&quot;
-        &quot;}&quot;
-        &quot;T&quot;
-        &quot;{\&quot;\&quot;:00&quot;
-        &quot;01&quot;
-        &quot;0}&quot;
-        &quot;00&quot;
-        &quot;{\&quot;\&quot;0&quot;
-</code></pre>
-<p>这都是嘛玩意儿，根本看不出跟我的初始输入有啥血缘关系。<br>
-于是跟进一下代码，来学习一下corpus的处理流程。</p>
-<h3 id="文件输入">文件输入</h3>
-<p><code>go-fuzz</code>命令的入口为<code>main</code>函数。<br>
-其中，调用了<code>coordinatorMain</code>和<code>hub.connect</code>函数。</p>
-<ul>
-<li><code>coordinatorMain</code>函数从<code>/corpus/</code>文件目录下读取用户生成的自定义初始语料集合。</li>
-<li><code>hub.connect</code>函数将这些语料集合载入到变量<code>hub.triageQueue</code>中。</li>
-</ul>
-<p>工作进程包含两个循环:</p>
-<ul>
-<li><code>hub.loop</code>: 该循环将<code>hub.triageQueue</code>中的语料载入到<code>triageC</code>变量中。</li>
-<li><code>worker.loop</code>:该循环调用<code>triageInput</code>函数来处理<code>triageC</code>变量。</li>
-</ul>
-<p>流程图如下:<br>
-<img src="https://img-blog.csdnimg.cn/20200821235626249.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="gofuzz 输入流程图" loading="lazy"></p>
-<h1 id="结尾">结尾</h1>
-<p>所以说gofuzz还是运行了我给的初始corpus，只是由于某种原因没有输出crash...<br>
-可能是没有当作模糊测试的重点？<br>
-这些都只是猜测<br>
-我不想花太多时间在研究如何优雅的使用gofuzz上了。<br>
-于是直接到gofuzz仓库的issue中寻找答案。<br>
-在<a href="https://github.com/dvyukov/go-fuzz/issues/289">issue#289</a>中，找到了类似的思考。<br>
-官方给出的更优解是<a href="https://github.com/thepudds/fzgo">fzgo</a>,一个集成了go-fuzz和go test的工具。</p>
-<p>后面我会把研究精力，从gofuzz的原理研究 转移到 fzgo的体验和测试上。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[GoFuzz无法正常触发crash研究]]></title>
-        <id>https://blog.leepanda.top/post/gofuzz-wu-fa-zheng-chang-hong-fa-crash-yan-jiu/</id>
-        <link href="https://blog.leepanda.top/post/gofuzz-wu-fa-zheng-chang-hong-fa-crash-yan-jiu/">
-        </link>
-        <updated>2021-05-29T11:09:45.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="abstract">Abstract</h1>
-<p>在使用gofuzz测试的过程中。<br>
-遇到明明很有问题、肯定能触发panic的语料，却没有生成对应的crash。<br>
-怀疑自己的使用姿势不对，遂对其进行了研究。本文记录一下实验过程和结果。</p>
-<p>为了方便测试，设计了自定义Fuzz函数如下:<br>
-<img src="https://img-blog.csdnimg.cn/20200821104633265.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="panic测试" loading="lazy"><br>
-通过测试panic是否会崩溃，来检查panic和return值之间的相关性。</p>
-<h3 id="猜测1-fuzz函数return值存在特殊含义">猜测1: Fuzz函数return值存在特殊含义</h3>
-<p>为了测试return值对fuzz过程的影响，我删去了panic的设计。<br>
-当改变return的返回值时，fuzz的exec(程序执行次数) corpus(进化出的语料) restarts(程序重启次数)发生了如下的变化。</p>
-<pre><code>return之间的影响 (无panic)
-仅return1
-exec+ corpus+ restarts+
-仅return 0 
-exec+ corpus+ restarts+
-仅return -1
-exec+ corpus1 restarts+
-</code></pre>
-<p>可以看出在gofuzz中，Fuzz函数的return值有特殊的含义。</p>
-<ul>
-<li>return 1 : 表示这次测试的样例是好的，成功的，阳性的。请多多使用这个突变分支的样例来测试。</li>
-<li>return 0 : 表示这次测试样例正常，挺好的。就继续测吧，对后续测试样例的使用没有影响。</li>
-<li>return -1: 表示这次测试使用的样例不给力，成阴性。在以后的测试中，减少这个突变分支的测试样例。</li>
-</ul>
-<blockquote>
-<p>由于我使用gofuzz测试的目的，就是为了找出让程序无法正常执行的输入样例。因此，这里会自然的想到使用panic 配合 return 1.来实现: 发现crash的同时，能让后面的fuzz过程找到更多 Panic样例。</p>
-</blockquote>
-<h3 id="猜测2-不同return的值-和-panic组合可能产生不同结果-导致不panic">猜测2: 不同return的值 和 panic组合，可能产生不同结果。导致不panic</h3>
-<p>我通过修改33line的那个<code>return</code>值，来测试panic函数无法正常崩溃 是否和 return的值相关。<br>
-测试结果如下</p>
-<pre><code>-1 不crash
-0 不crash
-1 不crash
-</code></pre>
-<ul>
-<li>看来和return的值没有关系。</li>
-</ul>
-<h3 id="猜测3-同一个block中panic和return不能一起使用">猜测3: 同一个block中，panic和return不能一起使用</h3>
-<p>首先编写一个简单的测试程序，代码如下:<br>
-<img src="https://img-blog.csdnimg.cn/20200821111315523.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="crash的代码" loading="lazy"><br>
-其中第16line的panic理论上必然触发<br>
-测试后发现果然<code>触发了crash</code></p>
-<p>于是我们在panic后面17line的位置添加<code>return true</code><br>
-<img src="https://img-blog.csdnimg.cn/20200821111513448.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="不crash的代码" loading="lazy"><br>
-<strong>测试发现，没有报错。在同一个block中，panic后面不能有return</strong></p>
-<h3 id="猜测4-panic和fuzz函数默认return之间的影响">猜测4: panic和Fuzz函数默认return之间的影响</h3>
-<p>在Fuzz函数中，如果自定义了panic点。则Fuzz函数的默认返回值必须唯一。<br>
-为了证实这一点，做了如下实验。</p>
-<pre><code class="language-go">func Fuzz(data []byte) int {
-	err := receivedCorpus(data)
-	fmt.Println(err)
-	if err != false {
-		panic(&quot;22&quot;)
-	}
-	return 0
-}
-</code></pre>
-<p>通过改变return 的返回值，来检查该值和panic之间的关系。<br>
-实验结果如下:</p>
-<pre><code>默认return 0
-不 crash
-默认return 1
-crash
-默认return -1
-不crash
-</code></pre>
-<h1 id="总结">总结</h1>
-<p>经过测试，在gofuzz中使用panic来触发崩溃时，</p>
-<ul>
-<li>不能在panic后面直接跟return。否则会没有crash。</li>
-<li>另外，Fuzz函数的默认返回值必须是1，否则不会崩溃。</li>
 </ul>
 ]]></content>
     </entry>

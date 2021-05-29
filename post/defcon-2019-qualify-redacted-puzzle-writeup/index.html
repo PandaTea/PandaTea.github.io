@@ -1,0 +1,345 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>Defcon 2019 Qualify: redacted puzzle Writeup | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/defcon-2019-qualify-redacted-puzzle-writeup.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">Defcon 2019 Qualify: redacted puzzle Writeup</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><p><ul class="markdownIt-TOC">
+<li><a href="#defcon-2019-qualify-redacted-puzzle">Defcon 2019 Qualify: redacted-puzzle</a>
+<ul>
+<li><a href="#1attachments">1.Attachments</a></li>
+<li><a href="#2source-code">2.source code</a></li>
+<li><a href="#3author-bboe">3.author: bboe</a></li>
+<li><a href="#4writeups">4.writeups</a></li>
+<li><a href="#5%E7%9F%A5%E8%AF%86%E7%82%B9">5.知识点</a>
+<ul>
+<li><a href="#51-%E5%9B%BE%E5%83%8F%E6%A8%A1%E5%BC%8F">5.1 图像模式</a></li>
+<li><a href="#52-pallete">5.2 pallete</a></li>
+<li><a href="#53-python-pil%E5%8C%85%E4%BD%BF%E7%94%A8">5.3 Python PIL包使用</a></li>
+<li><a href="#54-base%E7%B3%BB%E5%88%97%E7%BC%96%E7%A0%81%E5%8E%9F%E7%90%86">5.4 Base系列编码原理</a></li>
+</ul>
+</li>
+<li><a href="#6-defcon-2020q-uploooadit">6 Defcon 2020q uploooadit</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+</p>
+<h1 id="defcon-2019-qualify-redacted-puzzle">Defcon 2019 Qualify: redacted-puzzle</h1>
+<p>ctftime link: <a href="https://ctftime.org/task/8526">https://ctftime.org/task/8526</a></p>
+<h2 id="1attachments">1.Attachments</h2>
+<p><a href="https://s3.us-west-2.amazonaws.com/archive-ooo-public/public_files/0a0403756b188cd2a2aefa29121ec565802095297a357998064bf4135e0713e5/redacted-puzzle.gif">redacted-puzzle.gif</a><br>
+Everything you need is in this file.</p>
+<h2 id="2source-code">2.source code</h2>
+<p><a href="https://github.com/o-o-overflow/dc2019q-puzzle">dc2019q-puzzle</a></p>
+<h2 id="3author-bboe">3.author: bboe</h2>
+<p><strong>Bryce Boe</strong>是defcon的组织者，AppFolio公司的软件工程师\Tech Leader，加州大学圣巴巴拉分校 助教。</p>
+<ul>
+<li>Social Media
+<ul>
+<li><a href="https://twitter.com/bboe">twitter</a></li>
+<li><a href="http://www.bryceboe.com/">Blog</a></li>
+<li><a href="https://github.com/bboe">Github</a></li>
+<li><a href="https://scholar.google.com/citations?user=T83k-n8AAAAJ&amp;hl=zh-CN">Google Scholar</a></li>
+</ul>
+</li>
+</ul>
+<p>这位老师最后一篇论文发表于2014年，其博客也停更于2014年。<br>
+其主要贡献在于可视化的编程工具与教育事业的结合。<br>
+在论文<a href="https://seclab.bu.edu/papers/large_scale_hacking-dimva2010.pdf">Organizing large scale hacking competitions</a>中提出了大规模黑客技术比赛的设想。<br>
+身为人父的他已经在享受生活了，羡慕。<br>
+<img src="https://img-blog.csdnimg.cn/20210426181900111.png" alt="" loading="lazy"><br>
+另外，可以找到他在defcon2020q中出的另一道题目<a href="https://github.com/o-o-overflow/dc2020q-uploooadit">Defcon 2020q uploooadit</a></p>
+<h2 id="4writeups">4.writeups</h2>
+<ul>
+<li><a href="https://ctftime.org/writeup/15359">ThreatLevelMidnight</a></li>
+<li><a href="https://ctftime.org/writeup/15290">OSUSEC</a></li>
+<li><a href="https://ctftime.org/writeup/15252">IDontHaveATeam</a></li>
+<li><a href="https://ctftime.org/writeup/15247">ThreatLevelMidnight</a></li>
+<li><a href="https://xi4or0uji.github.io/2019/05/19/defcon-ctf-%E5%AD%A6%E4%B9%A0/#redacted-puzzle">2019 defcon 学习</a></li>
+</ul>
+<p>题目给出一个全黑的gif。分析发现图片的调色板为纯黑。<br>
+我们逐帧修改其调色板，让画面变得多彩一些。</p>
+<pre><code class="language-python">from PIL import Image
+imageObject = Image.open(&quot;./redacted-puzzle.gif&quot;)
+for frame in range(0,imageObject.n_frames):
+    imageObject.seek(frame)
+    imageObject.putpalette([255,0,0,0,255,0,0,0,255])
+    imageObject.save(&quot;./tmp/output-%02u.png&quot; % frame)
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20210426181959537.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></figure>
+<p>可以得到一组 类似八边形的图片。<br>
+其中给出了一个长32的字母表 <code>flag_alphabet = &quot;+-=ABCDEFGHIJKLMNOPQRSTUVWXYZ_{}&quot;</code><br>
+<img src="https://img-blog.csdnimg.cn/20210426182026283.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></p>
+<p>每一张图都是一个8bit的2进制数字。</p>
+<pre><code class="language-python">verticies = ['10001100', '01100011', '11100100', '01000110', '10000101', '00111101', '01000010', '10011000', '11100000',
+                 '11110100', '10000000', '00101101', '01110010', '00011100', '00001000', '10100101', '11010111', '01101110',
+                 '10100110', '10010001', '10111100', '10000100', '10000001', '10111001', '11010100', '00111011', '11001110',
+                 '11110010', '00011110', '10011101', '11001001', '11000111', '01100101', '00011110', '10011111']
+</code></pre>
+<p>由于<code>flag_alphabet</code>中有32个可见字符，想到Base32编码方式。<br>
+用符号表中的字母编码gif，得到flag。<br>
+<img src="https://img-blog.csdnimg.cn/20210426182047563.png" alt="" loading="lazy"></p>
+<pre><code class="language-python">verticies = ['10001100', '01100011', '11100100', '01000110', '10000101', '00111101', '01000010', '10011000', '11100000',
+                 '11110100', '10000000', '00101101', '01110010', '00011100', '00001000', '10100101', '11010111', '01101110',
+                 '10100110', '10010001', '10111100', '10000100', '10000001', '10111001', '11010100', '00111011', '11001110',
+                 '11110010', '00011110', '10011101', '11001001', '11000111', '01100101', '00011110', '10011111']
+   
+alphabet = '+-=ABCDEFGHIJKLMNOPQRSTUVWXYZ_{}'
+
+def solve(verticies):
+    combined = ''
+    for v in verticies:
+        combined += v
+
+    indicies = []
+    for x in range (0, len(combined)//5):
+        indicies.append(combined[x * 5:x * 5 + 5])
+
+    answer = ''
+    for x in indicies:
+        answer += alphabet[int(x, 2)]
+
+    print (answer)
+
+def twist(verticies):
+    newverticies = []
+
+    for v in verticies:
+        # v = abcdefgh -&gt; habcdefg
+        newv = ''
+        newv+=v[7]
+        newv+=v[0:7]        
+        newverticies.append(newv)
+
+    return newverticies
+
+for x in range (0,8):
+    solve(verticies)
+    verticies = twist(verticies)
+    
+print(&quot;Finished Program&quot;)
+</code></pre>
+<h2 id="5知识点">5.知识点</h2>
+<h3 id="51-图像模式">5.1 图像模式</h3>
+<p><a href="https://www.osgeo.cn/pillow/handbook/concepts.html#modes">https://www.osgeo.cn/pillow/handbook/concepts.html#modes</a></p>
+<p>这个 mode 是一个字符串，它定义图像中像素的类型和深度。每个像素使用位深度的全部范围。所以1位像素的范围是0-1，8位像素的范围是0-255，依此类推。<br>
+当前版本支持以下标准模式：</p>
+<ul>
+<li>1 （1位黑白像素，每字节存储一个像素）</li>
+<li>L （8位像素，黑白）</li>
+<li>P （8位像素，使用调色板映射到任何其他模式）</li>
+<li>RGB （3x8位像素，真彩色）</li>
+<li>RGBA （4x8位像素，带透明蒙版的真彩色）</li>
+<li>CMYK （4x8位像素，分色）</li>
+<li>YCbCr （3x8位像素，彩色视频格式）</li>
+<li>LAB （3x8位像素，L A B颜色空间）</li>
+<li>HSV （3x8位像素、色调、饱和度、值颜色空间）</li>
+<li>I （32位有符号整数像素）</li>
+<li>F （32位浮点像素）</li>
+</ul>
+<p>Image库还支持一些特殊模式:</p>
+<ul>
+<li>LA （L和阿尔法）</li>
+<li>PA （P与阿尔法）</li>
+<li>RGBX （带填充的真彩色）</li>
+<li>RGBa （带预乘alpha的真彩色）</li>
+<li>La （L带预乘α）</li>
+<li>I;16 （16位无符号整数像素）</li>
+<li>I;16L （16位小端无符号整数像素）</li>
+<li>I;16B （16位大端无符号整数像素）</li>
+<li>I;16N （16位本机端无符号整数像素）</li>
+<li>BGR;15 （15位反转真彩色）</li>
+<li>BGR;16 （16位反转真彩色）</li>
+<li>BGR;24 （24位反转真彩色）</li>
+<li>BGR;32 （32位反转真彩色）</li>
+</ul>
+<blockquote>
+<p>我怀疑MISC题目的常用工具 stegsolve 就是在各种Mode之间做切换。</p>
+</blockquote>
+<h3 id="52-pallete">5.2 pallete</h3>
+<p><a href="https://mathpretty.com/12731.html#Imageputpalette">使用PIL库 改变图片的调色板</a><br>
+当图片模式选择<code>P</code>时，ImageObject有pallete参数。<br>
+pallete默认为<code>RGB</code>格式，是一个长度为768的list对象。<br>
+在<code>RGB</code>格式下，pallete的list对象被3个一组，表示RGB颜色。<br>
+最多记录256个<code>RGB</code>颜色。</p>
+<pre><code class="language-python">palette = []
+for i in range(256):
+    palette.extend((i, i, i)) # grayscale wedge
+
+assert len(palette) == 768
+
+im.putpalette(palette)
+</code></pre>
+<h3 id="53-python-pil包使用">5.3 Python PIL包使用</h3>
+<p><a href="https://www.osgeo.cn/pillow/reference/Image.html">PIL包文档</a></p>
+<h3 id="54-base系列编码原理">5.4 Base系列编码原理</h3>
+<p><a href="https://zhuanlan.zhihu.com/p/51316306">Base64, Base32 和 Base16，用通俗的语言深入到内部</a></p>
+<h2 id="6-defcon-2020q-uploooadit">6 <a href="https://github.com/o-o-overflow/dc2020q-uploooadit">Defcon 2020q uploooadit</a></h2>
+<p><code>uploooadit</code>是一道<code>WEB</code>题，主要考点是<code>haproxy 1.9.10</code>中存在的<code>HTTP smuggling</code>漏洞。<br>
+Writeup可以看这篇<a href="https://www.xiaozzz.xyz/2020/05/22/Defcon-CTF-Qual-2020-Web-WP/">文章</a></p>
+<h1 id="总结">总结</h1>
+<p>Bryce Boe 老师总共出过两道Defcon的题目。<br>
+我没有找到他在题目上线之前对考点的研究痕迹。<br>
+其社交媒体或发布的论文中也没有对应的体现。<br>
+因此无法预测在2021 defcon中，bboe老师将带来什么样的题目。</p>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> </div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/defcon-2018-qualify-easy-pisy-writeup/">Defcon 2018 Qualify: Easy Pisy writeup</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#defcon-2019-qualify-redacted-puzzle">Defcon 2019 Qualify: redacted-puzzle</a>
+<ul>
+<li><a href="#1attachments">1.Attachments</a></li>
+<li><a href="#2source-code">2.source code</a></li>
+<li><a href="#3author-bboe">3.author: bboe</a></li>
+<li><a href="#4writeups">4.writeups</a></li>
+<li><a href="#5%E7%9F%A5%E8%AF%86%E7%82%B9">5.知识点</a>
+<ul>
+<li><a href="#51-%E5%9B%BE%E5%83%8F%E6%A8%A1%E5%BC%8F">5.1 图像模式</a></li>
+<li><a href="#52-pallete">5.2 pallete</a></li>
+<li><a href="#53-python-pil%E5%8C%85%E4%BD%BF%E7%94%A8">5.3 Python PIL包使用</a></li>
+<li><a href="#54-base%E7%B3%BB%E5%88%97%E7%BC%96%E7%A0%81%E5%8E%9F%E7%90%86">5.4 Base系列编码原理</a></li>
+</ul>
+</li>
+<li><a href="#6-defcon-2020q-uploooadit">6 Defcon 2020q uploooadit</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

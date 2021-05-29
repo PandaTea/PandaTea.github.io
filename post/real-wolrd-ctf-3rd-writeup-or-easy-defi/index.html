@@ -1,0 +1,250 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>Real Wolrd CTF 3rd Writeup | Easy Defi | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/real-wolrd-ctf-3rd-writeup-or-easy-defi.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">Real Wolrd CTF 3rd Writeup | Easy Defi</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h3 id="题目环境架构">题目环境架构</h3>
+<p>EasyDefi是一道面向去中心化金融服务的智能合约题目。<br>
+题目代码通过<a href="https://github.com/chaitin/Real-World-CTF-3rd-Challenge-Attachments/tree/main/Easy%20Defi">附件</a>的形式给出。<br>
+<img src="https://img-blog.csdnimg.cn/20210324162404145.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></p>
+<p>同时我们可以通过题目描述了解到<br>
+ChaitinSwap的逻辑和Uniswap基本类似，只是更改了手续费比例。<br>
+<img src="https://img-blog.csdnimg.cn/20210324162415188.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>ChaitinBank听上去是某种提供了借贷服务的Defi项目，<br>
+我们看一下代码:<br>
+<img src="https://img-blog.csdnimg.cn/20210324162424480.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"><br>
+Bank仅提供了两个功能接口，一个用FeiCoin换Flag，另一个使用Flag换FeiCoin。<br>
+但是这个FeiCoin又是个啥？我们到ERC20.sol里面确认一下：<br>
+<img src="https://img-blog.csdnimg.cn/2021033012521262.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>可见这里Panda币的合约名称叫FeiToken，看来FeiCoin和PandaToken是一个东西:</p>
+<p>至此我们可以得到题目大概的组织框架如下:<br>
+<img src="https://img-blog.csdnimg.cn/20210324162439372.png" alt="在这里插入图片描述" loading="lazy"></p>
+<p>一共存在三种代币: 长亭币、Panda币和FLAG<br>
+在ChaitinSwap中，长亭币 和 Panda币可以互换<br>
+在ChaitinBank中，Panda币和FLAG可以互换</p>
+<h3 id="代码审计">代码审计</h3>
+<h4 id="vuln1-k值不守恒">vuln1 K值不守恒</h4>
+<p>我们来审计合约代码，根据题目描述中的提示。<br>
+chaitinSwap和uniswap的区别主要在手续费。<br>
+chaitinSwap仅收取0.25%的手续费。<br>
+所以我们来看定义手续费附近的代码<br>
+<img src="https://img-blog.csdnimg.cn/20210324162450985.png" alt="在这里插入图片描述" loading="lazy"></p>
+<p>这里getAmountIn/Out函数中，有对0.25%的描述。<br>
+除此之外，在Factory合约的swap中也有相关描述。<br>
+<img src="https://img-blog.csdnimg.cn/202103241624587.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>于是我们发现了第一个漏洞点，这个ChaitinSwap的K值 不守恒。<br>
+为了表示0.25%的手续费，除数从1000改成了10000。<br>
+但是在377行进行比较时， 还是和Uniswap代码中原本的<code>1000**2</code>进行比较。<br>
+这导致最后的这个K值守恒的检查，很容易通过。<br>
+Uniswap的K值守恒是用大于等于号检查的，这个比较神奇，可以阅读这篇文章来详细分析一下。<code>https://zhuanlan.zhihu.com/p/272241656</code></p>
+<p>这里我们需要做的只是让amount1In或者amount0In为正数。我们稍稍向合约中转账(比如题目给我们准备的1个长亭币)就可以满足此限制。<br>
+之后我们将取出的amount0Out和amount1Out写得大一些，只要balance0Ajusted和balance1Adjusted相乘不要过小即可。</p>
+<p>这样我们就可以用1个长亭币换出了大量的PandaToken和长亭币。</p>
+<p>具体操作如下，<br>
+第一步把1 个长亭币转到chaitinToken-feiToken pair 合约中<br>
+<img src="https://img-blog.csdnimg.cn/20210324162514165.png" alt="" loading="lazy"></p>
+<p>第二步 调用pair合约的swap函数，把钱从流通池里掏出来<br>
+<img src="https://img-blog.csdnimg.cn/20210324162523406.png" alt="" loading="lazy"></p>
+<p>至此， 我们成功从交易所中 盗取了90个PandaToken和 88个长亭币</p>
+<h4 id="vuln2-bank没有用预言机可以操纵币价">vuln2 Bank没有用预言机，可以操纵币价</h4>
+<p>然而题目要求我们搞到80个Flag币<br>
+<img src="https://img-blog.csdnimg.cn/20210324162535783.png" alt="" loading="lazy"></p>
+<p>我们知道能得到FLAG的地方只有，BANK合约<br>
+<img src="https://img-blog.csdnimg.cn/20210324162544286.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>而且我们可以看到，用户能得到多少个flag币，和存入的PandaToken的币价有关系<br>
+<img src="https://img-blog.csdnimg.cn/20210324162551258.png" alt="在这里插入图片描述" loading="lazy"></p>
+<p>所以PandaToken价格越高，我们能得到的Flag越多。<br>
+此时的PandaToken币价为 11<br>
+<img src="https://img-blog.csdnimg.cn/20210324162557978.png" alt="在这里插入图片描述" loading="lazy"></p>
+<p>阅读代码我们发现，这里Bank合约没有使用预言机来防止恶意操纵币价。<br>
+所以很明显这里便是第二个漏洞点。<br>
+攻击者可以通过恶意操纵市场，来抬高PandaToken的币价。<br>
+我们通过Router合约可以实现该目的。</p>
+<p>具体操作如下:<br>
+这里先Approve给Router全部的长亭币<br>
+<img src="https://img-blog.csdnimg.cn/20210324162609945.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>然后调用Router.swapExactTokensForTokens 函数来拉动币价。<br>
+我们使用长亭币疯狂购买PandaToken，从而抬高PandaToken的币价。<br>
+<img src="https://img-blog.csdnimg.cn/20210324162620177.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></p>
+<p>接着我们来到Bank合约，查看PandaToken的价格<br>
+<img src="https://img-blog.csdnimg.cn/20210324162627944.png" alt="" loading="lazy"></p>
+<p>发现PandaToken的币价已经高达829了</p>
+<p>看到这么高的币价， 我们直接<br>
+调用depositFeiCointoFlag函数， 用手中全部的PandaToken来换取Flag<br>
+<img src="https://img-blog.csdnimg.cn/20210324162648561.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20210324162656142.png" alt="在这里插入图片描述" loading="lazy"></figure>
+<p>接下来，我们看看自己有多少个FlagToken<br>
+<img src="https://img-blog.csdnimg.cn/2021032416270331.png" alt="" loading="lazy"></p>
+<p>82.9个FLAG，满足题目要求。</p>
+<h3 id="获取flag">获取FLAG</h3>
+<p>最后我们回到命令行界面，选择option3 并输入token<br>
+<img src="https://img-blog.csdnimg.cn/20210324162714503.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
+<p>得到FLAG<br>
+<code>rwctf{axelytxtdznhahsebhk}</code></p>
+<h3 id="相关链接">相关链接</h3>
+<ul>
+<li>题目介绍和附件 https://github.com/chaitin/Real-World-CTF-3rd-Challenge-Attachments/tree/main/Easy%20Defi</li>
+<li>为什么说Uniswap的K值不那么守恒 https://zhuanlan.zhihu.com/p/272241656</li>
+<li>Uniswap文档 https://uniswap.org/docs/v2/</li>
+<li>AMM自动做市商原理 https://www.jianshu.com/p/5bb44a9cd220</li>
+</ul>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/defcon-2018-qualify-easy-pisy-writeup/">Defcon 2018 Qualify: Easy Pisy writeup</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/lesslessformal-analysis-of-composable-defi-protocolsgreatergreater-zu-he-xing-defi-xiang-mu-de-xing-shi-hua-yan-zheng/">《Formal Analysis of Composable DeFi Protocols》组合型DeFi项目的形式化验证</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E9%A2%98%E7%9B%AE%E7%8E%AF%E5%A2%83%E6%9E%B6%E6%9E%84">题目环境架构</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1">代码审计</a>
+<ul>
+<li><a href="#vuln1-k%E5%80%BC%E4%B8%8D%E5%AE%88%E6%81%92">vuln1 K值不守恒</a></li>
+<li><a href="#vuln2-bank%E6%B2%A1%E6%9C%89%E7%94%A8%E9%A2%84%E8%A8%80%E6%9C%BA%E5%8F%AF%E4%BB%A5%E6%93%8D%E7%BA%B5%E5%B8%81%E4%BB%B7">vuln2 Bank没有用预言机，可以操纵币价</a></li>
+</ul>
+</li>
+<li><a href="#%E8%8E%B7%E5%8F%96flag">获取FLAG</a></li>
+<li><a href="#%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5">相关链接</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

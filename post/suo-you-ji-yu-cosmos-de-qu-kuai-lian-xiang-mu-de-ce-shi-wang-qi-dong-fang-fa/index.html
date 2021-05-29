@@ -1,0 +1,201 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>所有基于cosmos的区块链项目的测试网启动方法 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/suo-you-ji-yu-cosmos-de-qu-kuai-lian-xiang-mu-de-ce-shi-wang-qi-dong-fang-fa.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">所有基于cosmos的区块链项目的测试网启动方法</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="abstract">Abstract</h1>
+<p>基于cosmos框架的区块链项目，在启动脚本上都大同小异。<br>
+这里做一下整理记录。方便后面的测试使用。</p>
+<h1 id="genesis-file-format">genesis file format</h1>
+<h3 id="init">init</h3>
+<p><code>serverd init --gen-txs --home=$HOME/.gaiad1 --chain-id=test-chain</code></p>
+<h3 id="gentx">gentx</h3>
+<p><code>serverd gentx --name validator --amount 1000000000ucsdt</code></p>
+<h3 id="add-genesis-account">add-genesis-account</h3>
+<p><code>serverd add-genesis-account $(client keys show validator -a) 10000000000ucsdt</code></p>
+<h3 id="collect-gentxs">Collect-gentxs</h3>
+<p><code>serverd collect-gentxs</code></p>
+<h3 id="start">start</h3>
+<p><code>serverd start</code></p>
+<h1 id="总结">总结</h1>
+<p>这边用<code>xar-network</code>来举例</p>
+<pre><code class="language-shell"># You can run all of these commands from your home directory
+cd $HOME
+
+# Initialize the genesis.json file that will help you to bootstrap the network
+xard init --chain-id=testing testing
+
+# Create a key to hold your validator account
+xarcli keys add validator
+
+# Add that key into the genesis.app_state.accounts array in the genesis file
+# NOTE: this command lets you set the number of coins. Make sure this account has some coins
+# with the genesis.app_state.staking.params.bond_denom denom, the default is staking
+xard add-genesis-account $(xarcli keys show validator -a) 10000000000000uftm,10000000000ucsdt
+
+# Generate the transaction that creates your validator
+xard gentx --name validator --amount 1000000000ucsdt
+
+# Add the generated bonding transaction to the genesis file
+xard collect-gentxs
+
+# Now its safe to start `xard`
+xard start
+
+</code></pre>
+<p>这样就初始化了 validator并给了一些初始代币。</p>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/he-yue-an-quan-3-burgerswap-chong-ru-lou-dong/">合约安全[3]: BurgerSwap重入漏洞</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/gofuzz-zi-ding-yi-yu-liao-shu-ru-liu-cheng-ji-lu/">GoFuzz自定义语料输入流程记录</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#genesis-file-format">genesis file format</a><br>
+*
+<ul>
+<li><a href="#init">init</a></li>
+<li><a href="#gentx">gentx</a></li>
+<li><a href="#add-genesis-account">add-genesis-account</a></li>
+<li><a href="#collect-gentxs">Collect-gentxs</a></li>
+<li><a href="#start">start</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

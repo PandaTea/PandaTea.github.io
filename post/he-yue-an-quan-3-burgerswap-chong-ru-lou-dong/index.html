@@ -1,0 +1,327 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>合约安全[3]: BurgerSwap重入漏洞 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/he-yue-an-quan-3-burgerswap-chong-ru-lou-dong.jpeg);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">合约安全[3]: BurgerSwap重入漏洞</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="前言">前言</h1>
+<p>2020年10月22日，<a href="https://burgerswap.org">Zengo</a>团队的Oded Leiba，发表了他在<a href="https://burgerswap.org">BurgerSwap</a>中发现的<a href="https://zengo.com/burgerswap-vulnerability/">重入漏洞</a>。<br>
+本文将翻译并解读漏洞的原理。</p>
+<p><ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86">基础知识</a>
+<ul>
+<li><a href="#amm">AMM</a></li>
+<li><a href="#%E6%B5%81%E5%8A%A8%E6%80%A7">流动性</a></li>
+<li><a href="#%E5%B8%81%E5%AF%B9">币对</a></li>
+<li><a href="#weth">WETH</a></li>
+</ul>
+</li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%BF%B0">漏洞概述</a></li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86">漏洞原理</a></li>
+<li><a href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88">修复方案</a>
+<ul>
+<li><a href="#checks-effects-interactions-%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83">Checks-Effects-Interactions 编码规范</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0%E9%94%81-lock-modifier">函数锁 lock modifier</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8">引用</a></li>
+</ul>
+</p>
+<h1 id="基础知识">基础知识</h1>
+<h2 id="amm">AMM</h2>
+<p>自动做市商(AMM)是一种即时兑换模式。<br>
+通常的交易所(中心化/去中心化)，需要买卖双方对价格达成一致，才能完成交易；<br>
+而AMM 只需买方认可流通池中的Token价格即可立刻完成交易。</p>
+<h2 id="流动性">流动性</h2>
+<p>用户将资产转入交易平台之中获得收益，而在平台中的总资产额度，就构成了流通池。<br>
+流通池中代币总额越多，深度越好，大额交易带来的影响也就更小，不至于因为一笔几十万美元的交易就让价格产生大幅波动。<br>
+Defi的一个风险点就是流通池不够大，容易产生较大滑点。</p>
+<h2 id="币对">币对</h2>
+<p>币对是用于记录流通池相关信息的变量。<br>
+例如，用户想使用<code>A</code>币换取<code>B</code>币，那么就会涉及到币对 <code>A-B</code>。<br>
+用户将一些<code>A</code>币转入币对<code>A-B</code>中，并从中取出若干<code>B币</code>，即可完成兑换。<br>
+币对<code>A-B</code>中可被取出的<code>A</code>币和<code>B</code>币总量，就对应着币对的<code>流动性</code>。<br>
+剩余币总量越大，<code>流动性</code>越大。</p>
+<h2 id="weth">WETH</h2>
+<p>为了让ETH能跟其他ERC20标准的Token进行交易，<br>
+实现了满足ERC20标准的WETH合约，作为ETH和Token之间兑换的桥梁。</p>
+<h1 id="漏洞概述">漏洞概述</h1>
+<p>这是一个典型的<a href="https://swcregistry.io/docs/SWC-107">重入漏洞</a>，<br>
+攻击者只需付出少量的ETH、一点点<code>WETH-BSC</code>流动性，即可掏空<code>WETH-BSC</code>币对中所有的ETH。</p>
+<h1 id="漏洞原理">漏洞原理</h1>
+<p>漏洞出现在<code>withdrawFromBSC</code>方法中,<br>
+该方法用于赎回<code>Token</code>或<code>ETH</code></p>
+<pre><code class="language-javascript">    function withdrawFromBSC(bytes calldata _signature, bytes32 _paybackId, address _token, uint _amount) external payable {
+        require(executedMap[_paybackId] == false, &quot;ALREADY_EXECUTED&quot;);
+        
+        require(_amount &gt; 0, &quot;NOTHING_TO_WITHDRAW&quot;);
+        require(msg.value == developFee, &quot;INSUFFICIENT_VALUE&quot;);
+        
+        bytes32 message = keccak256(abi.encodePacked(_paybackId, _token, msg.sender, _amount));
+        require(_verify(message, _signature), &quot;INVALID_SIGNATURE&quot;);
+        
+        if(_token == WETH) {
+            IWETH(WETH).withdraw(_amount);
+            TransferHelper.safeTransferETH(msg.sender, _amount);
+        } else {
+            TransferHelper.safeTransfer(_token, msg.sender, _amount);
+        }
+        totalFee = totalFee.add(developFee);
+        
+        executedMap[_paybackId] = true;
+        
+        emit Withdraw(_paybackId, msg.sender, _token, _amount);
+    }
+</code></pre>
+<ol>
+<li>函数先检查了<code>executedMap[_paybackId]</code>是否为<code>false</code>，从而判断这笔赎回交易是否已经被处理。</li>
+<li>然后检查了用户所支付的<code>feeValue</code>数量和提供的<code>签名</code>是否有效。</li>
+<li>接着便是调用<code>TransferHelper</code>进行转账操作。</li>
+<li>最后更改<code>executedMap[_paybackId]</code>的值为<code>true</code>，以表明该赎回交易处理完成。</li>
+</ol>
+<p>到这里，漏洞的本质就浮出水面了。<br>
+<strong><code>withdrawFromBSC</code>方法的实现，没有遵循<code>Checks-Effects-Interactions</code>编码规范。</strong></p>
+<p>根据<a href="https://fravoll.github.io/solidity-patterns/checks_effects_interactions.html">CEI规范</a>合约函数在实现时，应该</p>
+<ol>
+<li>先检查输入是否符合条件</li>
+<li>再修改合约状态</li>
+<li>最后和用户交互<br>
+举个正确的例子:</li>
+</ol>
+<pre><code class="language-javascript">    function withdraw(uint amount) public {
+        require(balances[msg.sender] &gt;= amount);
+
+        balances[msg.sender] -= amount;
+
+        msg.sender.transfer(amount);
+    }
+</code></pre>
+<p>很明显，对于<code>withdrawFromBSC</code>方法<br>
+<code>调用TransferHelper进行转账</code>的操作, 应发生在<code>executedMap[_paybackId] = true;</code>之后。</p>
+<p>由于<code>TransferHelper.safeTransferETH</code>的实现，使用的是原生的<code>.call.value</code>方法。</p>
+<pre><code class="language-javascript">    function safeTransferETH(address to, uint value) internal {
+        (bool success,) = to.call{value:value}(new bytes(0));
+        require(success, 'TransferHelper: ETH_TRANSFER_FAILED');
+    }
+</code></pre>
+<p>函数调用者的<code>fallback</code>方法将会被调用，<br>
+攻击者合约可以通过实现<code>fallback</code>方法，并在其中再次调用<code>withdrawFromBSC</code>来实现重入攻击。<br>
+转走<code>BurgerSwap</code>合约中所有的<code>ETH</code>。</p>
+<h1 id="修复方案">修复方案</h1>
+<h2 id="checks-effects-interactions-编码规范">Checks-Effects-Interactions 编码规范</h2>
+<p>最有效、简单的解决方案，就是将<code>withdrawFromBSC</code>方法中的</p>
+<pre><code class="language-javascript">        if(_token == WETH) {
+            IWETH(WETH).withdraw(_amount);
+            TransferHelper.safeTransferETH(msg.sender, _amount);
+        } else {
+            TransferHelper.safeTransfer(_token, msg.sender, _amount);
+        }
+</code></pre>
+<p>放到<code>executedMap[_paybackId] = true;</code>之后。<br>
+只要符合CEI规范，攻击合约就会因为通不过check，而无法改变函数控制流。</p>
+<h2 id="函数锁-lock-modifier">函数锁 lock modifier</h2>
+<p>通过实现一个<code>lock modifier</code>来添加函数锁概念。<br>
+当在交易中第一次进入函数时，<br>
+更新全局变量<code>lock</code>的值,使得<code>modifier</code>验证无法通过<br>
+从而限制函数之间的相互调用。</p>
+<p>简单举例如下:</p>
+<pre><code class="language-javascript">pragma solidity ^0.4.0;
+
+contract SingleCall {
+  address public lock = false;
+
+  modifier onlyOnce {
+    if (this.lock != false) throw;
+    _;
+  }
+
+  function withdrawFromBSC(bytes _someParams)
+  onlyOnce
+  {
+    lock = true;
+    //some command...;
+    lock = false;
+  }
+}
+</code></pre>
+<h1 id="总结">总结</h1>
+<p><code>BurgerSwap</code>合约由于没有遵循<code>Checks-Effects-Interactions 编码规范</code>，导致了严重的重入漏洞。<br>
+作为合约的开发人员，应以此为戒，把<code>用户交互</code>放到<code>修改合约状态</code>后面。<br>
+同时，不要盲目相信市面上第三方代码的实现。<br>
+也许底层函数本身没有问题，却由于开发时不安全地调用，引入了风险。</p>
+<p>另一方面，合约项目方可以通过赏金计划、漏洞平台等方式吸引社区中的白帽黑客来发现项目中的安全漏洞<br>
+帮助项目的完善和安全性的提升。<br>
+最后，项目方可以联系国内有<code>区块链合约安全</code>相关服务的厂家(比如<a href="https://www.chaitin.cn/zh/review">长亭科技</a>)来支持代码审计工作，对项目进行系统、全面的安全性检查。</p>
+<h1 id="引用">引用</h1>
+<ul>
+<li><a href="https://leepanda.blog.csdn.net/article/details/107137462">合约安全(1):Balancer中通货紧缩货币的套利攻击详解</a></li>
+<li><a href="https://zengo.com/burgerswap-vulnerability/">Reentering the Reentrancy Bug: Disclosing BurgerSwap’s Vulnerability</a></li>
+<li><a href="https://etherscan.io/address/0xaf5dcebba2f8bec8729117336b2fe8b4e0d99b0b#code">Source Code of BurgerSwap</a></li>
+<li><a href="https://swcregistry.io/docs/SWC-107">SWC-107 Reentrancy</a></li>
+<li><a href="https://consensys.github.io/smart-contract-best-practices/known_attacks/">Ethereum Smart Contract Best Practices#Reentrancy</a></li>
+<li><a href="https://fravoll.github.io/solidity-patterns/checks_effects_interactions.html">solidity-patterns Checks Effects Interactions</a></li>
+<li><a href="https://www.chaitin.cn/">长亭科技 Chaitin</a></li>
+</ul>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/he-yue-an-quan-4wei-sha-shuo-uniswapk-zhi-bu-na-me-shou-heng/">合约安全[4]:为啥说UniswapK值不那么守恒</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/suo-you-ji-yu-cosmos-de-qu-kuai-lian-xiang-mu-de-ce-shi-wang-qi-dong-fang-fa/">所有基于cosmos的区块链项目的测试网启动方法</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86">基础知识</a>
+<ul>
+<li><a href="#amm">AMM</a></li>
+<li><a href="#%E6%B5%81%E5%8A%A8%E6%80%A7">流动性</a></li>
+<li><a href="#%E5%B8%81%E5%AF%B9">币对</a></li>
+<li><a href="#weth">WETH</a></li>
+</ul>
+</li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%BF%B0">漏洞概述</a></li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86">漏洞原理</a></li>
+<li><a href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88">修复方案</a>
+<ul>
+<li><a href="#checks-effects-interactions-%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83">Checks-Effects-Interactions 编码规范</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0%E9%94%81-lock-modifier">函数锁 lock modifier</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8">引用</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

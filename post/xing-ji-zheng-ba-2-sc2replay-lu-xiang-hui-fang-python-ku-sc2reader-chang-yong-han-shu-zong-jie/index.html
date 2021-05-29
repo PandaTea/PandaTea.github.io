@@ -1,0 +1,279 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>星际争霸2 sc2replay录像回放python库sc2reader常用函数总结 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/xing-ji-zheng-ba-2-sc2replay-lu-xiang-hui-fang-python-ku-sc2reader-chang-yong-han-shu-zong-jie.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">星际争霸2 sc2replay录像回放python库sc2reader常用函数总结</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="安装">安装</h1>
+<p>pip install sc2reader</p>
+<h1 id="使用">使用</h1>
+<pre><code class="language-python">import sc2reader
+replay = sc2reader.load_replay('video.SC2Replay', load_level=2)
+</code></pre>
+<p>level的值可设置为0到4，越大再入的信息越多。</p>
+<h3 id="player">player</h3>
+<p><code>replay.player[key].name</code> 玩家游戏昵称<br>
+<code>replay.player[key].pick_race</code> 玩家的种族</p>
+<p>一般pvp的时候 key 可选为 1或者2</p>
+<h1 id="event">event</h1>
+<p>replay的所有内容记录在replay.events结构中<br>
+单位创建，单位移动，单位死亡等等。</p>
+<pre><code class="language-python">def get_event(replay):
+	for event in replay.events:
+		event_names = set([event.name for event in replay.events])
+	events_of_type = {name: [] for name in event_names}
+	for event in replay.events:
+		events_of_type[event.name].append(event)
+	return events_of_type
+</code></pre>
+<h3 id="chat-event">chat event</h3>
+<pre><code class="language-python">for msg_event in replay.messages:
+		print msg_event.text
+</code></pre>
+<p>显示游戏中玩家的聊天信息</p>
+<h3 id="unit-event">unit event</h3>
+<pre><code class="language-python">def unit_done_list(events_of_type):
+	unit_born_events = events_of_type[&quot;UnitBornEvent&quot;]
+	for ube in unit_born_events:
+		print ube.unit_controller.name.encode(&quot;utf-8&quot;) +&quot; born &quot; + str(ube.unit.name) + &quot; at &quot; + str(ube.second / 60) + &quot;:&quot; + str(ube.second % 60)
+</code></pre>
+<p>显示玩家的建造顺序</p>
+<h1 id="example">example</h1>
+<p>main.py如下</p>
+<pre><code class="language-python">#coding=utf-8
+#documents = https://readthedocs.org/projects/sc2reader/downloads/pdf/latest/
+import sc2reader
+import sys
+import sc2fliter
+
+def show_player_info(replay):
+	print &quot;    &quot; + replay.player[1].name.encode(&quot;utf-8&quot;) + &quot; vs &quot; + replay.player[2].name.encode(&quot;utf-8&quot;)
+	print &quot;    &quot; + replay.player[1].pick_race + &quot; vs &quot; + replay.player[2].pick_race
+	print &quot; &quot;
+
+def show_chat(replay):
+	for msg_event in replay.messages:
+		print &quot;    &quot; + msg_event.player.name.encode(&quot;utf-8&quot;) +&quot; : &quot; + msg_event.text.encode(&quot;utf-8&quot;)
+	print &quot; &quot;
+
+def get_event(replay):
+	for event in replay.events:
+		event_names = set([event.name for event in replay.events])
+	events_of_type = {name: [] for name in event_names}
+	for event in replay.events:
+		events_of_type[event.name].append(event)
+	return events_of_type
+
+def show_base_info(relpay):
+	show_player_info(replay)
+	show_chat(replay)
+	
+
+def unit_done_list(events_of_type,uc=None,n=None):
+	unit_born_events = events_of_type[&quot;UnitBornEvent&quot;]
+	for ube in unit_born_events:
+		if sc2fliter.baseFliter(ube.unit_controller,ube.second,ube.unit.name) and sc2fliter.highFliter(ube.unit_controller.pid,ube.unit.name,uc,n):
+			print ube.unit_controller.name.encode(&quot;utf-8&quot;) +&quot; born &quot; + str(ube.unit.name) + &quot; at &quot; + str(ube.second / 60) + &quot;:&quot; + str(ube.second % 60)
+
+if __name__ == '__main__':
+	filepath = sys.argv[1]
+	replay = sc2reader.load_replay(filepath, load_level=4)
+	show_base_info(replay)
+	events_of_type = get_event(replay)
+	unit_done_list(events_of_type,1)
+</code></pre>
+<p>sc2fliter.py为</p>
+<pre><code class="language-python">import sc2unit
+def baseFliter(unit_controller,second,name):
+	if unit_controller == None:
+		return False
+	if second == 0:
+		return False
+	if str(name) in sc2unit.blacklist:
+		return False
+	return True
+
+def highFliter(uc,n,unit_controller=None,name =None):
+	if unit_controller != None and  name != None:
+		if uc == unit_controller and n == name:
+			return True
+		else:
+			return False
+	if unit_controller != None:
+		if uc == unit_controller:
+			return True
+		else:
+			return False
+	if name != None:
+		if n == name:
+			return True
+		else:
+			return False
+	return True
+
+
+</code></pre>
+<h3 id="最终运行结果">最终运行结果</h3>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/2020050518363289.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="Dark建造顺序" loading="lazy"></figure>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/yi-tai-fang-xi-jie-3stateroot-wei-shi-me-bu-neng-qu-dai-receiptsroot/">以太坊细节[3]:StateRoot为什么不能取代ReceiptsRoot</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/nkn-gong-lian-yuan-ma-xue-xi-1webgui-de-jia-mi-tong-xin/">NKN公链源码学习[1]:webgui的加密通信</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8">使用</a><br>
+*
+<ul>
+<li><a href="#player">player</a></li>
+</ul>
+</li>
+<li><a href="#event">event</a><br>
+*
+<ul>
+<li><a href="#chat-event">chat event</a></li>
+<li><a href="#unit-event">unit event</a></li>
+</ul>
+</li>
+<li><a href="#example">example</a><br>
+*
+<ul>
+<li><a href="#%E6%9C%80%E7%BB%88%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C">最终运行结果</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

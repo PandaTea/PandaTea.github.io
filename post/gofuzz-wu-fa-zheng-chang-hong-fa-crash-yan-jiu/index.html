@@ -1,0 +1,230 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>GoFuzz无法正常触发crash研究 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/gofuzz-wu-fa-zheng-chang-hong-fa-crash-yan-jiu.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">GoFuzz无法正常触发crash研究</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="abstract">Abstract</h1>
+<p>在使用gofuzz测试的过程中。<br>
+遇到明明很有问题、肯定能触发panic的语料，却没有生成对应的crash。<br>
+怀疑自己的使用姿势不对，遂对其进行了研究。本文记录一下实验过程和结果。</p>
+<p>为了方便测试，设计了自定义Fuzz函数如下:<br>
+<img src="https://img-blog.csdnimg.cn/20200821104633265.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="panic测试" loading="lazy"><br>
+通过测试panic是否会崩溃，来检查panic和return值之间的相关性。</p>
+<h3 id="猜测1-fuzz函数return值存在特殊含义">猜测1: Fuzz函数return值存在特殊含义</h3>
+<p>为了测试return值对fuzz过程的影响，我删去了panic的设计。<br>
+当改变return的返回值时，fuzz的exec(程序执行次数) corpus(进化出的语料) restarts(程序重启次数)发生了如下的变化。</p>
+<pre><code>return之间的影响 (无panic)
+仅return1
+exec+ corpus+ restarts+
+仅return 0 
+exec+ corpus+ restarts+
+仅return -1
+exec+ corpus1 restarts+
+</code></pre>
+<p>可以看出在gofuzz中，Fuzz函数的return值有特殊的含义。</p>
+<ul>
+<li>return 1 : 表示这次测试的样例是好的，成功的，阳性的。请多多使用这个突变分支的样例来测试。</li>
+<li>return 0 : 表示这次测试样例正常，挺好的。就继续测吧，对后续测试样例的使用没有影响。</li>
+<li>return -1: 表示这次测试使用的样例不给力，成阴性。在以后的测试中，减少这个突变分支的测试样例。</li>
+</ul>
+<blockquote>
+<p>由于我使用gofuzz测试的目的，就是为了找出让程序无法正常执行的输入样例。因此，这里会自然的想到使用panic 配合 return 1.来实现: 发现crash的同时，能让后面的fuzz过程找到更多 Panic样例。</p>
+</blockquote>
+<h3 id="猜测2-不同return的值-和-panic组合可能产生不同结果-导致不panic">猜测2: 不同return的值 和 panic组合，可能产生不同结果。导致不panic</h3>
+<p>我通过修改33line的那个<code>return</code>值，来测试panic函数无法正常崩溃 是否和 return的值相关。<br>
+测试结果如下</p>
+<pre><code>-1 不crash
+0 不crash
+1 不crash
+</code></pre>
+<ul>
+<li>看来和return的值没有关系。</li>
+</ul>
+<h3 id="猜测3-同一个block中panic和return不能一起使用">猜测3: 同一个block中，panic和return不能一起使用</h3>
+<p>首先编写一个简单的测试程序，代码如下:<br>
+<img src="https://img-blog.csdnimg.cn/20200821111315523.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="crash的代码" loading="lazy"><br>
+其中第16line的panic理论上必然触发<br>
+测试后发现果然<code>触发了crash</code></p>
+<p>于是我们在panic后面17line的位置添加<code>return true</code><br>
+<img src="https://img-blog.csdnimg.cn/20200821111513448.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="不crash的代码" loading="lazy"><br>
+<strong>测试发现，没有报错。在同一个block中，panic后面不能有return</strong></p>
+<h3 id="猜测4-panic和fuzz函数默认return之间的影响">猜测4: panic和Fuzz函数默认return之间的影响</h3>
+<p>在Fuzz函数中，如果自定义了panic点。则Fuzz函数的默认返回值必须唯一。<br>
+为了证实这一点，做了如下实验。</p>
+<pre><code class="language-go">func Fuzz(data []byte) int {
+	err := receivedCorpus(data)
+	fmt.Println(err)
+	if err != false {
+		panic(&quot;22&quot;)
+	}
+	return 0
+}
+</code></pre>
+<p>通过改变return 的返回值，来检查该值和panic之间的关系。<br>
+实验结果如下:</p>
+<pre><code>默认return 0
+不 crash
+默认return 1
+crash
+默认return -1
+不crash
+</code></pre>
+<h1 id="总结">总结</h1>
+<p>经过测试，在gofuzz中使用panic来触发崩溃时，</p>
+<ul>
+<li>不能在panic后面直接跟return。否则会没有crash。</li>
+<li>另外，Fuzz函数的默认返回值必须是1，否则不会崩溃。</li>
+</ul>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/gofuzz-zi-ding-yi-yu-liao-shu-ru-liu-cheng-ji-lu/">GoFuzz自定义语料输入流程记录</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/ethereum-dos-attack-on-teku-notes/">Ethereum DoS Attack on Teku Notes</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#abstract">Abstract</a><br>
+*
+<ul>
+<li><a href="#%E7%8C%9C%E6%B5%8B1-fuzz%E5%87%BD%E6%95%B0return%E5%80%BC%E5%AD%98%E5%9C%A8%E7%89%B9%E6%AE%8A%E5%90%AB%E4%B9%89">猜测1: Fuzz函数return值存在特殊含义</a></li>
+<li><a href="#%E7%8C%9C%E6%B5%8B2-%E4%B8%8D%E5%90%8Creturn%E7%9A%84%E5%80%BC-%E5%92%8C-panic%E7%BB%84%E5%90%88%E5%8F%AF%E8%83%BD%E4%BA%A7%E7%94%9F%E4%B8%8D%E5%90%8C%E7%BB%93%E6%9E%9C-%E5%AF%BC%E8%87%B4%E4%B8%8Dpanic">猜测2: 不同return的值 和 panic组合，可能产生不同结果。导致不panic</a></li>
+<li><a href="#%E7%8C%9C%E6%B5%8B3-%E5%90%8C%E4%B8%80%E4%B8%AAblock%E4%B8%ADpanic%E5%92%8Creturn%E4%B8%8D%E8%83%BD%E4%B8%80%E8%B5%B7%E4%BD%BF%E7%94%A8">猜测3: 同一个block中，panic和return不能一起使用</a></li>
+<li><a href="#%E7%8C%9C%E6%B5%8B4-panic%E5%92%8Cfuzz%E5%87%BD%E6%95%B0%E9%BB%98%E8%AE%A4return%E4%B9%8B%E9%97%B4%E7%9A%84%E5%BD%B1%E5%93%8D">猜测4: panic和Fuzz函数默认return之间的影响</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

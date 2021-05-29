@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.leepanda.top</id>
     <title>戏</title>
-    <updated>2021-05-29T10:43:25.182Z</updated>
+    <updated>2021-05-29T11:28:45.735Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.leepanda.top"/>
     <link rel="self" href="https://blog.leepanda.top/atom.xml"/>
@@ -10,824 +10,1158 @@
     <icon>https://blog.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 戏</rights>
     <entry>
-        <title type="html"><![CDATA[okchain源码阅读1:宏观框架]]></title>
-        <id>https://blog.leepanda.top/post/okchain-yuan-ma-yue-du-1hong-guan-kuang-jia/</id>
-        <link href="https://blog.leepanda.top/post/okchain-yuan-ma-yue-du-1hong-guan-kuang-jia/">
+        <title type="html"><![CDATA[随想：记忆与时间]]></title>
+        <id>https://blog.leepanda.top/post/sui-xiang-ji-yi-yu-shi-jian/</id>
+        <link href="https://blog.leepanda.top/post/sui-xiang-ji-yi-yu-shi-jian/">
         </link>
-        <updated>2021-05-29T10:41:47.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="摘要">摘要</h1>
-<p>okchain作为okex的公链项目，功能面向交易所交易撮合。<br>
-代码实现上，基于cosmos和tendermint两个框架来实现。<br>
-这里记录一下他的实现的大概框架。<br>
-公链项目链接是https://github.com/okex/okchain</p>
-<hr>
-<h1 id="重点框架">重点框架</h1>
-<ul>
-<li>投票机制——一票多投<br>
-涉及模块</li>
-</ul>
+        <updated>2021-05-29T11:22:38.000Z</updated>
+        <content type="html"><![CDATA[<p>被软件推广忽悠一次后 ，开始反思自己买过、下载过的软件中，使用率最高、最值的是哪一个？<br>
+印象笔记。<br>
+大学的时候，开始使用CSDN做学习笔记、Chrome收藏来记录精彩文章、IPad记录思考过程和琐碎Tips 大量使用<code>磁质媒介</code>记录信息 可以说，从高中毕业之后，我就很少主动使用大脑去记忆了。<br>
+直到我忘记昨天同事做了项目分享</p>
+<h3 id="大脑应该记住啥">大脑应该记住啥</h3>
 <blockquote>
-<p>staking 投票质押逻辑<br>
-distribution<br>
-slashing  非法投票惩罚 ( 感觉这个会是审计重点</p>
+<p>《白夜追凶》中一个经验尚浅的罪犯，面对警方的盘问，说出了准备良久的生活足迹。 警方反而以此确认了他的嫌疑  因为没有一个正常人会记得自己上周二下午4点在干啥。</p>
 </blockquote>
+<p>它想说，遗忘是人之常情...<br>
+...但是，所有遗忘都情有可原吗</p>
 <ul>
-<li>opendex<br>
-涉及模块</li>
+<li>
+<p>特定内容<br>
+与重要之人的互动、父母和朋友的生日<br>
+昨天为啥觉得自己是个傻逼，女朋友不开心的原因<br>
+工作中遇到的一个可优化点<br>
+这些都不应该忘记</p>
+</li>
+<li>
+<p>较宽松的清晰度<br>
+如果说回忆上周二下午4点这种精准时间难度太大，<br>
+那么去年4季度我干了啥这种段时间的大事记<br>
+是否也容许答不上来</p>
+</li>
+<li>
+<p>记忆和时间的关系是什么？<br>
+我尝试在大脑里寻找这个月的回忆，<br>
+发现它们已经十分模糊、碎成了渣。</p>
+</li>
 </ul>
+<ol>
+<li>
+<p>和她一起跨年的夜晚，走到膝盖疼。天桥上看着她的眼睛，在车流声和冬夜微风中吃咖喱盒饭。</p>
+</li>
+<li>
+<p>我的研究有了巨大突破，极乐冲击着大脑。血脉贲张<br>
+研究成果上报后，却发现它已经被发现时的失落。</p>
+</li>
+<li>
+<p>少华的EZ居然能丝血反杀</p>
+</li>
+<li>
+<p>一整天都花在通勤上的周五。飞机降落时，耳膜的痛苦。</p>
+</li>
+<li>
+<p>运维项目时的期待。修缮源码时的无奈。</p>
+</li>
+<li>
+<p>蹲起后肌肉拉伸时，令人昏厥的快感<br>
+就这些了...<br>
+除此之外，我竟想不起这个月其他事情。<br>
+所以我是度过了一个月，还是度过了这6个片段？<br>
+...<br>
+我大胆猜想<br>
+如果拿掉 年、月、日，小时、分钟、秒 这些<br>
+人类通过协商共识  创造的 统一度量衡。<br>
+真正属于我自己的计时单位，会是什么<br>
+是 脑内记忆片段。<br>
+是 能回忆起来的 感觉。<br>
+客观上,以人类公认计时法，从1月1日 到 1月27日，间隔27天。<br>
+但对于我自己，只间隔 6片记忆。<br>
+如何利用该方法论<br>
+&quot;生命的意义在于获得时间&quot; ---- 《超体》</p>
+</li>
+</ol>
+<p>人类社会现行时间计法，以 秒作为基本单位，<br>
+其他单位年、月、日 均是从秒定义而来<br>
+而秒的定义本身则是<br>
+铯133原子基态的两个超精细能阶之间跃迁时所辐射的电磁波的周期的9,192,631,770倍的时间。<br>
+只要我们等待铯133原子跃迁更多次，<br>
+就能获取 人类文明现行时间计法 下，更多的时间。</p>
+<p>那么，对应到主观感觉计时法<br>
+我们需要怎么做，才能获得更多时间呢...</p>
+<p>很明显就不是等待了<br>
+而是要 主动经历、主动生成并体会感觉<br>
+我们需要愤怒、需要焦虑<br>
+需要欢悦、需要乐极而悲<br>
+需要 主动去追逐 新鲜的体验， 尽力用大脑记住这些精彩的感觉。</p>
+<p>比如说</p>
 <blockquote>
-<p>order<br>
-token<br>
-dex</p>
+<p>现在，凌晨三点半<br>
+我很困<br>
+半死不活地摊在椅子上<br>
+疑惑且小害怕——身上的痘痘怎么变多了<br>
+晃着腿<br>
+写着一些胡说八道、不清楚的东西，<br>
+希望发到知乎上得到共鸣，但又怕别人说我中二。<br>
+但其实根本没啥人看<br>
+同时还有点口渴<br>
+只要记住上述 压抑且混乱的 感觉，<br>
+我度过的时间就变长了。<br>
+从 6片记忆 延长到了 7片记忆</p>
 </blockquote>
-<hr>
-<h1 id="投票机制">投票机制</h1>
-<h3 id="创建validator或cva">创建validator或cva</h3>
+<h3 id="总结与疑问">总结与疑问</h3>
+<p>总而言之，我猜想，<br>
+通过用大脑而非印象笔记来记忆感觉<br>
+会在主观上，延长时间<br>
+同时在文章最后引出疑问：<br>
+阅读、看视频、听音乐 等。从艺术作品中，得到的感觉，会让时间变长么<br>
+反刍之前体会过的感觉，这个回忆行为本身，能延长时间么</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[机器学习[2]:模型评估]]></title>
+        <id>https://blog.leepanda.top/post/ji-qi-xue-xi-2mo-xing-ping-gu/</id>
+        <link href="https://blog.leepanda.top/post/ji-qi-xue-xi-2mo-xing-ping-gu/">
+        </link>
+        <updated>2021-05-29T11:21:06.000Z</updated>
+        <content type="html"><![CDATA[<p>对生成的模型进行比较，以得到最好的训练结果。需要使用评估算法进行评估。</p>
+<h3 id="评估算法">评估算法</h3>
 <ul>
-<li>msd数量就是va的初始票数，msd对应的初始票不能一票多投。</li>
-<li>va可以是脱离node的存在。可以通过unbond操作使node和va分开。</li>
-<li>任意一个va最终所得票(share) == msd + 其他节点投给自己的token</li>
+<li>分离训练数据集和评估数据集
+<ul>
+<li>66.7% + 33.3%</li>
 </ul>
-<h3 id="注销va或cva">注销va或cva</h3>
-<p>状态改变<br>
-<code>bonded -&gt; unbonding -&gt; unbonded</code></p>
+</li>
+<li>K折交叉验证分离
 <ul>
-<li>该操作是赎回msd的唯一手段。</li>
+<li>把data分为K组，每组都单独做一次 validation_data</li>
 </ul>
-<h3 id="投票">投票</h3>
+</li>
+<li>弃一交叉验证分离
 <ul>
-<li>投票的权重每周衰减一次。</li>
+<li>data中的每一个数据，都做一次validation</li>
 </ul>
-<h3 id="撤销投票">撤销投票</h3>
-<p>就是撤销投票</p>
-<h3 id="抵押">抵押</h3>
-<p>就是抵押</p>
-<hr>
-<h3 id="如何出块">如何出块</h3>
-<p>252个块一轮，21个va轮流出块。<br>
-每轮结束 重新选举21个va。</p>
-<h3 id="如何选举">如何选举</h3>
-<p>share得票按数量排序，选前21个。其他为cva。</p>
-<h3 id="增发">增发</h3>
-<p>每年增发1%<br>
-没3秒一个块，一年有10512000个块。</p>
-<h3 id="奖励">奖励</h3>
-<p>每个块的奖励1/4给va，3/4给投票给va的va和cva们。<br>
-每个块上链时立刻结算，会存放到奖金池中，需要节点自己手动领取。</p>
-<hr>
-<h1 id="opendex">opendex</h1>
-<h3 id="基本功能">基本功能</h3>
+</li>
+<li>重复随机评估
 <ul>
-<li>上架数字资产交易对</li>
+<li>随机分组，作validation</li>
 </ul>
-<blockquote>
-<p>Dex运营方发型数字资产交易对，手续费20000OKT。</p>
-</blockquote>
-<ul>
-<li>下架数字资产交易对</li>
+</li>
 </ul>
-<blockquote>
-<p>DEX运营方下架数字资产交易对，手续费0.0125OKT。</p>
-</blockquote>
+<h3 id="混淆矩阵相关">混淆矩阵相关</h3>
+<h4 id="图形分类">图形分类</h4>
 <ul>
-<li>增加数字资产交易对撮合金</li>
+<li>错误率</li>
+<li>Accurancy</li>
+<li>Precision</li>
+<li>Recall</li>
+<li>F1-Score</li>
+<li>TPR</li>
+<li>FPR</li>
+<li>PRC曲线
+<ul>
+<li>Precision作Y，Recall作X</li>
+<li>曲线下方面积为1时，性能最理想。</li>
 </ul>
-<blockquote>
-<p>DEX运营方抵押任意数量OKT，优先撮合撮合金高的币对交易，手续费归DEX运营方</p>
-</blockquote>
+</li>
+<li>ROC曲线
 <ul>
-<li>提取数字资产交易对撮合金</li>
-<li>手续费</li>
+<li>TPR作Y，FPR作X</li>
+<li>AUC曲线的Y值为ROC曲线下方的面积</li>
+<li>曲线越靠左上，性能越好</li>
 </ul>
-<blockquote>
-<p>预先锁定259200个区块高度所使用的手续费(单位OKT)，余额不足下单失败，默认0.25920OKT。当订单被撮合或者过期时，将手续费分给BP节点们。<br>
-多余的手续费会返还。</p>
-</blockquote>
-<h3 id="额外功能">额外功能</h3>
-<ul>
-<li>限制数字资产交易对的高频上架</li>
-<li>限制重名币或诈骗币</li>
-<li>限制垃圾币和有价值的币之间产生系统资源竞争</li>
-<li>交易对所有权转移</li>
+</li>
 </ul>
-<hr>
-<h1 id="va-bond状态变换">va bond状态变换</h1>
-<p>每个va都维护了state变量，来描述va的合法性。是正常运行、崩溃、还是非法运行等。<br>
-va创建之后会进入unbonded状态。被区块确认权限之后，进入bonded状态。</p>
-<h3 id="bonded-unbonding">bonded -&gt; unbonding</h3>
+<h4 id="目标检测">目标检测</h4>
 <ul>
-<li>执行destroy validator</li>
-<li>出块超时</li>
-<li>正常轮替</li>
+<li>IOU</li>
+<li>AP</li>
+<li>mAP</li>
 </ul>
-<h3 id="unbonding-unbonded">unbonding -&gt; unbonded</h3>
+<h4 id="回归类型">回归类型</h4>
 <ul>
-<li>unbonding周期结束 自动进入unbonded</li>
+<li>MAE</li>
+<li>RMSE</li>
 </ul>
-<h3 id="unbonded-bonded">unbonded -&gt; bonded</h3>
+<h3 id="reference">Reference</h3>
 <ul>
-<li>正常轮替 (但是如果jailed，需要提前发起unjailed tx</li>
-</ul>
-<h3 id="unbonded-kicked-off">unbonded -&gt; kicked off</h3>
-<p>share 和msd都为0，就会被剔除va set。<br>
-也就是没人选它，把投给他的token都赎回。而且他自己也赎回了msd</p>
-<h3 id="unbonding-kicked-off">unbonding -&gt; kicked off</h3>
-<p>unbonding周期结束后，如果 share == 0 and msd == 0,就直接kicked off</p>
-<h3 id="unbonding-bonded">unbonding -&gt; bonded</h3>
-<p>无需等待unbonding周期结束，过程中如果share票数极高，排名在全网前21名内，直接进入bonded状态。</p>
-<hr>
-<h1 id="slashing">slashing</h1>
-<p>节点非法行为的处罚机制</p>
-<h3 id="在同一高度对多个block签名">在同一高度，对多个block签名。</h3>
-<ul>
-<li>罚款所有抵押的5%</li>
-<li>bonded -&gt; unbonding</li>
-<li>jailed 为 无期徒刑，不能上诉。</li>
-</ul>
-<h3 id="validator-漏签名了太多的block">validator 漏签名了太多的block</h3>
-<ul>
-<li>漏签50个block 会惩罚一次</li>
-<li>每次惩罚 va全部抵押的 1%</li>
-<li>jailed 600s 刑满之后，要主动发起unjailed tx才能被释放。</li>
-</ul>
-<h3 id="主动发送-destroy-validator交易">主动发送 destroy validator交易</h3>
-<ul>
-<li>bonded -&gt; unbonding</li>
-<li>unbonding -&gt; unbonding</li>
-<li>jailed 为无期徒刑</li>
-<li>msd进入赎回状态</li>
-</ul>
-<hr>
-<h1 id="遗留问题">遗留问题</h1>
-<h3 id="文档中的概念疑惑点">文档中的概念疑惑点</h3>
-<ul>
-<li>数字资产交易对是个啥</li>
-<li>最小自委托msd是什么</li>
-<li>va从unbonded到bonded这个确认promotion的过程怎么实现的？</li>
-<li>bonded到底是什么意思？区分va和cva?</li>
-<li>正常轮替是什么意思</li>
-<li>unbonding 周期具体实现？时间还是啥？</li>
-<li>va miss 签名 指的是不是 没有vote</li>
-<li>miss50  是连续还是累计？</li>
-</ul>
-<h3 id="可能出现的问题">可能出现的问题</h3>
-<ul>
-<li>返还手续费这个地方 有没有快乐溢出。</li>
-<li>余额不足下单失败的地方，有没有快乐溢出。</li>
-<li>如何限制重名币，是否存在恶意抢注币名</li>
-<li>恶意诬陷validator 使之jailed</li>
-<li>如何判定MSD初始票和一般票之间的区别，从而限制一票多投。</li>
-<li>赎回msd的时候，能不能做些文章，比如归还给谁；先还钱后注销；等问题。</li>
-<li>能不能给死人投票？只要票数足够，死人无法卸任？</li>
-<li>block出块时签名如果重用，直接死刑。这个如果能诬陷就严重了。</li>
-<li>以他人身份发送 destroy validator交易，判死刑</li>
+<li><a href="https://zhuanlan.zhihu.com/p/74493056">常见的模型算法评估指标 - 人工智能技术干货的文章 - 知乎</a></li>
 </ul>
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[一篇文章看懂cosmos重委托漏洞]]></title>
-        <id>https://blog.leepanda.top/post/yi-pian-wen-zhang-kan-dong-cosmos-chong-wei-tuo-lou-dong/</id>
-        <link href="https://blog.leepanda.top/post/yi-pian-wen-zhang-kan-dong-cosmos-chong-wei-tuo-lou-dong/">
+        <title type="html"><![CDATA[机器学习[1]:特征选择]]></title>
+        <id>https://blog.leepanda.top/post/ji-qi-xue-xi-1te-zheng-xuan-ze/</id>
+        <link href="https://blog.leepanda.top/post/ji-qi-xue-xi-1te-zheng-xuan-ze/">
         </link>
-        <updated>2021-05-29T10:39:17.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="摘要">摘要</h1>
-<p>Cosmos SDK 在 2019年 5 月底发现存在严重安全漏洞，该团队随后发布了补丁，并与全球验证人共同进行了升级，从收到漏洞报告到修复主网共用了72小时。</p>
-<blockquote>
-<p>攻击者可利用该漏洞绕过委托金赎回时的锁定时间。</p>
-</blockquote>
-<p>在介绍漏洞细节之前，先介绍一下cosmos的投票机制。</p>
-<h3 id="staking投票机制">staking：投票机制</h3>
-<p>Cosmos中持币人可以将自己的货币委托给validator，当validator出块时，持币人获得收益。<br>
-当持币人遇到了佣金更低、网络状态更好的validator，不想继续委托原来的validator时。<br>
-可以unbond之前的validator。这需要等待21天。21天结束之后，委托的货币会被返还，然后持币人就可以委托其他validator了。</p>
-<h3 id="redelegation一键更换validator">redelegation：一键更换validator</h3>
-<p>redelegation功能 使持币人不用等待21天的unbonding周期，可以立即更换至其他validators。<br>
-唯一的限制是21天时间内，最多更换7次validators。<br>
-目前 Cosmostation 钱包已经支持redelegation功能。<br>
-<img src="https://img-blog.csdnimg.cn/20200511143059990.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="redelegation截图" loading="lazy"></p>
-<h1 id="漏洞介绍">漏洞介绍</h1>
-<p>Cosmos重委托漏洞，使得持币人在赎回委托金时，不必再等待21天的时间。<br>
-Cosmos 团队的 Jack Zampolin 分享了一个程序，可以发现那些利用漏洞提前撤回委托的恶意交易。<br>
-<img src="https://img-blog.csdnimg.cn/20200511150056418.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="Jack Zampolin" loading="lazy"></p>
-<p>该漏洞导致7250个Atom代币被提前赎回，当时每个Atom价值6美元。<br>
-截止2019年5月31日，使用上述恶意方法解除委托的 Atoms 大约为43,500美元。</p>
-<h3 id="补丁代码分析">补丁代码分析</h3>
-<p>Cosmos SDK 0.34.6 版本发布了重委托漏洞的补丁，并在区块高度 482100 时（大约2019年5月31日早上 10 点）生效。</p>
-<p>cosmos重委托漏洞 补丁commit 链接如下：<br>
-<a href="https://github.com/cosmos/cosmos-sdk/commit/80234baf91a15dd9a7df8dca38677b66b8d148c1">https://github.com/cosmos/cosmos-sdk/commit/80234baf91a15dd9a7df8dca38677b66b8d148c1</a></p>
-<p>代码修改的重点在于<br>
-github.com/cosmos/cosmos-sdk/x/staking/keeper/delegation.go,L585-L638:<br>
-Keeper.Undelegate函数<br>
-<img src="https://img-blog.csdnimg.cn/20200511174633935.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="代码修改" loading="lazy"><br>
-可见Undelegate函数中592行做了一个硬分叉，分叉高度是<code>UndelegatePatchHeight</code>等于<code>482100</code>。</p>
-<p>在分叉高度前的代码中，有一处关于<code>completeNow</code>的判断</p>
-<pre><code class="language-go">if completeNow {
-	balance := sdk.NewCoin(k.BondDenom(ctx), returnAmount)
-	if !balance.IsZero() {
-		if _, err := k.bankKeeper.UndelegateCoins(ctx, delAddr, sdk.Coins{balance}); err != nil {
-			return completionTime, err
-		}
-	}
-	return completionTime, nil
-}
-</code></pre>
-<p>如果completeNow等于 True，就直接退还委托的货币，而无需等待21天。<br>
-在Keeper.getBeginInfo函数中，我们发现<br>
-要使completeNow == True，需要<code>validator.status == sdk.Unbonded</code><br>
-<img src="https://img-blog.csdnimg.cn/20200511200014718.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="completeNow=True" loading="lazy"></p>
-<h3 id="不同的completetime-completenow">不同的completeTime / completeNow</h3>
-<p>当持币人想要撤销对validator的委托时，需要等待completeTime后，委托金才会返还给持币人。<br>
-对于completeTime，不同情况有不同的值。</p>
+        <updated>2021-05-29T11:19:34.000Z</updated>
+        <content type="html"><![CDATA[<p>数据和特征 限定了机器学习性能的上限，优化 模型和算法 来逼近这个上限</p>
+<h3 id="特征处理">特征处理</h3>
 <ul>
-<li>如果validator此时是Bonded状态，赎回委托金需要经历21天的时间。</li>
-<li>如果validator处于UnBonding状态，持币人从该validator解绑定需要的锁定期等于该validator的锁定期（小于或等于21天）。</li>
-<li>如果validator处于UnBonded状态，则不需要锁定期，持币人抵押的股权可立即变回代币。这也就是上面代码中提到的<code>validator.status == sdk.Unbonded</code>则<code>completeNow == True</code></li>
+<li>预处理</li>
+<li>特征选择</li>
+<li>降维</li>
 </ul>
-<p>这样设计的本意的是，当validator节点因作恶或意外被Jail后，持币人可以尽快取回抵押的股权，避免造成损失。</p>
-<h3 id="漏洞利用方法">漏洞利用方法</h3>
-<p>攻击者想要撤销对validatorA的委托，拿回委托金。但是又不想等待21天的unbonding。<br>
-于是攻击者使用cosmostation钱包提供的redelegation方法，将委托对象立刻转换为一个状态为Unbonded的validator。<br>
-接着再进行undelegate操作，Keeper.Undelegate函数收到<code>completeNow == True</code><br>
-便调用<code>k.bankKeeper.UndelegateCoins</code>立刻归还了委托金。<br>
-攻击者便可以绕过锁定期限制，瞬间赎回委托金。</p>
-<h3 id="漏洞危害">漏洞危害</h3>
-<p>漏洞不会造成用户的财产损失，但是可以让攻击者绕过21天的委托金锁定。<br>
-这会让cosmos设计的经济模型变得不稳定，破坏交易的公平。</p>
+<h3 id="特征选择的意义">特征选择的意义</h3>
+<ul>
+<li>降低拟合度</li>
+<li>预测结果更精确</li>
+<li>减少模型训练时间</li>
+</ul>
+<p>无关的特征会降低魔性的额准确度，尤其是线性算法(线性回归算法、逻辑回归算法)</p>
+<h3 id="特征选择的方法">特征选择的方法</h3>
+<ul>
+<li>单变量特征选择</li>
+<li>递归特征消除 RFE</li>
+<li>主要成分分析 PCA</li>
+<li>特征重要性</li>
+</ul>
+<h3 id="单变量特征选择">单变量特征选择</h3>
+<ul>
+<li>卡方检验法</li>
+<li>相关系数法</li>
+<li>互信息法</li>
+</ul>
+<p>卡方检验法代码</p>
+<pre><code class="language-python">#coding=utf-8
+from pandas import read_csv
+from numpy import set_printoptions
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+
+# 导入数据
+filename = 'iris.data'
+names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
+data = read_csv(filename, names=names)
+array = data.values
+
+X = array[:, 0:4] # 输入数据
+Y = array[:,4] # 输出结果
+
+ret=SelectKBest(score_func=chi2, k=2).fit(X,Y)
+print(ret.scores_) # 分数最高的那个属性 就是 最有决定性的特征
+features = ret.transform(X)
+print(features) # 查看分数最高的那K个属性 对应的数据
+#print(fit.scores_)
+</code></pre>
+<h3 id="递归特征消除">递归特征消除</h3>
+<ul>
+<li>线性回归</li>
+<li>逻辑回归</li>
+</ul>
+<p>逻辑回归法代码</p>
+<pre><code class="language-python">from pandas import read_csv
+from sklearn.feature_selection import RFE 
+from sklearn.linear_model import LogisticRegression
+
+filename = &quot;./iris.data&quot;
+names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
+array = read_csv(filename, names=names).values
+
+X=array[:,0:4]
+Y=array[:,4]
+
+model=LogisticRegression()
+fit = RFE(model, 1).fit(X,Y)
+print(&quot;所有特征:&quot;)
+print(fit.n_features_)
+print(&quot;被选中的特征:&quot;)
+print(fit.support_)
+print(&quot;特征排名&quot;)
+print(fit.ranking_)
+</code></pre>
+<h3 id="主要成分分析">主要成分分析</h3>
+<ul>
+<li>PCA</li>
+<li>LDA</li>
+</ul>
+<p>PCA算法代码</p>
+<pre><code>from pandas import read_csv
+from sklearn.decomposition import PCA
+
+filename = &quot;./iris.data&quot;
+names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
+array = read_csv(filename,names=names).values
+
+X = array[:,0:4]
+Y = array[:,4]
+
+fit = PCA(n_components=1).fit(X)
+print(fit.components_)
+</code></pre>
+<h3 id="特征重要性">特征重要性</h3>
+<ul>
+<li>袋装决策树算法</li>
+<li>随机森林算法</li>
+<li>极端随机树算法</li>
+</ul>
+<p>极端随机树算法代码</p>
+<pre><code class="language-python">from pandas import read_csv
+from sklearn.ensemble import ExtraTreesClassifier
+
+filename = &quot;./iris.data&quot;
+names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
+array = read_csv(filename, names=names).values
+
+X=array[:,0:4]
+Y=array[:,4]
+
+fit = ExtraTreesClassifier().fit(X,Y)
+print(fit.feature_importances_)
+</code></pre>
+<h3 id="总结">总结</h3>
+<p>上述代码都可以评估出，蝴蝶花的花瓣长度 是最能确定蝴蝶花种类的属性。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[软件工程备考简答题总结]]></title>
+        <id>https://blog.leepanda.top/post/ruan-jian-gong-cheng-bei-kao-jian-da-ti-zong-jie/</id>
+        <link href="https://blog.leepanda.top/post/ruan-jian-gong-cheng-bei-kao-jian-da-ti-zong-jie/">
+        </link>
+        <updated>2021-05-29T11:17:48.000Z</updated>
+        <content type="html"><![CDATA[<p>此版本复习提纲仅适用于 江苏大学陈雷老师班</p>
+<h3 id="第一章-软件工程概述">第一章 软件工程概述</h3>
+<ul>
+<li>
+<p>软件的特点</p>
+<ul>
+<li>无法观察物理形态</li>
+<li>在软件的开发过程、工程管理过程中渗透了大量的脑力劳动</li>
+<li>无磨损、老化</li>
+<li>需要在特定的计算机系统环境下运行</li>
+<li>有复用性</li>
+</ul>
+</li>
+<li>
+<p>软件工程的提出目的是:</p>
+<ul>
+<li>解决软件危机带来的诸多弊端
+<ul>
+<li>控制开发成本在预期范围内</li>
+<li>交付满足用户需求的软件</li>
+<li>软件的功能可靠</li>
+<li>软件的品质优秀</li>
+<li>控制软件的开发时间</li>
+<li>软件易于维护</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>目标、过程、原则</p>
+<ul>
+<li>目标：低成本、高品质、及时交付软件</li>
+<li>过程：基本过程、支持过程、组织过程</li>
+<li>原则：
+<ul>
+<li>适宜的开发泛型</li>
+<li>适宜的设计方法</li>
+<li>高品质的工程支持</li>
+<li>开发过程的管理</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="第二章-开发模型">第二章 开发模型</h3>
+<ul>
+<li>
+<p>四种开发模型的对比</p>
+<ul>
+<li>瀑布模型
+<ul>
+<li>顺序执行、不可回退</li>
+</ul>
+</li>
+<li>快速原型模型
+<ul>
+<li>快速获取用户的需求</li>
+</ul>
+</li>
+<li>增量模型
+<ul>
+<li>产品灵活可以变更需求</li>
+</ul>
+</li>
+<li>螺旋模型
+<ul>
+<li>在 快速原型模型 和 增量模型的基础上 添加了 风险管理</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>XP模型</p>
+<ul>
+<li>客户参与、适应变化、测试驱动、以代码为核心</li>
+</ul>
+</li>
+<li>
+<p>敏捷思想的核心价值观</p>
+<ul>
+<li>注重个人和交互</li>
+<li>注重能工作的软件</li>
+<li>提高客户的参与程度</li>
+<li>以积极的心态响应需求变化</li>
+</ul>
+</li>
+</ul>
+<h3 id="第三章-需求分析">第三章 需求分析</h3>
+<ul>
+<li>
+<p>结构化的具体步骤如下:</p>
+<ul>
+<li>建立当前系统的具体模型</li>
+<li>生成当前系统的逻辑模型</li>
+<li>建立目标系统的逻辑模型</li>
+</ul>
+</li>
+<li>
+<p>需求分析的过程：</p>
+<ul>
+<li>需求获取:调查软件需求</li>
+<li>需求分析:分析建模、对现实世界进行抽象</li>
+<li>需求说明:编写需求文档</li>
+<li>需求验证:需求评审</li>
+</ul>
+</li>
+<li>
+<p>人们对事物的认识是不断深化的，因此需求迭代是一个过程。</p>
+<ul>
+<li>这种迭代存在风险，会使上一次迭代因为需求不足而被推翻</li>
+<li>软件分析师应意识到迭代中风险的必然性。积极面对需求变更</li>
+</ul>
+</li>
+<li>
+<p>评审的作用</p>
+<ul>
+<li>作用:为了尽早消除需求中的错误，确保需求说明的准确、完整</li>
+<li>必要性:需求说明书中都是自然语言，需要确定语言的准确</li>
+</ul>
+</li>
+<li>
+<p>数据流图的作用</p>
+<ul>
+<li>抽象的表示系统和软件</li>
+<li>从信息加工的角度，自顶向下、逐步求精的表示功能细节</li>
+<li>提供了功能建模的机制 、 信息流建模的机制</li>
+<li>建立起系统或软件的功能模型</li>
+</ul>
+</li>
+</ul>
+<h3 id="第四章-软件设计">第四章 软件设计</h3>
+<ul>
+<li>
+<p>软件设计</p>
+<ul>
+<li>输入：需求规格说明书</li>
+<li>输出：设计规格说明书</li>
+<li>目标：需求模型转设计模型</li>
+<li>过程：层层分解、逐步求精</li>
+</ul>
+</li>
+<li>
+<p>软件设计是对软件需求进行：</p>
+<ul>
+<li>数据设计</li>
+<li>体系结构设计</li>
+<li>接口设计</li>
+<li>构件设计</li>
+<li>部署设计</li>
+</ul>
+</li>
+<li>
+<p>软件设计优化的准则如下:</p>
+<ul>
+<li>相关的各部分放到一起、不相关的不放到一起</li>
+<li>模块的大小要适中</li>
+<li>模块的接口简明扼要</li>
+<li>作用范围在控制范围内</li>
+<li>软件的深度、宽度、扇入扇出要适当</li>
+<li>单入口、单出口</li>
+<li>可预测模块的划分</li>
+</ul>
+</li>
+</ul>
+<h3 id="第五章-测试">第五章 测试</h3>
+<ul>
+<li>
+<p>测试和调试的不同</p>
+<ul>
+<li>测试：尽可能发现错误</li>
+<li>调试：尽可能修复错误</li>
+</ul>
+</li>
+<li>
+<p>静态测试和动态测试的不同</p>
+<ul>
+<li>静态测试：人工审计、仔细阅读文档、检查软件的执行情况是否与设计规格说明书一致</li>
+<li>动态测试：依赖软件的执行、测试用例来判断是否符合设计规格说明书</li>
+</ul>
+</li>
+<li>
+<p>软件测试分为：</p>
+<ul>
+<li>单元测试</li>
+<li>集成测试</li>
+<li>系统测试</li>
+<li>验收测试</li>
+</ul>
+</li>
+<li>
+<p>每一个测试活动有5个过程：</p>
+<ul>
+<li>测试计划制定、测试设计、测试样例生成、测试实施、测试报告</li>
+</ul>
+</li>
+</ul>
+<h3 id="第七章-需求分析方法">第七章 需求分析方法</h3>
+<ul>
+<li>
+<p>类的外部关联有3中关系</p>
+<ul>
+<li>关联</li>
+<li>继承</li>
+<li>依赖</li>
+</ul>
+</li>
+<li>
+<p>事件跟踪图</p>
+<ul>
+<li>表示事件顺序和事件和对象的关系</li>
+<li>时间从上到下递增</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十一章-软件项目管理方法">第十一章 软件项目管理方法</h3>
+<ul>
+<li>
+<p>软件项目管理和软件工程的区别和关系：</p>
+<ul>
+<li>目标相同：都是围绕软件产品开发的管理</li>
+<li>作用不同：软件工程是软件开发的方法论，软件项目管理是生产管理形式。</li>
+<li>关联：软件项目管理是软件工程的载体</li>
+</ul>
+</li>
+<li>
+<p>度量方法</p>
+<ul>
+<li>代码行度量</li>
+<li>功能点度量</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十三章-软件配置">第十三章 软件配置</h3>
+<ul>
+<li>
+<p>风险识别3步：</p>
+<ul>
+<li>资料收集</li>
+<li>估计项目风险形式</li>
+<li>识别风险</li>
+</ul>
+</li>
+<li>
+<p>软件质量：</p>
+<ul>
+<li>提供的软件产品满足用户的明确和隐含需求的能力特性总和。</li>
+</ul>
+</li>
+<li>
+<p>软件配置管理中的基本单元：软件配置项</p>
+<ul>
+<li>软件的文档、程序、数据进行整合
+<ul>
+<li>以利于软件的定义、标识、跟踪、管理，使其成为受控的软件版本产品</li>
+<li>这一过程成为软件配置管理</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十四章-软件维护">第十四章 软件维护</h3>
+<ul>
+<li>
+<p>软件维护的工作程序与软件开发的工作程序相仿</p>
+<ul>
+<li>维护的需求分析</li>
+<li>维护的设计</li>
+<li>修改程序代码</li>
+<li>维护后的测试</li>
+<li>维护后的试运行</li>
+<li>维护后的正式运行</li>
+<li>维护过程的评审和审计</li>
+</ul>
+</li>
+<li>
+<p>面向缺陷维护的内容</p>
+<ul>
+<li>该产品正常运行，但是个别地方存在缺陷。</li>
+<li>用户不满意，克服缺陷的方法是修改程序。</li>
+<li>修改程序而不修改结构</li>
+</ul>
+</li>
+<li>
+<p>文档是指记录数据的媒体和数据本身。</p>
+<ul>
+<li>永久性</li>
+<li>描述人工可读的东西</li>
+<li>表述活动、需求、过程或结果的描述、定义、规定或认证。</li>
+<li>规定了实现的细节。</li>
+</ul>
+</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[《思维导图》读书笔记]]></title>
+        <id>https://blog.leepanda.top/post/lesslesssi-wei-dao-tu-greatergreater-du-shu-bi-ji/</id>
+        <link href="https://blog.leepanda.top/post/lesslesssi-wei-dao-tu-greatergreater-du-shu-bi-ji/">
+        </link>
+        <updated>2021-05-29T11:16:56.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="前言">前言</h3>
+<p>为了加强记忆，学习了《思维导图》一书。<br>
+该书认为应当 使用 <code>线条自然</code>、<code>横向</code>、<code>色彩绚丽</code>、<code>以图形表意</code> 的 思维导图 来帮助记录知识点。<br>
+我根据自己的需要，用思维导图记录了书中介绍的，<code>高效记忆方法</code> 和 <code>问题分析方法</code></p>
+<h3 id="高效记忆">高效记忆</h3>
+<p><img src="https://img-blog.csdnimg.cn/20210311002216762.png" alt="RAM" loading="lazy"><br>
+高效记忆的留个关键技巧 图中从12点方向逆时针分别是</p>
+<ul>
+<li>专注：全神贯注地做事，感受</li>
+<li>理解：对事件充分理解，感受细节</li>
+<li>重复：一段时间后重复记忆</li>
+<li>联动：离散的知识点之间联想。增强记忆</li>
+<li>感官：场景可以与感官联动。比如恋人的气味。</li>
+<li>情景：向知识点中加入故事情节。</li>
+</ul>
+<h3 id="思考能力-提升">思考能力 提升</h3>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20210311002240436.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="CPU" loading="lazy"></figure>
+<p>对于一个命题，可以分析的方向如下:</p>
+<ul>
+<li>抽象</li>
+<li>比较</li>
+<li>分类</li>
+<li>解析</li>
+<li>集成</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[合约安全[4]:为啥说UniswapK值不那么守恒]]></title>
+        <id>https://blog.leepanda.top/post/he-yue-an-quan-4wei-sha-shuo-uniswapk-zhi-bu-na-me-shou-heng/</id>
+        <link href="https://blog.leepanda.top/post/he-yue-an-quan-4wei-sha-shuo-uniswapk-zhi-bu-na-me-shou-heng/">
+        </link>
+        <updated>2021-05-29T11:15:39.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="前言">前言</h1>
+<p>诶嘿，刚审计了个Swap项目，项目的Swap函数手续费收了两次...<br>
+为了把问题描述的清晰一些，我仔细地追了一下swap中手续费的计算方法。</p>
+<p>于是机缘巧合的发现了<code>Uniswap</code> K值检查的奇妙，和我想象中的检查方式有些差别。<br>
+本文做一个技术点的记录和分享。</p>
+<p><ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86">前置知识</a>
+<ul>
+<li><a href="#amm%E7%9A%84k%E5%80%BC%E5%AE%88%E6%81%92">AMM的K值守恒</a></li>
+</ul>
+</li>
+<li><a href="#%E9%97%AE%E9%A2%98%E5%8F%91%E7%8E%B0">问题发现</a><br>
+*
+<ul>
+<li><a href="#%E4%B8%BA%E5%95%A5%E4%B8%8D%E6%98%AF%E5%B0%8F%E4%BA%8Ek%E5%80%BC">为啥不是小于K值</a></li>
+<li><a href="#%E4%B8%BA%E5%95%A5%E8%BF%98%E8%83%BD%E5%A4%A7%E4%BA%8Ek%E5%80%BC">为啥还能大于K值</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E7%A2%8E%E7%A2%8E%E5%BF%B5">碎碎念</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8">引用</a></li>
+</ul>
+</p>
+<h1 id="前置知识">前置知识</h1>
+<h2 id="amm的k值守恒">AMM的K值守恒</h2>
+<p>在AMM中进行交易，遵循K值守恒原则，Swap前后的reverse乘积不变。<br>
+详细兑换原理，可查看 <a href="https://hackmd.io/@HaydenAdams/HJ9jLsfTz#Example-ETH-%E2%86%92-OMG">uniswap解析与举例</a></p>
+<h1 id="问题发现">问题发现</h1>
+<p>在描述问题过程之前，笔者奉上<code>UniswapV2Pair:swap</code>的代码以便查阅:</p>
+<pre><code class="language-javascript">    // this low-level function should be called from a contract which performs important safety checks
+    function swap(uint amount0Out, uint amount1Out, address to, bytes calldata data) external lock {
+        require(amount0Out &gt; 0 || amount1Out &gt; 0, 'UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT');
+        (uint112 _reserve0, uint112 _reserve1,) = getReserves(); // gas savings
+        require(amount0Out &lt; _reserve0 &amp;&amp; amount1Out &lt; _reserve1, 'UniswapV2: INSUFFICIENT_LIQUIDITY');
+
+        uint balance0;
+        uint balance1;
+        { // scope for _token{0,1}, avoids stack too deep errors
+        address _token0 = token0;
+        address _token1 = token1;
+        require(to != _token0 &amp;&amp; to != _token1, 'UniswapV2: INVALID_TO');
+        if (amount0Out &gt; 0) _safeTransfer(_token0, to, amount0Out); // optimistically transfer tokens
+        if (amount1Out &gt; 0) _safeTransfer(_token1, to, amount1Out); // optimistically transfer tokens
+        if (data.length &gt; 0) IUniswapV2Callee(to).uniswapV2Call(msg.sender, amount0Out, amount1Out, data);
+        balance0 = IERC20Uniswap(_token0).balanceOf(address(this));
+        balance1 = IERC20Uniswap(_token1).balanceOf(address(this));
+        }
+        uint amount0In = balance0 &gt; _reserve0 - amount0Out ? balance0 - (_reserve0 - amount0Out) : 0;
+        uint amount1In = balance1 &gt; _reserve1 - amount1Out ? balance1 - (_reserve1 - amount1Out) : 0;
+        require(amount0In &gt; 0 || amount1In &gt; 0, 'UniswapV2: INSUFFICIENT_INPUT_AMOUNT');
+        { // scope for reserve{0,1}Adjusted, avoids stack too deep errors
+        uint balance0Adjusted = balance0.mul(1000).sub(amount0In.mul(3));
+        uint balance1Adjusted = balance1.mul(1000).sub(amount1In.mul(3));
+        require(balance0Adjusted.mul(balance1Adjusted) &gt;= uint(_reserve0).mul(_reserve1).mul(1000**2), 'UniswapV2: K');
+        }
+
+        _update(balance0, balance1, _reserve0, _reserve1);
+        emit Swap(msg.sender, amount0In, amount1In, amount0Out, amount1Out, to);
+    }
+</code></pre>
+<p>根据AMM的K值守恒要求，当Swap完成时，uniswap底层应检查一下K值是否与交易前相等。<br>
+代码大概是 <code>balance0 * balance1 == K</code>这样子，至少应该是个<code>等于号</code>。<br>
+但是当我们跟进到<code>UniswapV2Pair:swap</code>函数时，发现检查K值守恒的用的是<code>&gt;=</code>号，对应代码是</p>
+<pre><code class="language-javascript">require(balance0Adjusted.mul(balance1Adjusted) &gt;= uint(_reserve0).mul(_reserve1).mul(1000**2), 'UniswapV2: K');
+</code></pre>
+<p>嘿嘿，神奇啊。这和预期的K值守恒完全不是一个意思呀。<br>
+带着充满好奇的满心欢喜，我们瞅瞅上面代码是咋写的。<br>
+等号左边儿咋害能比K值大呢?</p>
+<pre><code class="language-javascript">        uint balance0Adjusted = balance0.mul(1000).sub(amount0In.mul(3));
+        uint balance1Adjusted = balance1.mul(1000).sub(amount1In.mul(3));
+</code></pre>
+<p>瞅这两行，<code>balance0Adjusted</code>和<code>balance1Adjusted</code>是pair新余额的校准值。<br>
+校准的部分是刨去手续费的<code>amountIn</code>。<br>
+看到这里我就更懵了: 这一Adjust后，balance更小了。<br>
+这乘积肯定比K值小啊，咋害能大呢。</p>
+<h3 id="为啥不是小于k值">为啥不是小于K值</h3>
+<p>我们仔细看一下<code>amountIn</code>的来源，</p>
+<pre><code class="language-javascript">uint amount0In = balance0 &gt; _reserve0 - amount0Out ? balance0 - (_reserve0 - amount0Out) : 0;
+</code></pre>
+<p>可见<code>amountIn</code> 是 <code>真实balance - (reverse - amountOut)</code><br>
+所以<code>amountIn</code> 的含义是 <code>真实的输入量</code>，即包含<code>0.3%</code>手续费的那个<code>100%AmountIn</code>。</p>
+<p>这么一看我就悟了。<br>
+哦，我的老伙计。<br>
+用户把钱打进来的地方可是在swap函数调用之前呀。<br>
+如<code>UniswapV2Router02.sol:swapExactTokensForTokens</code>:</p>
+<pre><code class="language-javascript">    function swapExactTokensForTokens(
+        uint amountIn,
+        uint amountOutMin,
+        address[] calldata path,
+        address to,
+        uint deadline
+    ) external virtual override ensure(deadline) returns (uint[] memory amounts) {
+        amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path);
+        require(amounts[amounts.length - 1] &gt;= amountOutMin, 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
+        TransferHelper.safeTransferFrom(
+            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]
+        );
+        _swap(amounts, path, to);
+    }
+</code></pre>
+<ul>
+<li>打钱的地方是<code>TransferHelper.safeTransferFrom</code></li>
+<li>这时候<code>balance</code>发生变化，增加了<code>100%AmountIn</code></li>
+<li>但是下面<code>_swap</code>兑换的时候，用的<code>AmountOut</code>是<code>getAmountOut</code>return的那个<code>99.7%AmountOut</code>。</li>
+<li>剩余的<code>0.3%feeValue</code>被留在了pair里面，造成了输入币<code>reverse</code>的增大。</li>
+</ul>
+<p>后面<code>pair.swap</code>时，通过<code>校准</code>将这<code>0.3%</code>异常抹除。<br>
+这时再比较K值，就不是小于而是相等啦。</p>
+<h3 id="为啥还能大于k值">为啥还能大于K值</h3>
+<p>ok <code>不是小于而是相等</code>的问题解决了。<br>
+剩下就是 <code>Uniswap</code>为啥还留了个<code>大于号</code>。</p>
+<pre><code class="language-javascript">require(balance0Adjusted.mul(balance1Adjusted) &gt;= uint(_reserve0).mul(_reserve1).mul(1000**2), 'UniswapV2: K');
+</code></pre>
+<p>要搞清楚这个问题，我们需要回到Uniswap第一次开始检查<code>K值守恒</code>的时间点:<br>
+<code>commit:580787051ed66b75210c14269a3a48b4bcdee620</code></p>
+<p>在这个版本中，人类历史上首次提出了<code>&quot;UniswapV2: K&quot;</code>的要求</p>
+<pre><code class="language-javascript">        } else {
+            ...
+            require(amountIn.mul(reserve0 - amountOut).mul(997) &gt;= amountOut.mul(reserve1).mul(1000), &quot;UniswapV2: K&quot;);
+            ...
+        }
+</code></pre>
+<p>哭辽，原来<code>swap方法</code>从一开始就没想过<code>等价交换</code>或者什么<code>K值守恒</code><br>
+它只是要求 扣除手续费后的<code>AmountIn</code> 要大于等于 取走的<code>AmountOut</code><br>
+换句话说:<br>
+<strong>你往<code>pair</code>里面多扔钱我不拦着；想多拿走?绝不可能!(╬￣皿￣)=○</strong></p>
 <h1 id="总结">总结</h1>
-<p>cosmos重委托漏洞的本质，是新功能redelegation和旧功能unbonded立刻赎回机制，两者的逻辑出现冲突。<br>
-在开发过程中，开发人员需要对新功能可能涉及到的旧代码有充分的了解。</p>
-<h1 id="参考资料">参考资料</h1>
-<blockquote>
-<p><a href="https://blog.csdn.net/yelong0201/article/details/79643072">Cosmos staking module</a><br>
-<a href="https://medium.com/node-a-team/cosmos-hub-security-vulnerability-regarding-redelegation-and-unbonding-e6a2cf03e928">Node A-Team 分析文章 Cosmos Hub Security Vulnerability regarding Redelegation and Unbonding</a><br>
-<a href="https://www.chainnews.com/articles/159067316137.htm">Cosmos攻略：Staking 新手实用工具指南</a><br>
-<a href="https://blog.csdn.net/weixin_37504041/article/details/100164596">cosmos源码分析之四Staking模块</a><br>
-<a href="https://forum.cosmos.network/u/jessysaurusrex/activity/topics">jessysaurusrex 记录的几个cosmos 1day</a><br>
-<a href="https://www.jianshu.com/p/0878e5be0546">Cosmos的解绑定漏洞分析</a></p>
-</blockquote>
+<p>这么一追，我悟了。<br>
+<code>&gt;=</code>设计本身就是一个合约的利己行为。<br>
+Swap的K值守恒也只是限制<code>user</code>别换走额外的钱，<br>
+但你要是无偿提供点流动性，本合约绝不拦你~ ╰(￣▽￣)╭</p>
+<h1 id="碎碎念">碎碎念</h1>
+<p>使用<code>&gt;=</code>而不是<code>==</code>，放宽了K值守恒的限制，<br>
+这意味着攻击者有了更多的操作空间。<br>
+至于能怎么利用这个<code>小trick</code>，以后再想吧...</p>
+<h1 id="引用">引用</h1>
+<ul>
+<li><a href="https://hackmd.io/@HaydenAdams/HJ9jLsfTz#Providing-Liquidity">Uniswap Whitepaper</a></li>
+<li><a href="https://github.com/Uniswap/uniswap-v2-core/">Uniswap Core</a></li>
+<li><a href="https://github.com/Uniswap/uniswap-v2-periphery">Uniswap Periphery</a></li>
+</ul>
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[合约安全(2) Bancor Network权限配置错误漏洞]]></title>
-        <id>https://blog.leepanda.top/post/he-yue-an-quan-2-bancor-network-quan-xian-pei-zhi-cuo-wu-lou-dong/</id>
-        <link href="https://blog.leepanda.top/post/he-yue-an-quan-2-bancor-network-quan-xian-pei-zhi-cuo-wu-lou-dong/">
+        <title type="html"><![CDATA[合约安全[3]: BurgerSwap重入漏洞]]></title>
+        <id>https://blog.leepanda.top/post/he-yue-an-quan-3-burgerswap-chong-ru-lou-dong/</id>
+        <link href="https://blog.leepanda.top/post/he-yue-an-quan-3-burgerswap-chong-ru-lou-dong/">
         </link>
-        <updated>2021-05-29T10:35:33.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="abstract">Abstract</h1>
-<p>2020年6月16日,BancorV2上线以太坊主网。<br>
-2020年6月18日,Bancor Network团队发现了其BancorV2智能合约的安全漏洞。<br>
-<img src="https://img-blog.csdnimg.cn/20200706154156887.png" alt="Bancor团队发现漏洞" loading="lazy"><br>
-漏洞导致攻击者可盗取Bancor合约用户的资产。<br>
-本文将介绍一下攻击的细节和这次安全事件的始末。</p>
-<h1 id="漏洞原理">漏洞原理</h1>
-<p>本次安全事件一共涉及三个有漏洞的智能合约。</p>
+        <updated>2021-05-29T11:14:47.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="前言">前言</h1>
+<p>2020年10月22日，<a href="https://burgerswap.org">Zengo</a>团队的Oded Leiba，发表了他在<a href="https://burgerswap.org">BurgerSwap</a>中发现的<a href="https://zengo.com/burgerswap-vulnerability/">重入漏洞</a>。<br>
+本文将翻译并解读漏洞的原理。</p>
+<p><ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86">基础知识</a>
 <ul>
-<li>0x8dfeb86c7c962577ded19ab2050ac78654fea9f7</li>
-<li>0x5f58058C0eC971492166763c8C22632B583F667f</li>
-<li>0x923cab01e6a4639664aa64b76396eec0ea7d3a5f</li>
+<li><a href="#amm">AMM</a></li>
+<li><a href="#%E6%B5%81%E5%8A%A8%E6%80%A7">流动性</a></li>
+<li><a href="#%E5%B8%81%E5%AF%B9">币对</a></li>
+<li><a href="#weth">WETH</a></li>
 </ul>
-<p>三个合约内容相似，都实现了 TokenHandler contract<br>
-该合约关键functions如下:<br>
-<img src="https://img-blog.csdnimg.cn/20200706155529256.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="TokenHandler Fucntions" loading="lazy">可见实现了三个关键函数</p>
-<pre><code>safeApprove
-safeTransfer
-safeTransferFrom
-</code></pre>
-<p>非预期的是，三个函数的Access Control全都是public，<br>
-意味着任何人可以调用该函数来进行转账操作。<br>
-攻击者可以调用 safeTransferFrom函数，其中<code>_from</code>设为任何该合约的用户,<code>_to</code>设为攻击者自己的address。从而无限制的将用户的token转移到自己的钱包。</p>
-<h3 id="遗留问题">遗留问题</h3>
-<p>调用transferFrom时，需要<code>_from</code>用户有足够的<code>allowance</code>,如果<code>_value</code>超过了<code>allowance</code>应该会报错才对。<br>
-所以上文中<code>_from</code>可以设置的用户，必须有调用过approve函数来批准合约操作自己的token。</p>
-<h1 id="rescue">rescue</h1>
-<p>Bancor Network Team 发现漏洞后，立刻利用该漏洞，将所有用户的token向BancorNetwork安全账户转移。抢在被恶意攻击之前，将合约中的token掏空。<br>
-对应的Transaction如下</p>
+</li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%BF%B0">漏洞概述</a></li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86">漏洞原理</a></li>
+<li><a href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88">修复方案</a>
 <ul>
-<li>0xc8021b971e69e60c5deede19528b33dcd52cdbd8</li>
-<li>0x14fa61fd261ab950b9ce07685180a9555ab5d665</li>
+<li><a href="#checks-effects-interactions-%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83">Checks-Effects-Interactions 编码规范</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0%E9%94%81-lock-modifier">函数锁 lock modifier</a></li>
 </ul>
-<p>我们使用在线工具<a href="https://oko.palkeo.com/0xdba03739b4a29594fd3c89881caffa1862ce4bd630ed5f849b9f22707332e59e/">OKO Contract Explorer</a>来分析一下<br>
-发现Transaction 中主要调用了 balanceOf 、 allowance 和 safeTransforFrom三个函数<br>
-其中SafeTransforFrom就是刚才提到的漏洞函数<br>
-<img src="https://img-blog.csdnimg.cn/20200706164538338.png" alt="SafeTransforFrom" loading="lazy"><br>
-balanceOf和allowance用来查看当前token数量，和<code>_spender</code>可以操作的Token数量<br>
-<img src="https://img-blog.csdnimg.cn/20200706164426478.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="balanceOf和allowance" loading="lazy"><br>
-奇怪的是，每次调用allowance，返回的结果都极大。<br>
-如图中，0x8dfe居然Approve了<code>0xfffffffffffffffffffffffffffffffffffffffffffffecf2ccab1d2176d6ebb</code>这么多的DATA<br>
-DATA的总发行量也没有这么多呀<br>
-结合Bancor Network 官方Twitter的描述:<br>
-<img src="https://img-blog.csdnimg.cn/20200706171247966.png" alt="Given Approvals" loading="lazy"><br>
-我们猜测是BancorV2用户为了操作方便，直接进行了infinite approve.<br>
-这也就解释了上文中的allowance超额的问题。</p>
-<h1 id="discussion">Discussion</h1>
-<p>综上所述，上线仅一天的BancorV2,由于函数的Access Control存在问题，存在盗笔风险。<br>
-受该漏洞影响的token总价值为$409,656。<br>
-另一方面，从代码审计的角度来讲，Access Control Setting Error是很简单很好理解的漏洞。<br>
-为了Defi应用的安全，项目上线之前还是请安全团队来进行一次代码审计吧</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[合约安全(1) Balancer中通货紧缩货币的套利攻击详解]]></title>
-        <id>https://blog.leepanda.top/post/he-yue-an-quan-1balancer-zhong-tong-huo-jin-suo-huo-bi-de-tao-li-gong-ji-xiang-jie/</id>
-        <link href="https://blog.leepanda.top/post/he-yue-an-quan-1balancer-zhong-tong-huo-jin-suo-huo-bi-de-tao-li-gong-ji-xiang-jie/">
-        </link>
-        <updated>2021-05-29T10:32:15.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="abstract">Abstract</h1>
-<p>消息来源：2020.6.29 链闻看天下<br>
-<a href="https://www.chainnews.com/articles/961746731123.htm">当红流动性挖矿 DeFi 项目 Balancer 如何被攻击？官方这么说</a><br>
-文中简要描述了攻击发生时间和危害，没有详细描述漏洞细节。</p>
-<p>漏洞详细介绍可参考文章<a href="https://medium.com/@1inch.exchange/balancer-hack-2020-a8f7131c980e">《Balancer Pool with STA Deflationary Token Incident》</a></p>
-<h1 id="概念介绍">概念介绍</h1>
-<h3 id="滑点-slippage">滑点 slippage</h3>
-<p>在买卖 token 时，期望的交易价格和实际支付的价格之间的差别，称之为交易滑点。</p>
-<h3 id="流通池">流通池</h3>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8">引用</a></li>
+</ul>
+</p>
+<h1 id="基础知识">基础知识</h1>
+<h2 id="amm">AMM</h2>
+<p>自动做市商(AMM)是一种即时兑换模式。<br>
+通常的交易所(中心化/去中心化)，需要买卖双方对价格达成一致，才能完成交易；<br>
+而AMM 只需买方认可流通池中的Token价格即可立刻完成交易。</p>
+<h2 id="流动性">流动性</h2>
 <p>用户将资产转入交易平台之中获得收益，而在平台中的总资产额度，就构成了流通池。<br>
 流通池中代币总额越多，深度越好，大额交易带来的影响也就更小，不至于因为一笔几十万美元的交易就让价格产生大幅波动。<br>
 Defi的一个风险点就是流通池不够大，容易产生较大滑点。</p>
-<h3 id="流动性挖矿-liquidity-mining">流动性挖矿 liquidity mining</h3>
-<p>用户将自己的token放到交易所的流通池中，交易所则将等值的交易所代币发放给用户。<br>
-这样一来，用户为交易所提供了流通池的部分深度。同时，用户可以享受交易所挖矿带来的分红。</p>
-<h3 id="自动化做市商-amm">自动化做市商 AMM</h3>
-<p>AMM是一种即时兑换模式。<br>
-通常的交易所(中心化/去中心化)，需要买卖双方对价格达成一致，才能完成交易；而AMM 只需买方认可流通池中的token价格即可完成交易。</p>
-<pre><code>类比到游戏当中，就是玩家交易所 和 游戏NPC商人的区别。
-在玩家交易所中，需要买方玩家的出价 和 卖方的出价一致，才能达成交易。 这需要双方的互动。
-在游戏NPC商人中，无论是买方还是卖方，玩家只需要认可NPC给出的一口价，就可以完成交易。(例如把打怪获得的装备卖给武器商人，多少钱武器商人说了算，没有回旋余地)至于NPC给出的价格，则是按照游戏中的规则，对武器进行估值（蓝色装备10金币，紫色装备100金币等）
-AMM就是这样一个武器商人，他会按照既定规则对token进行估值，并跟用户进行即时交易。
-</code></pre>
-<h3 id="uniswap">Uniswap</h3>
-<p>Uniswap 就是一个AMM实例，官网是 : <a href="https://uniswap.exchange">https://uniswap.exchange</a><br>
-Uniswap 采取的算法为固定乘积的方式 : 可以用方程式 X * Y= K 来表示。这里，K 是个常数。<br>
-假设有这样一个交易池，其中有 50 个以太坊，有 1 万美元，而 K 的值恒定，为 1 万。<br>
-假设 X 表示以太坊的供应量 50， Y 是 ETH 交易时的价格。<br>
-在这种情况下，Y 的价格会是 10,000/50 = 200， 因为 K = 10000 是个常数值。<br>
-如果有人购买了以太坊，交易池子中的以太坊会减少，而美元的总量会增加。</p>
-<ul>
-<li>假设用户用 200 美元的价格，购买了 2 个以太坊。X 变为 48，Y 变成 10000/48 = 208 元。</li>
-<li>假设用户出售 7 个以太坊，X 变为 55 。Y  变成 10000/55 = 181 美元。</li>
-</ul>
-<h3 id="通缩货币模型">通缩货币模型</h3>
-<p>即被设计成&quot;越用越少&quot;的token。<br>
-举例如下</p>
-<pre><code>func token.Transfor(from,to,Amount):
-	from.Amount -= Amount
-	to.Amount += ( Amount - 1ETH )
-</code></pre>
-<p>当from把10000 ETH 转给 to时，from虽然减少了10000 个 ETH，但是 to 只收到了9999个 ETH。这就导致token总量越来越少。<br>
-实现了货币的通缩。</p>
-<h1 id="攻击过程">攻击过程</h1>
-<p>攻击对应的transaction是<a href="https://etherscan.io/tx/0x013be97768b702fe8eccef1a40544d5ecb3c1961ad5f87fee4d16fdc08c78106">https://etherscan.io/tx/0x013be97768b702fe8eccef1a40544d5ecb3c1961ad5f87fee4d16fdc08c78106</a></p>
-<p>其中Token Transfer如下：<br>
-<img src="https://img-blog.csdnimg.cn/20200705132655398.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="交易内容如下" loading="lazy"><br>
-etherscan自带的explorer不太好看细节，这里推荐使用<a href="https://oko.palkeo.com/0x013be97768b702fe8eccef1a40544d5ecb3c1961ad5f87fee4d16fdc08c78106/">OKO contract explorer</a><br>
-界面如下，可以看到函数调用顺序<br>
-<img src="https://img-blog.csdnimg.cn/2020070513444497.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="Call Tree" loading="lazy"></p>
-<h3 id="step1-flash-loan-借钱搞事">Step1 flash loan 借钱搞事</h3>
-<p>Defi相关攻击中，有部分攻击是需要资金成本的。闪电贷的出现，使这种资金成本不再是攻击者的障碍。</p>
-<ul>
-<li>我们看到Transaction首先调用了两次approve函数，来批准 WETH9和STA 代理用户转账。<br>
-<img src="https://img-blog.csdnimg.cn/202007051344102.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="approve" loading="lazy"></li>
-<li>接着是一记operate函数，从dYdX进行闪电贷。一共借了104331.302778 × 10¹⁸ WETH<br>
-<img src="https://img-blog.csdnimg.cn/20200705142758939.png" alt="在这里插入图片描述" loading="lazy"></li>
-</ul>
-<h3 id="step2-用weth换sta使sta数量减少并升值">Step2 用WETH换STA，使STA数量减少，并升值。</h3>
-<ul>
-<li>然后攻击者分多次调用 swapExactAmountln函数，将借来的WETH换成STA。<br>
-<img src="https://img-blog.csdnimg.cn/20200705142937700.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="swapExactAmountln" loading="lazy"><br>
-这里注意，由于STA是通货紧缩模型货币。上述swapExactAmountln函数发生时，流通池中的STA总数回减少，攻击者得到的STA也减少了，收到的STA的总数量是小于WETH数量除以两者价值比的。<br>
-数量的下降，导致了STA单价上升(因为Uniswap中的K值不变，数量少则单价升高)。</li>
-</ul>
-<h3 id="step3-用sta换weth配合gulp函数获得额外weth">Step3 用STA换WETH，配合gulp函数，获得额外WETH。</h3>
-<ul>
-<li>最后，攻击者多次先后调用  swapExactAmountln 和 gulp函数，将STA换回WETH。<br>
-<img src="https://img-blog.csdnimg.cn/20200705152219583.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"><br>
-这里注意，如果没有配合gulp使用，STA的单价会随着swapExactAmountln的调用，越来越低。<br>
-到最后STA单价会低到攻击者无法获利，不过是把WETH换成了STA，然后又换了回来。<br>
-我们看一下gulp函数的定义。</li>
-</ul>
-<pre><code>function gulp(address token)
-        external
-        _logs_
-        _lock_
-    {
-        require(_records[token].bound, &quot;ERR_NOT_BOUND&quot;);
-        _records[token].balance = IERC20(token).balanceOf(address(this));
+<h2 id="币对">币对</h2>
+<p>币对是用于记录流通池相关信息的变量。<br>
+例如，用户想使用<code>A</code>币换取<code>B</code>币，那么就会涉及到币对 <code>A-B</code>。<br>
+用户将一些<code>A</code>币转入币对<code>A-B</code>中，并从中取出若干<code>B币</code>，即可完成兑换。<br>
+币对<code>A-B</code>中可被取出的<code>A</code>币和<code>B</code>币总量，就对应着币对的<code>流动性</code>。<br>
+剩余币总量越大，<code>流动性</code>越大。</p>
+<h2 id="weth">WETH</h2>
+<p>为了让ETH能跟其他ERC20标准的Token进行交易，<br>
+实现了满足ERC20标准的WETH合约，作为ETH和Token之间兑换的桥梁。</p>
+<h1 id="漏洞概述">漏洞概述</h1>
+<p>这是一个典型的<a href="https://swcregistry.io/docs/SWC-107">重入漏洞</a>，<br>
+攻击者只需付出少量的ETH、一点点<code>WETH-BSC</code>流动性，即可掏空<code>WETH-BSC</code>币对中所有的ETH。</p>
+<h1 id="漏洞原理">漏洞原理</h1>
+<p>漏洞出现在<code>withdrawFromBSC</code>方法中,<br>
+该方法用于赎回<code>Token</code>或<code>ETH</code></p>
+<pre><code class="language-javascript">    function withdrawFromBSC(bytes calldata _signature, bytes32 _paybackId, address _token, uint _amount) external payable {
+        require(executedMap[_paybackId] == false, &quot;ALREADY_EXECUTED&quot;);
+        
+        require(_amount &gt; 0, &quot;NOTHING_TO_WITHDRAW&quot;);
+        require(msg.value == developFee, &quot;INSUFFICIENT_VALUE&quot;);
+        
+        bytes32 message = keccak256(abi.encodePacked(_paybackId, _token, msg.sender, _amount));
+        require(_verify(message, _signature), &quot;INVALID_SIGNATURE&quot;);
+        
+        if(_token == WETH) {
+            IWETH(WETH).withdraw(_amount);
+            TransferHelper.safeTransferETH(msg.sender, _amount);
+        } else {
+            TransferHelper.safeTransfer(_token, msg.sender, _amount);
+        }
+        totalFee = totalFee.add(developFee);
+        
+        executedMap[_paybackId] = true;
+        
+        emit Withdraw(_paybackId, msg.sender, _token, _amount);
     }
 </code></pre>
-<p>可见gulp是对STA单价进行一个校准，校准函数是ERC20的balanceOf。而不是用的当前流通池中预期的价格。<br>
-所以，这里会产生一个偏差，STA的单价会被固定在高位。不会随着swapExactAmountln的调用而减少。</p>
-<h3 id="step4-还清flash-loan贷款套利离开">Step4 还清flash loan贷款，套利离开</h3>
-<ul>
-<li>最终，攻击者得到了超量的WETH，并向dYdX归还了借来的104331.302778 × 10¹⁸ WETH<br>
-<img src="https://img-blog.csdnimg.cn/20200705162120151.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="还钱" loading="lazy"><br>
-并取出利润。<br>
-<img src="https://img-blog.csdnimg.cn/20200705162354515.png" alt="拿钱走人" loading="lazy"></li>
-</ul>
-<h1 id="discussion">Discussion</h1>
-<p>攻击发生在2020年6月29日，造成了50w美元的损失。6月30日，balancer Labs宣布已经奖励了Bug finder Hex_Capital。并将会为所有funder报销整个攻击事件中的所有损失。</p>
-<h1 id="references">References</h1>
-<ul>
-<li>攻击交易详情 https://oko.palkeo.com/0x013be97768b702fe8eccef1a40544d5ecb3c1961ad5f87fee4d16fdc08c78106/</li>
-<li>攻击事件记录 https://medium.com/@1inch.exchange/balancer-hack-2020-a8f7131c980e</li>
-<li>balancer 官方twitter https://twitter.com/BalancerLabs</li>
-<li>ERC20智能合约实现代码 https://zhuanlan.zhihu.com/p/104527883</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[以太坊细节-消息机制]]></title>
-        <id>https://blog.leepanda.top/post/yi-tai-fang-xi-jie-xiao-xi-ji-zhi/</id>
-        <link href="https://blog.leepanda.top/post/yi-tai-fang-xi-jie-xiao-xi-ji-zhi/">
-        </link>
-        <updated>2021-05-29T10:18:21.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="前言">前言</h2>
-<p>研究公链中msg互相触发关系，学习一下以太坊中消息广播的逻辑顺序。<br>
-带宽要求和消息转发之间有没有相对关系。</p>
-<blockquote>
-<p>消息监听机制 handleMsg: server,client,ProtocolManager<br>
-消息广播机制 broadcast: transaction,block,blockHash</p>
-</blockquote>
-<h2 id="寻找转发点">寻找转发点</h2>
-<p>找msg的监听循环，代码中类似handleMsg之类的函数</p>
-<h3 id="protocolmanagerhandemsg-中的转发逻辑">ProtocolManager.handeMsg 中的转发逻辑</h3>
-<p>在ProtocolManager.handleMsg中把所有消息的触发关系梳理了一遍。<br>
-内容如下<br>
-<img src="https://blog.leepanda.top/post-images/1622283633054.png" alt="" loading="lazy"></p>
-<h4 id="举例-getblockheadersmsg">举例 GetBlockHeadersMsg</h4>
-<p>在共识过程中，如果节点收到了区块头的消息。<br>
-会触发消息监听中的GetBlockHeadersMsg事件。<br>
-代码如下<br>
-handler.go line386</p>
-<pre><code>case msg.Code == GetBlockHeadersMsg:
-        ...
-        if err := msg.Decode(&amp;query); err != nil {
-			return errResp(ErrDecode, &quot;%v: %v&quot;, msg, err)
-		}
-        ...
-return p.SendBlockHeaders(headers)
-</code></pre>
-<p>其中<code>peer.SendBlockHeaders</code>函数的定义如下</p>
-<pre><code>func (p *peer) SendBlockHeaders(headers []*types.Header) error {
-	return p2p.Send(p.rw, BlockHeadersMsg, headers)
-}
-</code></pre>
-<p>emmmm，就是简单地把区块头广播出去。</p>
-<p>在return之前还有一个返回点</p>
-<pre><code>if err := msg.Decode(&amp;query); err != nil {
-			return errResp(ErrDecode, &quot;%v: %v&quot;, msg, err)
-		}
-</code></pre>
-<p>可见节点收到的区块头会被广播出去的条件是msg要能够正常的Decode.</p>
-<p>其他msg分析过程同上。</p>
-<h3 id="serverhandlerhandlemsg">serverHandler.handleMsg</h3>
-<p>serverHandler的监听中，所有消息触发情况如下图。<br>
-<img src="https://blog.leepanda.top/post-images/1622283858463.png" alt="" loading="lazy"></p>
-<p><s>哭了，没有消息闭环。</s></p>
-<h3 id="clienthandlerhandlemsg">clientHandler.handleMsg</h3>
-<p>clientHandler的监听，作用是对Server返回的结果进行对应的处理<br>
-收到的消息及其对应关系如下。<br>
-<img src="https://blog.leepanda.top/post-images/1622283887920.png" alt="" loading="lazy"></p>
-<h2 id="寻找广播点">寻找广播点</h2>
-<p>广播的底层在于peer类的boardcast函数</p>
-<pre><code>func (p *peer) broadcast() {
-	for {
-		select {
-		case txs := &lt;-p.queuedTxs:
-			if err := p.SendTransactions(txs); err != nil {
-				return
-			}
-			p.Log().Trace(&quot;Broadcast transactions&quot;, &quot;count&quot;, len(txs))
-
-		case prop := &lt;-p.queuedProps:
-			if err := p.SendNewBlock(prop.block, prop.td); err != nil {
-				return
-			}
-			p.Log().Trace(&quot;Propagated block&quot;, &quot;number&quot;, prop.block.Number(), &quot;hash&quot;, prop.block.Hash(), &quot;td&quot;, prop.td)
-
-		case block := &lt;-p.queuedAnns:
-			if err := p.SendNewBlockHashes([]common.Hash{block.Hash()}, []uint64{block.NumberU64()}); err != nil {
-				return
-			}
-			p.Log().Trace(&quot;Announced block&quot;, &quot;number&quot;, block.Number(), &quot;hash&quot;, block.Hash())
-
-		case &lt;-p.term:
-			return
-		}
-	}
-}
-</code></pre>
-<p><s>emmmmmmm 为啥刚才没搜到</s></p>
-<p>三个channel用于广播</p>
-<p>p.queuedProps 广播块<br>
-p.queuedAnns 广播哈希<br>
-p.queuedTxs 广播交易</p>
-<h3 id="广播交易-广播哈希">广播交易 广播哈希</h3>
-<p>当节点自己挖到block时<br>
-w.mux.Post(core.NewMinedBlockEvent{Block: block})<br>
-其中会在本地生成NewMinedBlockEvent事件<br>
-该事件触发minedBroadcastLoop循环</p>
-<pre><code>		if ev, ok := obj.Data.(core.NewMinedBlockEvent); ok {
-			pm.BroadcastBlock(ev.Block, true)  // First propagate block to peers
-			pm.BroadcastBlock(ev.Block, false) // Only then announce to the rest
-		}
-</code></pre>
-<p>其中BroadcastBlock函数根据第二个参数，选择广播整个区块还是只广播区块的hash</p>
-<h3 id="交易广播">交易广播</h3>
-<p>广播交易监听txBroadcastLoop循环</p>
-<pre><code>select {
-		case event := &lt;-pm.txsCh:
-			pm.BroadcastTxs(event.Txs)
-</code></pre>
-<p>触发广播需要pm.txsCh<br>
-<s>然而没找到这个信道的赋值在哪</s></p>
-<h2 id="带宽消耗">带宽消耗</h2>
-<h3 id="文献描述">文献描述</h3>
-<p>试图从以太坊的白皮书中找到对带宽的描述<br>
-https://github.com/ethereum/wiki/wiki/[中文]-以太坊白皮书<br>
-但是并没有相关内容<br>
-更多是在描述原理</p>
-<p>查到了bitmex网，这里有一些对节点性能的测量标准。<br>
-BitMEX 研究推出以太坊节点指标网站——Nodestats.org</p>
-<p>https://blog.bitmex.com/zh_cn-bitmex-research-launches-ethereum-node-monitoring-website-nodestats-org/</p>
-<p>从中我们可以找到一些geth的节点带宽要求<br>
-<img src="https://blog.leepanda.top/post-images/1622284074484.png" alt="" loading="lazy"></p>
-<p>Geth的上行带宽 要求 4kb/s<br>
-Geth的下行带宽 要求 60kb/s</p>
-<h3 id="代码中的限制">代码中的限制</h3>
-<p>rlpx.go line603</p>
-<pre><code>if fsize &gt; maxUint24 {
-</code></pre>
-<p>每个msg最大256byte。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[我要内卷]]></title>
-        <id>https://blog.leepanda.top/post/xuan-ze-nei-juan/</id>
-        <link href="https://blog.leepanda.top/post/xuan-ze-nei-juan/">
-        </link>
-        <updated>2021-05-09T15:07:25.000Z</updated>
-        <content type="html"><![CDATA[<p>我之前困惑的不能算是 “职业生涯规划” 而是 “懒惰和欲望的矛盾”<br>
-随着时间发展，清心寡欲的我，必然面对越来越多的刚需欲望。<br>
-车子、房子、父母的养老钱。<br>
-我的生活开销，枸杞茶。</p>
-<p>我错误的以为，工作时间越久，我的价值越高，工资越高<br>
-但是对于大多数工程师而言，刚入职的那一刻，或许是工资最高的时候。<br>
-未来，可能会越来越难<br>
-身上的担子可能会越来越重。我的收入 不涨就是下降。<br>
-别被知乎里面 宣传 人生无须努力的论调洗了脑</p>
-<p>趁着我的身体还苟的住，<br>
-多积累一些资产。</p>
-<p>让未来的自己能轻松一些，有更多的选择空间。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[太阳和冥王星应该互相包容]]></title>
-        <id>https://blog.leepanda.top/post/tai-yang-he-ming-wang-xing-ying-gai-hu-xiang-bao-rong/</id>
-        <link href="https://blog.leepanda.top/post/tai-yang-he-ming-wang-xing-ying-gai-hu-xiang-bao-rong/">
-        </link>
-        <updated>2021-04-29T00:58:41.000Z</updated>
-        <content type="html"><![CDATA[<p>看到个令人心酸的小故事：<br>
-一个小伙子，家境一般，母亲在KTV做工，父亲是一名流水线工人。</p>
-<p>他有理想，满怀热血，积极参加各种校园活动，做的都很好。<br>
-他的诗朗诵震慑人心，听众都被他的真诚打动。<br>
-他以相当高的分数报考了理想大学的核物理专业。去实现他的梦想&quot;再造它一个太阳出来！&quot;</p>
-<p>但上了大学之后，事情有一点吃力。<br>
-他适应不了宿舍生活，但也没钱租房。<br>
-他被同学们当做异类排挤<br>
-就算是所谓的朋友也道一声“不好意思，我实在受够你了”然后告辞。<br>
-他仍然积极参加校园活动，到处当志愿者。但却积劳成疾，落下病根，最终休学。</p>
-<p>后来，他跳河了<br>
-他接受不了失败的自己，啥也干不成<br>
-<img src="https://blog.leepanda.top/post-images/1619660197553.jpg" alt="" loading="lazy"></p>
-<h3 id="有理想是好的">有理想是好的</h3>
-<p>我喜欢这些有理想的人，他们有着为了理想舍弃生命的勇气。人类的赞歌是勇气的赞歌。<br>
-比如要成为海贼王的<code>路飞</code>、为了替老妈报仇，去跟DIO拼命的<code>JOJO</code>、不胜利毋宁死的<code>加尔鲁什</code>。<br>
-<img src="https://blog.leepanda.top/post-images/1619663403081.png" alt="" loading="lazy"><br>
-比如雷军 愿你出走半生，归来仍是少年。<br>
-比如我女朋友，她为了做出真正有意义的毕设，做出能推动行业向前发展的研究成果，天天熬夜，没有真正完全放松的周末。<br>
-比如大一大二的我，&quot;学校给我放双休，但人生没有假期。叫醒我的不是闹钟，而是梦想&quot;。作为一个人生目标流，寻找生命的意义的选手。我几乎不需要休息。</p>
-<p>这种有主观能动性的存在是很好的，他们可以创造更多的价值。<br>
-姜文称赞彭于晏时，评价他&quot;可以把灵与肉分离开&quot;。大脑完全支配身体，不受肉欲的阻挠。</p>
-<h3 id="没有理想也是好的">没有理想也是好的</h3>
-<p>天津方言称那些 理想高于能力的人，&quot;想瞎了心了&quot;<br>
-高中的语文老师说&quot;上班别跟我谈理想，我的理想就是不上班&quot;<br>
-历史老师教导我&quot;这么好的天气，上什么班啊...咱应该找个草坪，把衣服铺上面，往上一躺，多好。&quot;<br>
-大家对996的抨击，反应了很多人 也不想那么辛苦。</p>
-<p>我不想努力了 我不想天天狼性思维了 累了<br>
-一位拉比(Dr. Abraham Twerski)说 &quot;生命没有意义是一件很幸运的事，对嘛，你就活着就行了。就这么活着就行了。&quot;</p>
-<p>灵体顺肉体的自然才是常态，<br>
-人生快乐小技巧：别推敲习惯。</p>
-<h3 id="太阳是好的">太阳是好的</h3>
-<p>&quot;高情商&quot;寓言故事：&quot;你是愿意当一颗土鸡蛋，被热水改变。还是愿意当一个咖啡豆，改变环境。&quot;<br>
-从小我们被教育要做人上人<br>
-我们希望自己能控制别人，利用别人。我们希望自己如帝王一样御人。<br>
-我们希望自己有资格教别人做人，对自己看不惯的行为批斗一番。<br>
-我们希望自己能改造别人、就像改造客观环境一样。<br>
-我们希望自己像红太阳一样，引领别人，为迷茫的年轻人指路。</p>
-<p>理科生、研究员、工程师通过改变客观世界，创造价值。<br>
-文科生、作者、辩手通过改变理科生创造价值。<br>
-人文学科的学者们世世代代研究的东西，毛爷爷禁止我们学的东西。有超强的力量。</p>
-<blockquote>
-<p>我不在乎你怎么看我，但是我要你学会怎么跟我说话，怎么做人做事。<br>
-<img src="https://blog.leepanda.top/post-images/1619666141161.jpg" alt="" loading="lazy"><br>
-不断变强，质量像太阳一样庞大，让世界围着自己转。</p>
-</blockquote>
-<h3 id="冥王星也是好的">冥王星也是好的</h3>
-<p>辐射别人会让别人不开心，大家都是独立的人。<br>
-普信男好为人师，会令人作呕。<br>
-<img src="https://blog.leepanda.top/post-images/1619666851869.jpg" alt="" loading="lazy"><br>
-环保女政治正确，也会让人很累。</p>
-<p>我更在乎快乐。<br>
-那些不是明星，不教导，不批评别人的人们。我也超爱，跟他们在一起很舒服。<br>
-<img src="https://blog.leepanda.top/post-images/1619667327030.png" alt="" loading="lazy"></p>
-<blockquote>
-<p>不过哭声大的孩子有奶吃...&quot;懂事&quot;的宝宝得不到太阳人那么多的社会资源</p>
-</blockquote>
-<h3 id="总结">总结</h3>
-<p>世界并非离散的。<br>
-大家都处在 太阳和冥王星限定的连续区间里，拼命努力和懒懒散散的区间里。<br>
-都是很好的</p>
-<p>只是我个人偏好吧。<br>
-因为我已经过的很舒适了，不想继续努力了。<br>
-所以希望身边少一些太阳，多一些安静的冥王星。<br>
-我也是冥王星，我不会恶心你们的。安啦。</p>
-<h3 id="ps">PS</h3>
-<p>啊， 举文章开头的那个案例<br>
-是因为<br>
-那个小哥哥试图像高中诗朗诵那样影响大学同学，但其实也是个普通人。<br>
-作为普信男的他，被身边的人排挤了。<br>
-所以觉得很符合题意。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[青椒虾仁+香菇猪肉]]></title>
-        <id>https://blog.leepanda.top/post/qing-jiao-xia-ren-xiang-gu-zhu-rou/</id>
-        <link href="https://blog.leepanda.top/post/qing-jiao-xia-ren-xiang-gu-zhu-rou/">
-        </link>
-        <updated>2021-04-25T14:22:15.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="香菇猪肉">香菇猪肉</h3>
-<ul>
-<li>猪肉切片
-<ul>
-<li>装入碗中</li>
-<li>加入生抽、料酒、胡椒粉、辣椒粉、油?</li>
-<li>揉捏 至 搅拌均匀</li>
-</ul>
-</li>
-<li>开始热锅
-<ul>
-<li>倒油</li>
-<li>等油烧热 倒入猪肉</li>
-<li>等猪肉熟了 倒入葱姜蒜</li>
-<li>炒一会 倒入蘑菇</li>
-<li>炒一会 出锅</li>
-</ul>
-</li>
-</ul>
-<h3 id="青椒虾仁">青椒虾仁</h3>
-<ul>
-<li>虾仁剥皮
-<ul>
-<li>装入碗中</li>
-<li>加入 胡椒粉、生粉、生抽</li>
-<li>揉捏 至 搅拌均匀</li>
-</ul>
-</li>
-<li>热锅
-<ul>
-<li>热油</li>
-<li>倒入虾仁 炒红后捞出</li>
-</ul>
-</li>
-<li>葱姜蒜 炝锅
-<ul>
-<li>倒入青椒</li>
-<li>炒一会</li>
-<li>倒入虾仁</li>
-<li>翻炒一会 出锅</li>
-</ul>
-</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[巧克力雪糕菜谱]]></title>
-        <id>https://blog.leepanda.top/post/qiao-ke-li-xue-gao-cai-pu/</id>
-        <link href="https://blog.leepanda.top/post/qiao-ke-li-xue-gao-cai-pu/">
-        </link>
-        <updated>2021-04-25T13:08:45.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="食材">食材</h3>
-<ul>
-<li>淡奶油 500 g</li>
-<li>炼乳 170 g</li>
-<li>可可粉 80 g</li>
-</ul>
-<h3 id="步骤">步骤</h3>
 <ol>
-<li>淡奶油打发</li>
-<li>倒入炼乳 和 可可粉</li>
-<li>搅拌均匀<br>
-<img src="https://blog.leepanda.top/post-images/1619356338657.jpg" alt="" loading="lazy"></li>
-<li>抹平冷冻4个小时<br>
-<img src="https://blog.leepanda.top/post-images/1619356349338.jpg" alt="" loading="lazy"></li>
+<li>函数先检查了<code>executedMap[_paybackId]</code>是否为<code>false</code>，从而判断这笔赎回交易是否已经被处理。</li>
+<li>然后检查了用户所支付的<code>feeValue</code>数量和提供的<code>签名</code>是否有效。</li>
+<li>接着便是调用<code>TransferHelper</code>进行转账操作。</li>
+<li>最后更改<code>executedMap[_paybackId]</code>的值为<code>true</code>，以表明该赎回交易处理完成。</li>
 </ol>
-<h3 id="最终效果">最终效果</h3>
-<figure data-type="image" tabindex="1"><img src="https://blog.leepanda.top/post-images/1619356357470.jpg" alt="" loading="lazy"></figure>
+<p>到这里，漏洞的本质就浮出水面了。<br>
+<strong><code>withdrawFromBSC</code>方法的实现，没有遵循<code>Checks-Effects-Interactions</code>编码规范。</strong></p>
+<p>根据<a href="https://fravoll.github.io/solidity-patterns/checks_effects_interactions.html">CEI规范</a>合约函数在实现时，应该</p>
+<ol>
+<li>先检查输入是否符合条件</li>
+<li>再修改合约状态</li>
+<li>最后和用户交互<br>
+举个正确的例子:</li>
+</ol>
+<pre><code class="language-javascript">    function withdraw(uint amount) public {
+        require(balances[msg.sender] &gt;= amount);
+
+        balances[msg.sender] -= amount;
+
+        msg.sender.transfer(amount);
+    }
+</code></pre>
+<p>很明显，对于<code>withdrawFromBSC</code>方法<br>
+<code>调用TransferHelper进行转账</code>的操作, 应发生在<code>executedMap[_paybackId] = true;</code>之后。</p>
+<p>由于<code>TransferHelper.safeTransferETH</code>的实现，使用的是原生的<code>.call.value</code>方法。</p>
+<pre><code class="language-javascript">    function safeTransferETH(address to, uint value) internal {
+        (bool success,) = to.call{value:value}(new bytes(0));
+        require(success, 'TransferHelper: ETH_TRANSFER_FAILED');
+    }
+</code></pre>
+<p>函数调用者的<code>fallback</code>方法将会被调用，<br>
+攻击者合约可以通过实现<code>fallback</code>方法，并在其中再次调用<code>withdrawFromBSC</code>来实现重入攻击。<br>
+转走<code>BurgerSwap</code>合约中所有的<code>ETH</code>。</p>
+<h1 id="修复方案">修复方案</h1>
+<h2 id="checks-effects-interactions-编码规范">Checks-Effects-Interactions 编码规范</h2>
+<p>最有效、简单的解决方案，就是将<code>withdrawFromBSC</code>方法中的</p>
+<pre><code class="language-javascript">        if(_token == WETH) {
+            IWETH(WETH).withdraw(_amount);
+            TransferHelper.safeTransferETH(msg.sender, _amount);
+        } else {
+            TransferHelper.safeTransfer(_token, msg.sender, _amount);
+        }
+</code></pre>
+<p>放到<code>executedMap[_paybackId] = true;</code>之后。<br>
+只要符合CEI规范，攻击合约就会因为通不过check，而无法改变函数控制流。</p>
+<h2 id="函数锁-lock-modifier">函数锁 lock modifier</h2>
+<p>通过实现一个<code>lock modifier</code>来添加函数锁概念。<br>
+当在交易中第一次进入函数时，<br>
+更新全局变量<code>lock</code>的值,使得<code>modifier</code>验证无法通过<br>
+从而限制函数之间的相互调用。</p>
+<p>简单举例如下:</p>
+<pre><code class="language-javascript">pragma solidity ^0.4.0;
+
+contract SingleCall {
+  address public lock = false;
+
+  modifier onlyOnce {
+    if (this.lock != false) throw;
+    _;
+  }
+
+  function withdrawFromBSC(bytes _someParams)
+  onlyOnce
+  {
+    lock = true;
+    //some command...;
+    lock = false;
+  }
+}
+</code></pre>
+<h1 id="总结">总结</h1>
+<p><code>BurgerSwap</code>合约由于没有遵循<code>Checks-Effects-Interactions 编码规范</code>，导致了严重的重入漏洞。<br>
+作为合约的开发人员，应以此为戒，把<code>用户交互</code>放到<code>修改合约状态</code>后面。<br>
+同时，不要盲目相信市面上第三方代码的实现。<br>
+也许底层函数本身没有问题，却由于开发时不安全地调用，引入了风险。</p>
+<p>另一方面，合约项目方可以通过赏金计划、漏洞平台等方式吸引社区中的白帽黑客来发现项目中的安全漏洞<br>
+帮助项目的完善和安全性的提升。<br>
+最后，项目方可以联系国内有<code>区块链合约安全</code>相关服务的厂家(比如<a href="https://www.chaitin.cn/zh/review">长亭科技</a>)来支持代码审计工作，对项目进行系统、全面的安全性检查。</p>
+<h1 id="引用">引用</h1>
+<ul>
+<li><a href="https://leepanda.blog.csdn.net/article/details/107137462">合约安全(1):Balancer中通货紧缩货币的套利攻击详解</a></li>
+<li><a href="https://zengo.com/burgerswap-vulnerability/">Reentering the Reentrancy Bug: Disclosing BurgerSwap’s Vulnerability</a></li>
+<li><a href="https://etherscan.io/address/0xaf5dcebba2f8bec8729117336b2fe8b4e0d99b0b#code">Source Code of BurgerSwap</a></li>
+<li><a href="https://swcregistry.io/docs/SWC-107">SWC-107 Reentrancy</a></li>
+<li><a href="https://consensys.github.io/smart-contract-best-practices/known_attacks/">Ethereum Smart Contract Best Practices#Reentrancy</a></li>
+<li><a href="https://fravoll.github.io/solidity-patterns/checks_effects_interactions.html">solidity-patterns Checks Effects Interactions</a></li>
+<li><a href="https://www.chaitin.cn/">长亭科技 Chaitin</a></li>
+</ul>
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[按摩]]></title>
-        <id>https://blog.leepanda.top/post/an-mo/</id>
-        <link href="https://blog.leepanda.top/post/an-mo/">
+        <title type="html"><![CDATA[所有基于cosmos的区块链项目的测试网启动方法]]></title>
+        <id>https://blog.leepanda.top/post/suo-you-ji-yu-cosmos-de-qu-kuai-lian-xiang-mu-de-ce-shi-wang-qi-dong-fang-fa/</id>
+        <link href="https://blog.leepanda.top/post/suo-you-ji-yu-cosmos-de-qu-kuai-lian-xiang-mu-de-ce-shi-wang-qi-dong-fang-fa/">
         </link>
-        <updated>2021-04-22T09:56:00.000Z</updated>
-        <content type="html"><![CDATA[<p>老妈给我按摩后背的时候，肌肉真的有得到放松。<br>
-经过实践，按摩不像其他传统养生节目。<br>
-它真的有明显的功效。</p>
-<h3 id="颈部">颈部</h3>
+        <updated>2021-05-29T11:13:04.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="abstract">Abstract</h1>
+<p>基于cosmos框架的区块链项目，在启动脚本上都大同小异。<br>
+这里做一下整理记录。方便后面的测试使用。</p>
+<h1 id="genesis-file-format">genesis file format</h1>
+<h3 id="init">init</h3>
+<p><code>serverd init --gen-txs --home=$HOME/.gaiad1 --chain-id=test-chain</code></p>
+<h3 id="gentx">gentx</h3>
+<p><code>serverd gentx --name validator --amount 1000000000ucsdt</code></p>
+<h3 id="add-genesis-account">add-genesis-account</h3>
+<p><code>serverd add-genesis-account $(client keys show validator -a) 10000000000ucsdt</code></p>
+<h3 id="collect-gentxs">Collect-gentxs</h3>
+<p><code>serverd collect-gentxs</code></p>
+<h3 id="start">start</h3>
+<p><code>serverd start</code></p>
+<h1 id="总结">总结</h1>
+<p>这边用<code>xar-network</code>来举例</p>
+<pre><code class="language-shell"># You can run all of these commands from your home directory
+cd $HOME
+
+# Initialize the genesis.json file that will help you to bootstrap the network
+xard init --chain-id=testing testing
+
+# Create a key to hold your validator account
+xarcli keys add validator
+
+# Add that key into the genesis.app_state.accounts array in the genesis file
+# NOTE: this command lets you set the number of coins. Make sure this account has some coins
+# with the genesis.app_state.staking.params.bond_denom denom, the default is staking
+xard add-genesis-account $(xarcli keys show validator -a) 10000000000000uftm,10000000000ucsdt
+
+# Generate the transaction that creates your validator
+xard gentx --name validator --amount 1000000000ucsdt
+
+# Add the generated bonding transaction to the genesis file
+xard collect-gentxs
+
+# Now its safe to start `xard`
+xard start
+
+</code></pre>
+<p>这样就初始化了 validator并给了一些初始代币。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GoFuzz自定义语料输入流程记录]]></title>
+        <id>https://blog.leepanda.top/post/gofuzz-zi-ding-yi-yu-liao-shu-ru-liu-cheng-ji-lu/</id>
+        <link href="https://blog.leepanda.top/post/gofuzz-zi-ding-yi-yu-liao-shu-ru-liu-cheng-ji-lu/">
+        </link>
+        <updated>2021-05-29T11:11:21.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="背景">背景</h1>
+<p>在使用gofuzz的过程中，发现自己输入的corpus好像没有被执行。<br>
+遂审计一下代码，追踪一下输入的corpus的处理流程。</p>
+<h1 id="正文">正文</h1>
+<p>在一次测试过程中，我输入的初始语料如下</p>
+<pre><code>{&quot;Name&quot;:&quot;AjWwhT&quot;,&quot;Symbol&quot;:&quot;HctcuA&quot;,&quot;TotalSupply&quot;:100}
+</code></pre>
+<p>但进化出的可崩溃语料却是这些</p>
+<pre><code>        &quot;:&quot;
+        &quot;{\&quot;\&quot;1&quot;
+        &quot;{1&quot;
+        &quot;{:&quot;
+        &quot;\&quot;\&quot;,&quot;
+        &quot;\&quot;\&quot;:&quot;
+        &quot;{0&quot;
+        &quot;{,&quot;
+        &quot;,&quot;
+        &quot;{2&quot;
+        &quot;{\&quot;\&quot;:0\&quot;0&quot;
+        &quot;{\&quot;\&quot;T&quot;
+        &quot;0T&quot;
+        &quot;0\&quot;0&quot;
+        &quot;{\&quot;\&quot;2&quot;
+        &quot;{\&quot;\&quot;\&quot;&quot;
+        &quot;{T&quot;
+        &quot;{\&quot;\&quot;}&quot;
+        &quot;{\&quot;\&quot;:\&quot;\&quot;:&quot;
+        &quot;{\&quot;\&quot;:\&quot;\&quot;T&quot;
+        &quot;{\&quot;\&quot;,&quot;
+        &quot;02&quot;
+        &quot;{}&quot;
+        &quot;}&quot;
+        &quot;T&quot;
+        &quot;{\&quot;\&quot;:00&quot;
+        &quot;01&quot;
+        &quot;0}&quot;
+        &quot;00&quot;
+        &quot;{\&quot;\&quot;0&quot;
+</code></pre>
+<p>这都是嘛玩意儿，根本看不出跟我的初始输入有啥血缘关系。<br>
+于是跟进一下代码，来学习一下corpus的处理流程。</p>
+<h3 id="文件输入">文件输入</h3>
+<p><code>go-fuzz</code>命令的入口为<code>main</code>函数。<br>
+其中，调用了<code>coordinatorMain</code>和<code>hub.connect</code>函数。</p>
 <ul>
-<li>
-<p>捏颈椎<br>
-这个动作没有固定的穴位，但是还挺舒服。<br>
-定义喉结方向为前方。<br>
-拇指和四指夹住脖子后方中部的肌肉(在皮肤下面有一块硬硬的东西，应该是肌肉吧大概)。<br>
-从风池穴向下，大约八厘米的范围，都是可以捏的。<br>
-离散用力，约50下。<br>
-<img src="https://blog.leepanda.top/post-images/1619085443636.png" alt="捏颈椎" loading="lazy"></p>
-</li>
-<li>
-<p>风池穴<br>
-眼睛保健操倒数第三节。<br>
-和捏脊椎不同的是，这一步的用力要适中。<br>
-用力不能离散，要连续用力，保持恬静。<br>
-按揉个50圈即可</p>
-</li>
-<li>
-<p>天牖穴<br>
-在风池穴下面，ge这儿呢<br>
-<img src="https://blog.leepanda.top/post-images/1619085466467.png" alt="天牖穴" loading="lazy"><br>
-与风池穴相同，连续按揉，保持恬静。<br>
-同样按揉50圈</p>
-</li>
+<li><code>coordinatorMain</code>函数从<code>/corpus/</code>文件目录下读取用户生成的自定义初始语料集合。</li>
+<li><code>hub.connect</code>函数将这些语料集合载入到变量<code>hub.triageQueue</code>中。</li>
 </ul>
-<h3 id="肩膀">肩膀</h3>
+<p>工作进程包含两个循环:</p>
 <ul>
-<li>
-<p>肩井<br>
-肩井的位置在脖子和肩膀的折角处。<br>
-<img src="https://blog.leepanda.top/post-images/1619085494025.png" alt="肩井穴" loading="lazy"><br>
-离散用力，按揉到爽。<br>
-（大概按揉个30次左右，手就会酸。按累了就歇歇..）</p>
-</li>
-<li>
-<p>天宗<br>
-天宗的位置在肩井的下面<br>
-<img src="https://blog.leepanda.top/post-images/1619085516123.png" alt="天宗" loading="lazy"><br>
-离散用力，力度要强。<br>
-由于按揉肩井的时候，手已经按酸了。<br>
-这里可以改用肘。<br>
-不要将全身的重量都压在上面，受害者会死于非命。</p>
-</li>
-<li>
-<p>肩膀上缘<br>
-就是给爸爸妈妈锤肩的那个地方<br>
-力度同样要大一些。<br>
-手不累了就用手按，如果还累可以用小臂。<br>
-<img src="https://blog.leepanda.top/post-images/1619085541281.png" alt="肩膀上缘" loading="lazy"></p>
-</li>
+<li><code>hub.loop</code>: 该循环将<code>hub.triageQueue</code>中的语料载入到<code>triageC</code>变量中。</li>
+<li><code>worker.loop</code>:该循环调用<code>triageInput</code>函数来处理<code>triageC</code>变量。</li>
 </ul>
-<h3 id="后背">后背</h3>
+<p>流程图如下:<br>
+<img src="https://img-blog.csdnimg.cn/20200821235626249.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="gofuzz 输入流程图" loading="lazy"></p>
+<h1 id="结尾">结尾</h1>
+<p>所以说gofuzz还是运行了我给的初始corpus，只是由于某种原因没有输出crash...<br>
+可能是没有当作模糊测试的重点？<br>
+这些都只是猜测<br>
+我不想花太多时间在研究如何优雅的使用gofuzz上了。<br>
+于是直接到gofuzz仓库的issue中寻找答案。<br>
+在<a href="https://github.com/dvyukov/go-fuzz/issues/289">issue#289</a>中，找到了类似的思考。<br>
+官方给出的更优解是<a href="https://github.com/thepudds/fzgo">fzgo</a>,一个集成了go-fuzz和go test的工具。</p>
+<p>后面我会把研究精力，从gofuzz的原理研究 转移到 fzgo的体验和测试上。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GoFuzz无法正常触发crash研究]]></title>
+        <id>https://blog.leepanda.top/post/gofuzz-wu-fa-zheng-chang-hong-fa-crash-yan-jiu/</id>
+        <link href="https://blog.leepanda.top/post/gofuzz-wu-fa-zheng-chang-hong-fa-crash-yan-jiu/">
+        </link>
+        <updated>2021-05-29T11:09:45.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="abstract">Abstract</h1>
+<p>在使用gofuzz测试的过程中。<br>
+遇到明明很有问题、肯定能触发panic的语料，却没有生成对应的crash。<br>
+怀疑自己的使用姿势不对，遂对其进行了研究。本文记录一下实验过程和结果。</p>
+<p>为了方便测试，设计了自定义Fuzz函数如下:<br>
+<img src="https://img-blog.csdnimg.cn/20200821104633265.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="panic测试" loading="lazy"><br>
+通过测试panic是否会崩溃，来检查panic和return值之间的相关性。</p>
+<h3 id="猜测1-fuzz函数return值存在特殊含义">猜测1: Fuzz函数return值存在特殊含义</h3>
+<p>为了测试return值对fuzz过程的影响，我删去了panic的设计。<br>
+当改变return的返回值时，fuzz的exec(程序执行次数) corpus(进化出的语料) restarts(程序重启次数)发生了如下的变化。</p>
+<pre><code>return之间的影响 (无panic)
+仅return1
+exec+ corpus+ restarts+
+仅return 0 
+exec+ corpus+ restarts+
+仅return -1
+exec+ corpus1 restarts+
+</code></pre>
+<p>可以看出在gofuzz中，Fuzz函数的return值有特殊的含义。</p>
 <ul>
-<li>
-<p>双指刮刮乐<br>
-用双手食指和中指的第一关节，自上而下，用力划过脊柱两侧。<br>
-<img src="https://blog.leepanda.top/post-images/1619085559662.png" alt="双指刮刮乐" loading="lazy"><br>
-这个过程要用力一些。<br>
-可以刮它30个来回。</p>
-</li>
-<li>
-<p>手刀敲敲乐<br>
-杨慧兰的8层手刀，同样在脊柱两侧用力<br>
-<img src="https://blog.leepanda.top/post-images/1619085584911.png" alt="手刀敲敲乐" loading="lazy"><br>
-轻轻的敲即可，手刀仅使用1成功力。<br>
-沿着脊柱，来回往复。<br>
-来10个来回放松一下即可。</p>
-</li>
-<li>
-<p>撸脊椎<br>
-单手，力度适中<br>
-沿着脊柱，自上而下。刨。<br>
-单回合路径越长，受害人越爽。<br>
-建议从脑袋壳子一口气撸到尾(yǐ)巴骨。<br>
-来30次单程。</p>
-</li>
+<li>return 1 : 表示这次测试的样例是好的，成功的，阳性的。请多多使用这个突变分支的样例来测试。</li>
+<li>return 0 : 表示这次测试样例正常，挺好的。就继续测吧，对后续测试样例的使用没有影响。</li>
+<li>return -1: 表示这次测试使用的样例不给力，成阴性。在以后的测试中，减少这个突变分支的测试样例。</li>
 </ul>
-<h3 id="结尾">结尾</h3>
-<p>一整套流程走完后，不要问受害者感觉如何。<br>
-如果他觉得爽，那他现在只想睡觉。<br>
-帮他盖好被子，拉上窗帘，就可以安静的溜了。<br>
-（ 被子盖过头，道一声 阿门 ）<br>
-<img src="https://blog.leepanda.top/post-images/1619085605044.png" alt="水啦" loading="lazy"></p>
+<blockquote>
+<p>由于我使用gofuzz测试的目的，就是为了找出让程序无法正常执行的输入样例。因此，这里会自然的想到使用panic 配合 return 1.来实现: 发现crash的同时，能让后面的fuzz过程找到更多 Panic样例。</p>
+</blockquote>
+<h3 id="猜测2-不同return的值-和-panic组合可能产生不同结果-导致不panic">猜测2: 不同return的值 和 panic组合，可能产生不同结果。导致不panic</h3>
+<p>我通过修改33line的那个<code>return</code>值，来测试panic函数无法正常崩溃 是否和 return的值相关。<br>
+测试结果如下</p>
+<pre><code>-1 不crash
+0 不crash
+1 不crash
+</code></pre>
+<ul>
+<li>看来和return的值没有关系。</li>
+</ul>
+<h3 id="猜测3-同一个block中panic和return不能一起使用">猜测3: 同一个block中，panic和return不能一起使用</h3>
+<p>首先编写一个简单的测试程序，代码如下:<br>
+<img src="https://img-blog.csdnimg.cn/20200821111315523.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="crash的代码" loading="lazy"><br>
+其中第16line的panic理论上必然触发<br>
+测试后发现果然<code>触发了crash</code></p>
+<p>于是我们在panic后面17line的位置添加<code>return true</code><br>
+<img src="https://img-blog.csdnimg.cn/20200821111513448.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="不crash的代码" loading="lazy"><br>
+<strong>测试发现，没有报错。在同一个block中，panic后面不能有return</strong></p>
+<h3 id="猜测4-panic和fuzz函数默认return之间的影响">猜测4: panic和Fuzz函数默认return之间的影响</h3>
+<p>在Fuzz函数中，如果自定义了panic点。则Fuzz函数的默认返回值必须唯一。<br>
+为了证实这一点，做了如下实验。</p>
+<pre><code class="language-go">func Fuzz(data []byte) int {
+	err := receivedCorpus(data)
+	fmt.Println(err)
+	if err != false {
+		panic(&quot;22&quot;)
+	}
+	return 0
+}
+</code></pre>
+<p>通过改变return 的返回值，来检查该值和panic之间的关系。<br>
+实验结果如下:</p>
+<pre><code>默认return 0
+不 crash
+默认return 1
+crash
+默认return -1
+不crash
+</code></pre>
+<h1 id="总结">总结</h1>
+<p>经过测试，在gofuzz中使用panic来触发崩溃时，</p>
+<ul>
+<li>不能在panic后面直接跟return。否则会没有crash。</li>
+<li>另外，Fuzz函数的默认返回值必须是1，否则不会崩溃。</li>
+</ul>
 ]]></content>
     </entry>
 </feed>

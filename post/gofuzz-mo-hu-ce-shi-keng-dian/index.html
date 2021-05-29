@@ -1,0 +1,214 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>GoFuzz模糊测试坑点 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/gofuzz-mo-hu-ce-shi-keng-dian.jpeg);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">GoFuzz模糊测试坑点</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="abstract">Abstract</h1>
+<p>尝试使用 go fuzz 来测试程序，本文记录一下测试过程。<br>
+其中遇到了一些新鲜的点，值得记录一下。</p>
+<h3 id="1-国内下载安装">1、国内下载安装</h3>
+<p>gofuzz 的官方安装方法如下</p>
+<pre><code class="language-bash">go get github.com/dvyukov/go-fuzz/go-fuzz
+go get github.com/dvyukov/go-fuzz/go-fuzz-build
+</code></pre>
+<p>但国内服务器可能无法正常下载。<br>
+可以运行以下命令来手动安装gofuzz</p>
+<pre><code class="language-bash">cd $GOPATH/src/github.com/dvyukov/
+git clone https://github.com/dvyukov/go-fuzz.git
+cd go-fuzz/
+
+go install
+cd ../go-fuzz-build/
+go install
+</code></pre>
+<h3 id="2-fuzz函数仅接收byte类型">2、Fuzz函数仅接收byte类型</h3>
+<p>使用gofuzz测试程序，只能将byte类型的值作为输入。</p>
+<pre><code class="language-go">// +build gofuzz
+package foo
+func Fuzz(data []byte) int {
+    ... ...
+}
+</code></pre>
+<p>如果需要测试多参数函数，复杂类型参数的函数，需要做一些序列化。</p>
+<p>例如，下面的代码用来测试<code>NewMsgIssue</code>函数。<br>
+由于Fuzz函数仅接收<code>[]byte</code>类型作为参数。<br>
+我们需要自己写一个<code>receivedCorpus</code>函数，将收到的语料data反序列化为结构体。</p>
+<pre><code class="language-go">func Fuzz(data []byte) int {
+	FuzzParam := receivedCorpus(data)
+	coinIssueInfo := types.IssueParams{
+		Name:               FuzzParam.Name,
+		Symbol:             strings.ToUpper(FuzzParam.Symbol),
+		TotalSupply:        sdk.NewInt(FuzzParam.TotalSupply),
+	}
+	msg := types.NewMsgIssue(sdk.AccAddress([]byte(&quot;hello&quot;)), &amp;coinIssueInfo)
+	return 0
+}
+</code></pre>
+<p>上述代码中，<code>receivedCorpus</code>函数为了实现从语料的byte中反序列化出结构体，我使用的是第三方库<code>gob</code>。<br>
+使用方法如下</p>
+<pre><code class="language-go">type issueParamfuzz struct{ //要传输的测试语料
+	Name string
+	Symbol string
+	TotalSupply int64
+}
+
+func receivedCorpus(data []byte) (issueParamfuzz,bool){
+	ret := issueParamfuzz{}
+	b := bytes.Buffer{}
+	b.Read(data)
+	dec := gob.NewDecoder(&amp;b)
+	dec.Decode(&amp;ret)
+	return ret,false
+}
+</code></pre>
+<p>这里不要使用<code>encoding/binary</code>库，因为<code>binary</code>不能序列化任何引用类型或复杂类型。</p>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/yi-pian-wen-zhang-kan-bu-dong-ru-he-shi-yong-afl-fuzz-apache/">一篇文章看不懂，如何使用AFL Fuzz Apache</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/yi-tai-fang-xi-jie-3stateroot-wei-shi-me-bu-neng-qu-dai-receiptsroot/">以太坊细节[3]:StateRoot为什么不能取代ReceiptsRoot</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#abstract">Abstract</a><br>
+*
+<ul>
+<li><a href="#1-%E5%9B%BD%E5%86%85%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85">1、国内下载安装</a></li>
+<li><a href="#2-fuzz%E5%87%BD%E6%95%B0%E4%BB%85%E6%8E%A5%E6%94%B6byte%E7%B1%BB%E5%9E%8B">2、Fuzz函数仅接收byte类型</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

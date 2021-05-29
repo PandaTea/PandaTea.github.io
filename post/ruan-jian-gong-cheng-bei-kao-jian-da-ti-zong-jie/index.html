@@ -1,0 +1,457 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>软件工程备考简答题总结 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/ruan-jian-gong-cheng-bei-kao-jian-da-ti-zong-jie.jpeg);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">软件工程备考简答题总结</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><p>此版本复习提纲仅适用于 江苏大学陈雷老师班</p>
+<h3 id="第一章-软件工程概述">第一章 软件工程概述</h3>
+<ul>
+<li>
+<p>软件的特点</p>
+<ul>
+<li>无法观察物理形态</li>
+<li>在软件的开发过程、工程管理过程中渗透了大量的脑力劳动</li>
+<li>无磨损、老化</li>
+<li>需要在特定的计算机系统环境下运行</li>
+<li>有复用性</li>
+</ul>
+</li>
+<li>
+<p>软件工程的提出目的是:</p>
+<ul>
+<li>解决软件危机带来的诸多弊端
+<ul>
+<li>控制开发成本在预期范围内</li>
+<li>交付满足用户需求的软件</li>
+<li>软件的功能可靠</li>
+<li>软件的品质优秀</li>
+<li>控制软件的开发时间</li>
+<li>软件易于维护</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>目标、过程、原则</p>
+<ul>
+<li>目标：低成本、高品质、及时交付软件</li>
+<li>过程：基本过程、支持过程、组织过程</li>
+<li>原则：
+<ul>
+<li>适宜的开发泛型</li>
+<li>适宜的设计方法</li>
+<li>高品质的工程支持</li>
+<li>开发过程的管理</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="第二章-开发模型">第二章 开发模型</h3>
+<ul>
+<li>
+<p>四种开发模型的对比</p>
+<ul>
+<li>瀑布模型
+<ul>
+<li>顺序执行、不可回退</li>
+</ul>
+</li>
+<li>快速原型模型
+<ul>
+<li>快速获取用户的需求</li>
+</ul>
+</li>
+<li>增量模型
+<ul>
+<li>产品灵活可以变更需求</li>
+</ul>
+</li>
+<li>螺旋模型
+<ul>
+<li>在 快速原型模型 和 增量模型的基础上 添加了 风险管理</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>XP模型</p>
+<ul>
+<li>客户参与、适应变化、测试驱动、以代码为核心</li>
+</ul>
+</li>
+<li>
+<p>敏捷思想的核心价值观</p>
+<ul>
+<li>注重个人和交互</li>
+<li>注重能工作的软件</li>
+<li>提高客户的参与程度</li>
+<li>以积极的心态响应需求变化</li>
+</ul>
+</li>
+</ul>
+<h3 id="第三章-需求分析">第三章 需求分析</h3>
+<ul>
+<li>
+<p>结构化的具体步骤如下:</p>
+<ul>
+<li>建立当前系统的具体模型</li>
+<li>生成当前系统的逻辑模型</li>
+<li>建立目标系统的逻辑模型</li>
+</ul>
+</li>
+<li>
+<p>需求分析的过程：</p>
+<ul>
+<li>需求获取:调查软件需求</li>
+<li>需求分析:分析建模、对现实世界进行抽象</li>
+<li>需求说明:编写需求文档</li>
+<li>需求验证:需求评审</li>
+</ul>
+</li>
+<li>
+<p>人们对事物的认识是不断深化的，因此需求迭代是一个过程。</p>
+<ul>
+<li>这种迭代存在风险，会使上一次迭代因为需求不足而被推翻</li>
+<li>软件分析师应意识到迭代中风险的必然性。积极面对需求变更</li>
+</ul>
+</li>
+<li>
+<p>评审的作用</p>
+<ul>
+<li>作用:为了尽早消除需求中的错误，确保需求说明的准确、完整</li>
+<li>必要性:需求说明书中都是自然语言，需要确定语言的准确</li>
+</ul>
+</li>
+<li>
+<p>数据流图的作用</p>
+<ul>
+<li>抽象的表示系统和软件</li>
+<li>从信息加工的角度，自顶向下、逐步求精的表示功能细节</li>
+<li>提供了功能建模的机制 、 信息流建模的机制</li>
+<li>建立起系统或软件的功能模型</li>
+</ul>
+</li>
+</ul>
+<h3 id="第四章-软件设计">第四章 软件设计</h3>
+<ul>
+<li>
+<p>软件设计</p>
+<ul>
+<li>输入：需求规格说明书</li>
+<li>输出：设计规格说明书</li>
+<li>目标：需求模型转设计模型</li>
+<li>过程：层层分解、逐步求精</li>
+</ul>
+</li>
+<li>
+<p>软件设计是对软件需求进行：</p>
+<ul>
+<li>数据设计</li>
+<li>体系结构设计</li>
+<li>接口设计</li>
+<li>构件设计</li>
+<li>部署设计</li>
+</ul>
+</li>
+<li>
+<p>软件设计优化的准则如下:</p>
+<ul>
+<li>相关的各部分放到一起、不相关的不放到一起</li>
+<li>模块的大小要适中</li>
+<li>模块的接口简明扼要</li>
+<li>作用范围在控制范围内</li>
+<li>软件的深度、宽度、扇入扇出要适当</li>
+<li>单入口、单出口</li>
+<li>可预测模块的划分</li>
+</ul>
+</li>
+</ul>
+<h3 id="第五章-测试">第五章 测试</h3>
+<ul>
+<li>
+<p>测试和调试的不同</p>
+<ul>
+<li>测试：尽可能发现错误</li>
+<li>调试：尽可能修复错误</li>
+</ul>
+</li>
+<li>
+<p>静态测试和动态测试的不同</p>
+<ul>
+<li>静态测试：人工审计、仔细阅读文档、检查软件的执行情况是否与设计规格说明书一致</li>
+<li>动态测试：依赖软件的执行、测试用例来判断是否符合设计规格说明书</li>
+</ul>
+</li>
+<li>
+<p>软件测试分为：</p>
+<ul>
+<li>单元测试</li>
+<li>集成测试</li>
+<li>系统测试</li>
+<li>验收测试</li>
+</ul>
+</li>
+<li>
+<p>每一个测试活动有5个过程：</p>
+<ul>
+<li>测试计划制定、测试设计、测试样例生成、测试实施、测试报告</li>
+</ul>
+</li>
+</ul>
+<h3 id="第七章-需求分析方法">第七章 需求分析方法</h3>
+<ul>
+<li>
+<p>类的外部关联有3中关系</p>
+<ul>
+<li>关联</li>
+<li>继承</li>
+<li>依赖</li>
+</ul>
+</li>
+<li>
+<p>事件跟踪图</p>
+<ul>
+<li>表示事件顺序和事件和对象的关系</li>
+<li>时间从上到下递增</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十一章-软件项目管理方法">第十一章 软件项目管理方法</h3>
+<ul>
+<li>
+<p>软件项目管理和软件工程的区别和关系：</p>
+<ul>
+<li>目标相同：都是围绕软件产品开发的管理</li>
+<li>作用不同：软件工程是软件开发的方法论，软件项目管理是生产管理形式。</li>
+<li>关联：软件项目管理是软件工程的载体</li>
+</ul>
+</li>
+<li>
+<p>度量方法</p>
+<ul>
+<li>代码行度量</li>
+<li>功能点度量</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十三章-软件配置">第十三章 软件配置</h3>
+<ul>
+<li>
+<p>风险识别3步：</p>
+<ul>
+<li>资料收集</li>
+<li>估计项目风险形式</li>
+<li>识别风险</li>
+</ul>
+</li>
+<li>
+<p>软件质量：</p>
+<ul>
+<li>提供的软件产品满足用户的明确和隐含需求的能力特性总和。</li>
+</ul>
+</li>
+<li>
+<p>软件配置管理中的基本单元：软件配置项</p>
+<ul>
+<li>软件的文档、程序、数据进行整合
+<ul>
+<li>以利于软件的定义、标识、跟踪、管理，使其成为受控的软件版本产品</li>
+<li>这一过程成为软件配置管理</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十四章-软件维护">第十四章 软件维护</h3>
+<ul>
+<li>
+<p>软件维护的工作程序与软件开发的工作程序相仿</p>
+<ul>
+<li>维护的需求分析</li>
+<li>维护的设计</li>
+<li>修改程序代码</li>
+<li>维护后的测试</li>
+<li>维护后的试运行</li>
+<li>维护后的正式运行</li>
+<li>维护过程的评审和审计</li>
+</ul>
+</li>
+<li>
+<p>面向缺陷维护的内容</p>
+<ul>
+<li>该产品正常运行，但是个别地方存在缺陷。</li>
+<li>用户不满意，克服缺陷的方法是修改程序。</li>
+<li>修改程序而不修改结构</li>
+</ul>
+</li>
+<li>
+<p>文档是指记录数据的媒体和数据本身。</p>
+<ul>
+<li>永久性</li>
+<li>描述人工可读的东西</li>
+<li>表述活动、需求、过程或结果的描述、定义、规定或认证。</li>
+<li>规定了实现的细节。</li>
+</ul>
+</li>
+</ul>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/ji-qi-xue-xi-1te-zheng-xuan-ze/">机器学习[1]:特征选择</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/lesslesssi-wei-dao-tu-greatergreater-du-shu-bi-ji/">《思维导图》读书笔记</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E6%A6%82%E8%BF%B0">第一章 软件工程概述</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%9E%8B">第二章 开发模型</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90">第三章 需求分析</a></li>
+<li><a href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1">第四章 软件设计</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%94%E7%AB%A0-%E6%B5%8B%E8%AF%95">第五章 测试</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%83%E7%AB%A0-%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E6%96%B9%E6%B3%95">第七章 需求分析方法</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AB%A0-%E8%BD%AF%E4%BB%B6%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86%E6%96%B9%E6%B3%95">第十一章 软件项目管理方法</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0-%E8%BD%AF%E4%BB%B6%E9%85%8D%E7%BD%AE">第十三章 软件配置</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0-%E8%BD%AF%E4%BB%B6%E7%BB%B4%E6%8A%A4">第十四章 软件维护</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

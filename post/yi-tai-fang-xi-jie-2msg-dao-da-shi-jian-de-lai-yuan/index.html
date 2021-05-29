@@ -1,0 +1,287 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>以太坊细节[2]:msg到达时间的来源 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/yi-tai-fang-xi-jie-2msg-dao-da-shi-jian-de-lai-yuan.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">以太坊细节[2]:msg到达时间的来源</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h2 id="背景">背景</h2>
+<p>有些依赖时间弱同步假设的共识，比如PBFT，DPOS，和一些元胞自动机衍生(MoCA)的共识。在实现的时候需要得到消息的到达时间。<br>
+学习了一下以太坊如何处理区块到达时间的。这里记录一下。</p>
+<h2 id="消息中receivedat的写入逻辑">消息中ReceivedAt的写入逻辑</h2>
+<p>一切的起点是<code>p2p</code>模块的<code>server.run()</code>函数<br>
+从这里开始，geth启动了p2p服务器。</p>
+<pre><code>func (srv *Server) run(dialstate dialer) {
+	srv.log.Info(&quot;Started P2P networking&quot;, &quot;self&quot;, srv.localnode.Node().URLv4())
+	...
+				go srv.runPeer(p)
+				peers[c.node.ID()] = p
+    ...
+}
+</code></pre>
+<p>调用<code>runPeer</code>函数 <code>p2p/server.go, L1044 - L1067</code></p>
+<pre><code>func (srv *Server) runPeer(p *Peer) {
+	...
+	remoteRequested, err := p.run()
+    ...
+}
+</code></pre>
+<p>p2p服务器通过<code>runPeer</code>函数，调用了<code>peer</code>的<code>run</code>函数<br>
+启动节点。<br>
+run函数中启动了各种监听，</p>
+<pre><code>func (p *Peer) run() (remoteRequested bool, err error) {
+	...
+	go p.readLoop(readErr)
+	go p.pingLoop()
+    ...
+}
+</code></pre>
+<p>跟进<code>readLoop</code>中就可以看到对<code>msg</code>的操作。</p>
+<pre><code>func (p *Peer) readLoop(errc chan&lt;- error) {
+	defer p.wg.Done()
+	for {
+		msg, err := p.rw.ReadMsg()
+		if err != nil {
+			errc &lt;- err
+			return
+		}
+		msg.ReceivedAt = time.Now()
+		if err = p.handle(msg); err != nil {
+			errc &lt;- err
+			return
+		}
+	}
+}
+</code></pre>
+<p>可见 <code>readLoop</code>函数会循环调用<code>rw</code>中的ReadMsg<br>
+向读出的<code>msg</code>中写入<code>msg.ReceivedAt</code>值为当前时间<br>
+这里的<code>ReceivedAt</code>就可以在后面用来判断消息的到达时间，通过比较<code>ReceivedAt</code>和<code>block.header.timestamp</code>就可以很方便的判断消息在网络中游荡的时间长度。<br>
+函数<code>readLoop</code>中，将处理好的<code>msg</code>送到了<code>p.handle</code>里<br>
+<code>peer.handle</code>中，又将<code>msg</code>给到了<code>proto.in</code></p>
+<pre><code>func (p *Peer) handle(msg Msg) error {
+    ...
+    proto, err := p.getProto(msg.Code)
+    ...
+		select {
+		case proto.in &lt;- msg:
+			return nil
+	...
+}
+</code></pre>
+<p>进入<code>getProto</code>函数中，看一看这个<code>proto</code>是啥。</p>
+<pre><code>func (p *Peer) getProto(code uint64) (*protoRW, error) {
+	for _, proto := range p.running {
+		if code &gt;= proto.offset &amp;&amp; code &lt; proto.offset+proto.Length {
+			return proto, nil
+		}
+	}
+    ...
+}
+</code></pre>
+<p>这里可以看到所有<code>proto</code>来自<code>p.running</code>域，<br>
+在<code>Peer</code>的结构定义中，我们可以找到<code>running</code>的数据类型</p>
+<pre><code>type Peer struct {
+    ...
+	running map[string]*protoRW
+    ...
+}
+</code></pre>
+<p><code>running</code>是一组<code>protoRW</code><br>
+当<code>protoRW.in</code>被赋值时，<code>protoRW.ReadMsg</code>函数就不再堵塞。</p>
+<pre><code>func (rw *protoRW) ReadMsg() (Msg, error) {
+	select {
+	case msg := &lt;-rw.in:
+		msg.Code -= rw.offset
+		return msg, nil
+	case &lt;-rw.closed:
+		return Msg{}, io.EOF
+	}
+}
+</code></pre>
+<p>这样就又回到了<code>readLoop</code>函数的开始。<br>
+可见<code>readLoop</code>函数的作用，就是为所有msg加上<code>ReceivedAt</code>后<br>
+重新再放回到<code>ReadMsg</code>中.</p>
+<h2 id="区块中receivedat的赋值">区块中ReceivedAt的赋值。</h2>
+<p>知道了<code>ReceivedAt</code>是怎么来的。现在看一下在哪里使用了它。<br>
+以太坊的用法如下<br>
+首先由<code>ProtocolManager</code>调用<code>handle</code>开启监听。</p>
+<pre><code>func (pm *ProtocolManager) handle(p *peer) error {
+	...
+		if err := pm.handleMsg(p); err != nil 
+    ...
+}
+</code></pre>
+<p><code>ProtocolManager.handle</code>中调用消息监听<code>pm.handleMsg</code>函数。</p>
+<pre><code>func (pm *ProtocolManager) handleMsg(p *peer) error {
+	// Read the next message from the remote peer, and ensure it's fully consumed
+	msg, err := p.rw.ReadMsg()
+	...
+	case msg.Code == NewBlockMsg:
+	...
+		request.Block.ReceivedAt = msg.ReceivedAt
+		request.Block.ReceivedFrom = p
+	...
+</code></pre>
+<p>可见当收到<code>NewBlockMsg</code>消息的时候，<br>
+解析出的<code>block</code>会做<code>block.ReceivedAt = msg.ReceivedAt</code>操作<br>
+至此，区块<code>block</code>就知道自己是什么时候到的该节点了。</p>
+<h2 id="总结">总结</h2>
+<p>如果是从<code>Block.ReceivedAt</code>一点一点往回追，<br>
+会卡在<code>ProtocolManager</code>的<code>p.rw.ReadMsg</code>函数上。<br>
+<img src="https://img-blog.csdnimg.cn/20200220144846891.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="ProtocolManger" loading="lazy"><br>
+这个函数本身没有对<code>ReceivedAt</code>的定义。<br>
+而且其中的<code>in</code>信道也很难find。<br>
+不过，换个角度。从<code>p2p.sevrer</code>开始追。<br>
+一直追到<code>readLoop</code><br>
+就恍然大悟了。</p>
+<p>以太坊的消息到达时间处理流程如下。<br>
+<img src="https://img-blog.csdnimg.cn/20200220145108197.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="以太坊ReceivedAt处理流程" loading="lazy"></p>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/gai-lu-fen-bu-he-sui-ji-bian-liang-du-li-xing/">概率分布和随机变量独立性</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/dnbft-gong-shi-yi-chong-ke-dong-tai-diao-jie-wang-luo-jie-dian-shu-de-pbft-you-hua-fang-an/">DNBFT共识——一种可动态调节网络节点数的PBFT优化方案</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E8%83%8C%E6%99%AF">背景</a></li>
+<li><a href="#%E6%B6%88%E6%81%AF%E4%B8%ADreceivedat%E7%9A%84%E5%86%99%E5%85%A5%E9%80%BB%E8%BE%91">消息中ReceivedAt的写入逻辑</a></li>
+<li><a href="#%E5%8C%BA%E5%9D%97%E4%B8%ADreceivedat%E7%9A%84%E8%B5%8B%E5%80%BC">区块中ReceivedAt的赋值。</a></li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

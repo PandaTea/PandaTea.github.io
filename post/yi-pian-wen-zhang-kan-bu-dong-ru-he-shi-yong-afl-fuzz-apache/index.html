@@ -1,0 +1,241 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>一篇文章看不懂，如何使用AFL Fuzz Apache | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/yi-pian-wen-zhang-kan-bu-dong-ru-he-shi-yong-afl-fuzz-apache.jpg);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">一篇文章看不懂，如何使用AFL Fuzz Apache</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><p><a href="https://sensepost.com/blog/2017/fuzzing-apache-httpd-server-with-american-fuzzy-lop-+-persistent-mode/">原文地址</a></p>
+<h1 id="intro">intro</h1>
+<p>笔者发现了Apache数组越界漏洞 CVE-2017-7668，漏洞的详情写在了笔者的<a href="https://animal0day.blogspot.com/2017/05/fuzzing-apache-httpd-server-with.html">博客</a>中。博客中介绍了如何使用AFL来测试httpd服务。<br>
+和Dominic先生交流之后，决定在这里再记录一下整个过程。<br>
+文中涉及，代码审计、honggfuzz使用、radamsa使用、AFL工具使用</p>
+<h1 id="goal">Goal</h1>
+<p>偶然遇到AFL，尝试后发现AFL只能测试stdin的输入。对于来自网络的输入则无能为力。<br>
+于是我尝试对Apache进行测试，希望能找到测试Httpd Server端的办法<br>
+总体思路有二:1、对于Apache Command Line添加新的参数 2、使用AFL的<a href="https://github.com/google/honggfuzz/tree/master/examples/apache">持久化Fuzzing</a></p>
+<h1 id="steup-part-1">Steup part 1</h1>
+<p>我的服务器是Debian GNU/Linux 8 64bit，它的内核是4.9.0-0.bpo.2-rt-amd64.<br>
+无须严格使用上述配置，能编译AFL就行。<br>
+在开始正式的编译源码、安装程序、fuzz测试之前，我建议您创建一个适合你的文件夹目录，来存放测试中使用的文件。<br>
+这里给大家介绍我的文件目录格式，仅作参考:</p>
+<ul>
+<li>Victims – For the target programs that we are about to fuzz</li>
+<li>Fuzzers – AFL, honggfuzz, radamsa, etc. go here</li>
+<li>Testcases  – The samples we are going to feed the fuzzer to throw against our Victim</li>
+<li>Sessions – For storing the fuzzing sessions</li>
+<li>Compilers – To store compilers such as clang-4.0 and binaries needed to compile</li>
+</ul>
+<h3 id="compiling-and-installing-afl">Compiling and Installing AFL</h3>
+<p>执行以下命令即可</p>
+<pre><code class="language-bash">sudo apt install build-essential
+wget http://lcamtuf.coredump.cx/afl/releases/afl-latest.tgz
+tar xzf afl-latest.tgz
+cd afl*
+make &amp;&amp; sudo make install &amp;&amp; echo-e &quot;\n[+] AFL ready to fuzz at $(which afl-fuzz)&quot;
+</code></pre>
+<p>编译之后，可以添加环境变量，来更方便的调用AFL</p>
+<h3 id="compiling-and-installing-apache">Compiling and installing Apache</h3>
+<p>首先下载Apache及其依赖。在本次案例中，我把apache放到了~/Fuzzing/Victims/apache_afl/目录下<br>
+在编译Apache之前，还需要安装Apache portable Runtime. APR和nghttp2</p>
+<pre><code class="language-bash">sudo apt install pkg-config
+sudo apt install libssl-dev
+</code></pre>
+<h3 id="fuzzing-apache-with-afl-through-an-input-file">Fuzzing Apache with AFL through an input file</h3>
+<p>as we all know, AFL使用种子文件作为命令行参数的初始测试范围。</p>
+<pre><code class="language-bash">afl-fuzz -i testcases/-o session_1/--./victim -v -f @@
+</code></pre>
+<p>然而Apache没有命令行参数输入</p>
+<h3 id="patching-apache">Patching Apache</h3>
+<p>为了让Apache能接收命令行传入的参数，需要修改Apache的main.c源码文件。修改后的源文件可在<a href="https://gist.githubusercontent.com/n30m1nd/28d193d99e02ad572927905cb315aad8/raw/31fe4d7df5db8d00c5e246b0f6b0b27c11f8de7e/apatching_apache_for_AFL_fuzzing.diff">这里</a>下载.<br>
+然后在apache源码根目录下执行命令</p>
+<pre><code class="language-bash">patch -p0 -i apatching_apache_for_AFL_fuzzing.diff
+</code></pre>
+<p>这个补丁的思路是，在Apache进程中创建一个线程以修改web渲染线程的参数，这样就能让左右结构发生在同一个进程当中，从而实现AFL的代码解析。</p>
+<h3 id="fuzzing-apache">Fuzzing Apache</h3>
+<p>现在我们就可以Fuzz Apache相关代码了。<br>
+我们使用如下命令来编译Apache：</p>
+<pre><code class="language-bash">CC=&quot;afl-clang&quot; CXX=&quot;afl-clang++&quot; PREFIX=&quot;/usr/local/apache_afl_blogpost/&quot;./compile_dependencies_with_flags.sh
+</code></pre>
+<p>在启动Apache时，我们需要添加三个参数</p>
+<pre><code class="language-bash">-X -m none -t 5000
+</code></pre>
+<h1 id="setup-part-2">Setup part 2</h1>
+<p>使用AFL的持久化测试方法</p>
+<h3 id="compiling-afl-clang-fast">Compiling afl-clang-fast</h3>
+<p>还记得之前下载的clang和llvm吗，超方便的。我们可以直接在他们的文件夹下面编译AFL。为了实现可持续化的Fuzz我们只需要额外编译一个AFL的实验性功能。<br>
+可以只fuzz一部分代码，而不是执行全部代码。</p>
+<h3 id="patching-apache-for-persistence">Patching Apache for Persistence</h3>
+<p>在这之前，还是需要改一下Apache的源码。修改后的<a href="https://gist.github.com/n30m1nd/ec19fc17c6293be303b85a998cd05aa9">源码链接</a>。</p>
+<h3 id="fuzzing-apache-with-afl-on-persistent-mode">Fuzzing Apache with AFL on Persistent mode</h3>
+<p>同上文中介绍的该参数的方法一样，我们需要在启动Apache时，我们需要添加三个参数</p>
+<pre><code class="language-bash">-X -m none -t 5000
+</code></pre>
+<h1 id="conclusions">Conclusions</h1>
+<p>本文介绍了如何通过使用 unshared function 来高效的fuzz程序。<br>
+这个办法相对honggfuzz而言还是慢了点。可能是因为Apache实现中包含多线程的原因。<br>
+测试中发现的crash也都能复现，效果棒棒。<br>
+很感谢Apache安全团队在研究中给予的帮助，很高兴和你们合作。<br>
+加油，奥利给</p>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/ethereum-dos-attack-on-teku-notes/">Ethereum DoS Attack on Teku Notes</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/gofuzz-mo-hu-ce-shi-keng-dian/">GoFuzz模糊测试坑点</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#intro">intro</a></li>
+<li><a href="#goal">Goal</a></li>
+<li><a href="#steup-part-1">Steup part 1</a><br>
+*
+<ul>
+<li><a href="#compiling-and-installing-afl">Compiling and Installing AFL</a></li>
+<li><a href="#compiling-and-installing-apache">Compiling and installing Apache</a></li>
+<li><a href="#fuzzing-apache-with-afl-through-an-input-file">Fuzzing Apache with AFL through an input file</a></li>
+<li><a href="#patching-apache">Patching Apache</a></li>
+<li><a href="#fuzzing-apache">Fuzzing Apache</a></li>
+</ul>
+</li>
+<li><a href="#setup-part-2">Setup part 2</a><br>
+*
+<ul>
+<li><a href="#compiling-afl-clang-fast">Compiling afl-clang-fast</a></li>
+<li><a href="#patching-apache-for-persistence">Patching Apache for Persistence</a></li>
+<li><a href="#fuzzing-apache-with-afl-on-persistent-mode">Fuzzing Apache with AFL on Persistent mode</a></li>
+</ul>
+</li>
+<li><a href="#conclusions">Conclusions</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

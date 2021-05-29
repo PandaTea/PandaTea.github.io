@@ -1,0 +1,220 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>GoFuzz自定义语料输入流程记录 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/gofuzz-zi-ding-yi-yu-liao-shu-ru-liu-cheng-ji-lu.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">GoFuzz自定义语料输入流程记录</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="背景">背景</h1>
+<p>在使用gofuzz的过程中，发现自己输入的corpus好像没有被执行。<br>
+遂审计一下代码，追踪一下输入的corpus的处理流程。</p>
+<h1 id="正文">正文</h1>
+<p>在一次测试过程中，我输入的初始语料如下</p>
+<pre><code>{&quot;Name&quot;:&quot;AjWwhT&quot;,&quot;Symbol&quot;:&quot;HctcuA&quot;,&quot;TotalSupply&quot;:100}
+</code></pre>
+<p>但进化出的可崩溃语料却是这些</p>
+<pre><code>        &quot;:&quot;
+        &quot;{\&quot;\&quot;1&quot;
+        &quot;{1&quot;
+        &quot;{:&quot;
+        &quot;\&quot;\&quot;,&quot;
+        &quot;\&quot;\&quot;:&quot;
+        &quot;{0&quot;
+        &quot;{,&quot;
+        &quot;,&quot;
+        &quot;{2&quot;
+        &quot;{\&quot;\&quot;:0\&quot;0&quot;
+        &quot;{\&quot;\&quot;T&quot;
+        &quot;0T&quot;
+        &quot;0\&quot;0&quot;
+        &quot;{\&quot;\&quot;2&quot;
+        &quot;{\&quot;\&quot;\&quot;&quot;
+        &quot;{T&quot;
+        &quot;{\&quot;\&quot;}&quot;
+        &quot;{\&quot;\&quot;:\&quot;\&quot;:&quot;
+        &quot;{\&quot;\&quot;:\&quot;\&quot;T&quot;
+        &quot;{\&quot;\&quot;,&quot;
+        &quot;02&quot;
+        &quot;{}&quot;
+        &quot;}&quot;
+        &quot;T&quot;
+        &quot;{\&quot;\&quot;:00&quot;
+        &quot;01&quot;
+        &quot;0}&quot;
+        &quot;00&quot;
+        &quot;{\&quot;\&quot;0&quot;
+</code></pre>
+<p>这都是嘛玩意儿，根本看不出跟我的初始输入有啥血缘关系。<br>
+于是跟进一下代码，来学习一下corpus的处理流程。</p>
+<h3 id="文件输入">文件输入</h3>
+<p><code>go-fuzz</code>命令的入口为<code>main</code>函数。<br>
+其中，调用了<code>coordinatorMain</code>和<code>hub.connect</code>函数。</p>
+<ul>
+<li><code>coordinatorMain</code>函数从<code>/corpus/</code>文件目录下读取用户生成的自定义初始语料集合。</li>
+<li><code>hub.connect</code>函数将这些语料集合载入到变量<code>hub.triageQueue</code>中。</li>
+</ul>
+<p>工作进程包含两个循环:</p>
+<ul>
+<li><code>hub.loop</code>: 该循环将<code>hub.triageQueue</code>中的语料载入到<code>triageC</code>变量中。</li>
+<li><code>worker.loop</code>:该循环调用<code>triageInput</code>函数来处理<code>triageC</code>变量。</li>
+</ul>
+<p>流程图如下:<br>
+<img src="https://img-blog.csdnimg.cn/20200821235626249.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70#pic_center" alt="gofuzz 输入流程图" loading="lazy"></p>
+<h1 id="结尾">结尾</h1>
+<p>所以说gofuzz还是运行了我给的初始corpus，只是由于某种原因没有输出crash...<br>
+可能是没有当作模糊测试的重点？<br>
+这些都只是猜测<br>
+我不想花太多时间在研究如何优雅的使用gofuzz上了。<br>
+于是直接到gofuzz仓库的issue中寻找答案。<br>
+在<a href="https://github.com/dvyukov/go-fuzz/issues/289">issue#289</a>中，找到了类似的思考。<br>
+官方给出的更优解是<a href="https://github.com/thepudds/fzgo">fzgo</a>,一个集成了go-fuzz和go test的工具。</p>
+<p>后面我会把研究精力，从gofuzz的原理研究 转移到 fzgo的体验和测试上。</p>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/suo-you-ji-yu-cosmos-de-qu-kuai-lian-xiang-mu-de-ce-shi-wang-qi-dong-fang-fa/">所有基于cosmos的区块链项目的测试网启动方法</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/gofuzz-wu-fa-zheng-chang-hong-fa-crash-yan-jiu/">GoFuzz无法正常触发crash研究</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E8%83%8C%E6%99%AF">背景</a></li>
+<li><a href="#%E6%AD%A3%E6%96%87">正文</a><br>
+*
+<ul>
+<li><a href="#%E6%96%87%E4%BB%B6%E8%BE%93%E5%85%A5">文件输入</a></li>
+</ul>
+</li>
+<li><a href="#%E7%BB%93%E5%B0%BE">结尾</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

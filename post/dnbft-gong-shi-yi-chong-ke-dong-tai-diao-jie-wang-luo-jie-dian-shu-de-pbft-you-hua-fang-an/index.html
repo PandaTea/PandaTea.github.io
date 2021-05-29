@@ -1,0 +1,304 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>DNBFT共识——一种可动态调节网络节点数的PBFT优化方案 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/dnbft-gong-shi-yi-chong-ke-dong-tai-diao-jie-wang-luo-jie-dian-shu-de-pbft-you-hua-fang-an.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">DNBFT共识——一种可动态调节网络节点数的PBFT优化方案</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="摘要">摘要</h1>
+<p>区块链类比于一种分布式存储系统，<br>
+这种存储系统有可持续增长，不可篡改的特点。<br>
+区块链中的共识是多个节点对某一个状态达成一致的过程。<br>
+PBFT是一种快速的共识机制。<br>
+但有无法动态调整网络的缺陷。<br>
+对此缺陷，江苏大学的储劲松提出了DNBFT共识，这里来学习一下。</p>
+<h1 id="pbft共识">PBFT共识</h1>
+<h2 id="pbft流程简述">PBFT流程简述</h2>
+<p>PBFT共识过程分为四个阶段，分别是pre-prepare、Prepare、Commit、Reply。</p>
+<p><strong>pre-prepare</strong>: 所有普通节点向leader节点发送transaction交易信息，leader收集交易信息，并对transactions进行选择和排序，整理出来要写入新区块的交易集合，并广播这个transactions集合。<br>
+<strong>Prepare</strong>: 各节点收到transactions集合之后，在本地对transactions进行演算，更新节点状态。更新后，根据transactions计算的结果生成一个校验值，并将自己生成的校验值广播出去。<br>
+<strong>commit</strong>：当节点收到2f个不同节点发来的校验值，和自己的校验值比较相等之后，向全网广播一个commit消息。<br>
+<strong>Relay</strong>: 当leader节点收到2f个不同节点发来的commit消息之后，将提交新区块到本地的链上，并提交新区块。至此，新的区块上链。<br>
+<img src="https://img-blog.csdnimg.cn/20200201215029263.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="PBFT" loading="lazy"><br>
+详细共识流程和原理<a href="https://blog.csdn.net/cemao4548/article/details/104227351">PBFT机制原理</a></p>
+<h2 id="pbft节点进出机制">PBFT节点进出机制</h2>
+<h3 id="pbft共识协议本身没有动态机制">PBFT共识协议本身没有动态机制</h3>
+<p>PBFT本身不能动态共识，每一轮的节点数是固定的。这个特性在现实环境中有很多不利影响。例如，想新节点无法加入到网络中；恶意节点无法从网络中剔除。</p>
+<p>例如，想用高吞吐、快速的PBFT共识来做一个学生学分的区块链系统，增强学分系统的公信度。但是因为PBFT总节点数不能动态改变，导致新入学的同学无法加入网络，被开除的同学无法退出网络。</p>
+<h3 id="pbft的动态共识机制改良">PBFT的动态共识机制改良</h3>
+<h4 id="dnbft共识设定">DNBFT共识设定</h4>
+<p>DNBFT共识，即在PBFT基础上添加了JOIN协议4个子协议，来满足节点添加和删除的功能。<br>
+四个子协议为: JOIN EXIT PCLEAR CLEAR<br>
+节点加入 节点退出 主节点被动退出 备份节点被动退出<br>
+同时维护节点状态表<br>
+<img src="https://img-blog.csdnimg.cn/20200202184723128.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="节点状态表" loading="lazy"><br>
+NodeID从小到大寻找良性状态节点，来胜任leader节点。<br>
+刚进入网络的节点状态设为 Benign<br>
+离开网络的节点状态设为 Absent<br>
+有恶意行为的节点状态设为 Malicious</p>
+<h4 id="dnbft-动态添加节点过程">DNBFT 动态添加节点过程</h4>
+<p><img src="https://img-blog.csdnimg.cn/2020020220461179.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="DNBFT过程" loading="lazy"><br>
+<strong>阶段一</strong><br>
+新节点 首先到 CA_Node 注册，CA_Node检查其身份合法之后，在节点表后面添加新记录，例如这个新节点是节点g。<br>
+CA_Node将 g 的加入申请消息<code>&lt;JOIN,g,IP,PK&gt;sig_ca</code>广播，发给所有备用节点。<br>
+所有节点(例如节点i)收到消息<code>&lt;JOIN,g,IP,PK&gt;sig_ca</code>后，验证消息签名sig_ca。然后将收到的消息和CA_Node提供的节点状态表进行比对。<br>
+比对通过后，节点i开始JOIN协议。</p>
+<p><strong>阶段二</strong><br>
+当进入JOIN协议之后，节点i停止收发常规PBFT的四个子协议(pre-prepare,prepare,commit,reply)。<br>
+节点i广播一个<code>&lt;JOIN,v+1,h,C,P,g,i&gt;sig_i</code>消息<br>
+其中<br>
+v : pbft的视图编号<br>
+h : 当前区块高度（论文里写的是序列号...这里我是不是理解的有问题<br>
+C : 来自2f+1个不同节点的消息(这个C用来证明当前高度确实是h<br>
+P : 高度大于h的消息集合pm,其中必须有一个pre-prepare消息和2f+1个prepare消息（这是干啥的呢<br>
+g：待添加的节点id<br>
+i：本节点id<br>
+sig_i: 本节点签名</p>
+<p><strong>阶段三</strong><br>
+当主节点p收到2f+1个有效的JOIN消息后，向全网广播<code>&lt;NEWVIEW,v+1,V,O,g&gt;sig_p</code>消息<br>
+其中<br>
+V：来自2f+1个节点的JOIN有效消息<br>
+O：从V中选择高度最低的prepare消息,其高度计作min；选择高度最高的prepare消息，其高度计作max；对于V中所有发出高度是min的消息的节点，生成一个该节点的prepare消息（可以伪造？），这些消息组成了O。<br>
+g：待加入的节点<br>
+sig_p：主节点的签名</p>
+<p><strong>阶段四</strong><br>
+当所有节点收到来自主节点p的NEWVIEW消息之后，进行核对，核对正确后。将本地的节点状态表进行更新，添加节点g。<br>
+至此，节点g正式加入网络。</p>
+<h4 id="dnbft-主动离开">DNBFT 主动离开</h4>
+<p>退出网络有两种情况，主动离开和被动离开。主动离开就是因为节点自身原因主动离开网络，被动离开就是节点因为作恶或者不作为被强行清除出网络。</p>
+<p><strong>阶段一</strong><br>
+想要退出的节点记为节点i。<br>
+节点i向CA_Node请求退出网络。<br>
+节点i向网络广播<code>&lt;EXIT-REQ,i,IP,PK&gt;sig_i</code>消息，<br>
+CA_Node收到节点i广播的EXIT消息之后，记录节点i到CLR列表。<br>
+CA_Node广播CLR消息，将节点i的状态改为absent。</p>
+<p><strong>阶段二</strong><br>
+普通节点i在收到EXIT-REQ后，将消息记录下来。<br>
+等接到CLR消息后，查找CLR列表中未过期的地址。<br>
+比对地址和本地的EXIT-REQ记录，<br>
+将相同的地址从本地节点的节点状态表中删除。</p>
+<p><strong>阶段三</strong><br>
+普通节点j在将节点i状态置为absent之后，<br>
+向全网广播<code>&lt;EXIT,v+1,h,C,P,E,i&gt;sig_j</code>,<br>
+当新leader节点收到2f+1个EXIT消息之后，<br>
+向全网广播<code>&lt;NEW-View,v+1,V,O,E&gt;sig_leader</code></p>
+<p><strong>阶段四</strong><br>
+到此位置，所有节点将节点i的状态置为absent<br>
+然后每一个节点向要退出的节点i发送<code>&lt;EXIT-REPLY,v+i,j,i&gt;sig_j</code><br>
+当节点i收到f+1个EXIT-REPLY之后，即认为自己已经退出网络。</p>
+<h4 id="dnbft-主节点被动离开">DNBFT 主节点被动离开</h4>
+<p>DNBFT和PBFT一样，允许f个故障节点。<br>
+对于恶意节点，PBFT共识只能容忍。<br>
+而DNBFT共识在容忍恶意节点作恶的同时能够动态的剔除恶意节点。<br>
+通过剔除恶意节点并且阻止恶意节点再次进入网络，来降低恶意节点出现的概率。<br>
+<img src="https://img-blog.csdnimg.cn/20200208182446855.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="被动退出协议" loading="lazy"><br>
+<strong>阶段一</strong><br>
+恶意主节点 记为 节点z<br>
+有 普通节点  节点i<br>
+新主节点 节点j<br>
+节点i向全网广播 <code>&lt;PCLEAR,v+1,h,C,P,z,i&gt;sig_i</code><br>
+C和P依旧是消息集合<br>
+当新主节点收到PCLEAR消息2f+1个时，<br>
+向除了节点z的全网广播 <code>&lt;NEW-VIEW,v+1,V,O,z&gt;sig_j</code>，<br>
+普通节点检查NEW-VIEW消息的签名 合法性</p>
+<p><strong>阶段二</strong><br>
+此时全网对 恶意节点z 的排挤动作已完成<br>
+所有节点已将恶意节点z的节点状态置为 malicious<br>
+所有节点向 恶意节点z 和 NodeCA 发送消息<code>&lt;PCLEAR-REPLY,v+1,z,i&gt;sig_i</code><br>
+当NodeCA收到了f+1个PCLEAR-REPLY之后，将节点z在NodeCA的节点状态置为 malicious<br>
+从此，节点z将再也无法加入网络</p>
+<h4 id="dnbft-普通节点被动离开">DNBFT 普通节点被动离开</h4>
+<p>普通节点主观判断主节点是否为恶意节点，是简单的。<br>
+但<br>
+普通节点难以判断一个普通节点是否为恶意节点。<br>
+DNBFT引入两个术语</p>
+<ul>
+<li>参与度(PD) 当一个普通节点Node_i参加了一次完整的共识，Node_i.PD +=1，相反则PD -= 1,PB初始值为3，0 &lt;= PD &lt;=3,PD 为整数。PD==0时，则节点为恶意节点</li>
+<li>成功完成共识后，如果节点j 与 2f+1个节点提交的信息一样，则记为完成一次完整的共识。</li>
+</ul>
+<p><strong>阶段一</strong><br>
+普通节点i要驱逐恶意普通节点z<br>
+普通节点i向全网广播<code>&lt;CLEAR,v+1,h,C,P,z,i&gt;sig_i</code></p>
+<p><strong>阶段二</strong><br>
+当主节点leader收到2f+1个CLEAR消息后<br>
+向全网广播<code>&lt;NEW-VIEW,v+1,V,O,Z&gt;sig_leader</code><br>
+普通节点收到NEW-VIEW之后，进行签名验证。<br>
+将Z中包含的恶意节点进行驱逐<br>
+将状态置为malicious</p>
+<p><strong>阶段三</strong><br>
+普通节点i向恶意节点和NodeCA发送<code>&lt;CLEAR-REPLY,v+1,Z,i&gt;sig_i</code>消息<br>
+当NodeCA收到消息之后，将恶意节点Z们的状态置为Malicious<br>
+至此驱逐过程结束</p>
+<h1 id="思考">思考</h1>
+<p>这个DNBFT共识有NodeCA这个非常中心化的设定。<br>
+共识中似乎有一些异常状态会导致共识的失败，这个我在研究研究。</p>
+<h1 id="引用国内外对bft共识的研究">引用，国内外对BFT共识的研究</h1>
+<p>[1]张迪.另一种BFT共识算法在区块链中的应用[J].传播力研究,2019,3(28):272.</p>
+<p>[2]戴鹏. 基于实用拜占庭共识算法（PBFT）的区块链模型的评估与改进[D].北京邮电大学,2019.</p>
+<p>[3]王永革 PBFT 拜占庭协议安全性分析：不适合联盟链或公链 https://www.theblockbeats.com/news/6208</p>
+<p>[4] Andrew Miller. The Honey Badger of BFT Protocols https://eprint.iacr.org/2016/199.pdf</p>
+<p>[5]杨磊,黄浩,李仁发,李肯立.P2P存储系统拜占庭容错机制研究[J].计算机应用研究,2009,26(01):4-8+40.</p>
+<p>[6]储劲松. 基于PBFT算法的动态共识机制研究[D].江苏大学,2019.</p>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/yi-tai-fang-xi-jie-2msg-dao-da-shi-jian-de-lai-yuan/">以太坊细节[2]:msg到达时间的来源</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/pbft-shi-jian-min-gan-xing-yi-ji-gong-ji-fang-fa/">PBFT时间敏感性以及攻击方法</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E6%91%98%E8%A6%81">摘要</a></li>
+<li><a href="#pbft%E5%85%B1%E8%AF%86">PBFT共识</a>
+<ul>
+<li><a href="#pbft%E6%B5%81%E7%A8%8B%E7%AE%80%E8%BF%B0">PBFT流程简述</a></li>
+<li><a href="#pbft%E8%8A%82%E7%82%B9%E8%BF%9B%E5%87%BA%E6%9C%BA%E5%88%B6">PBFT节点进出机制</a>
+<ul>
+<li><a href="#pbft%E5%85%B1%E8%AF%86%E5%8D%8F%E8%AE%AE%E6%9C%AC%E8%BA%AB%E6%B2%A1%E6%9C%89%E5%8A%A8%E6%80%81%E6%9C%BA%E5%88%B6">PBFT共识协议本身没有动态机制</a></li>
+<li><a href="#pbft%E7%9A%84%E5%8A%A8%E6%80%81%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6%E6%94%B9%E8%89%AF">PBFT的动态共识机制改良</a>
+<ul>
+<li><a href="#dnbft%E5%85%B1%E8%AF%86%E8%AE%BE%E5%AE%9A">DNBFT共识设定</a></li>
+<li><a href="#dnbft-%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E8%8A%82%E7%82%B9%E8%BF%87%E7%A8%8B">DNBFT 动态添加节点过程</a></li>
+<li><a href="#dnbft-%E4%B8%BB%E5%8A%A8%E7%A6%BB%E5%BC%80">DNBFT 主动离开</a></li>
+<li><a href="#dnbft-%E4%B8%BB%E8%8A%82%E7%82%B9%E8%A2%AB%E5%8A%A8%E7%A6%BB%E5%BC%80">DNBFT 主节点被动离开</a></li>
+<li><a href="#dnbft-%E6%99%AE%E9%80%9A%E8%8A%82%E7%82%B9%E8%A2%AB%E5%8A%A8%E7%A6%BB%E5%BC%80">DNBFT 普通节点被动离开</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%80%9D%E8%80%83">思考</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8%E5%9B%BD%E5%86%85%E5%A4%96%E5%AF%B9bft%E5%85%B1%E8%AF%86%E7%9A%84%E7%A0%94%E7%A9%B6">引用，国内外对BFT共识的研究</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

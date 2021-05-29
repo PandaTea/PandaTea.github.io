@@ -1,0 +1,306 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>合约安全[4]:为啥说UniswapK值不那么守恒 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/he-yue-an-quan-4wei-sha-shuo-uniswapk-zhi-bu-na-me-shou-heng.jpeg);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">合约安全[4]:为啥说UniswapK值不那么守恒</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="前言">前言</h1>
+<p>诶嘿，刚审计了个Swap项目，项目的Swap函数手续费收了两次...<br>
+为了把问题描述的清晰一些，我仔细地追了一下swap中手续费的计算方法。</p>
+<p>于是机缘巧合的发现了<code>Uniswap</code> K值检查的奇妙，和我想象中的检查方式有些差别。<br>
+本文做一个技术点的记录和分享。</p>
+<p><ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86">前置知识</a>
+<ul>
+<li><a href="#amm%E7%9A%84k%E5%80%BC%E5%AE%88%E6%81%92">AMM的K值守恒</a></li>
+</ul>
+</li>
+<li><a href="#%E9%97%AE%E9%A2%98%E5%8F%91%E7%8E%B0">问题发现</a><br>
+*
+<ul>
+<li><a href="#%E4%B8%BA%E5%95%A5%E4%B8%8D%E6%98%AF%E5%B0%8F%E4%BA%8Ek%E5%80%BC">为啥不是小于K值</a></li>
+<li><a href="#%E4%B8%BA%E5%95%A5%E8%BF%98%E8%83%BD%E5%A4%A7%E4%BA%8Ek%E5%80%BC">为啥还能大于K值</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E7%A2%8E%E7%A2%8E%E5%BF%B5">碎碎念</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8">引用</a></li>
+</ul>
+</p>
+<h1 id="前置知识">前置知识</h1>
+<h2 id="amm的k值守恒">AMM的K值守恒</h2>
+<p>在AMM中进行交易，遵循K值守恒原则，Swap前后的reverse乘积不变。<br>
+详细兑换原理，可查看 <a href="https://hackmd.io/@HaydenAdams/HJ9jLsfTz#Example-ETH-%E2%86%92-OMG">uniswap解析与举例</a></p>
+<h1 id="问题发现">问题发现</h1>
+<p>在描述问题过程之前，笔者奉上<code>UniswapV2Pair:swap</code>的代码以便查阅:</p>
+<pre><code class="language-javascript">    // this low-level function should be called from a contract which performs important safety checks
+    function swap(uint amount0Out, uint amount1Out, address to, bytes calldata data) external lock {
+        require(amount0Out &gt; 0 || amount1Out &gt; 0, 'UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT');
+        (uint112 _reserve0, uint112 _reserve1,) = getReserves(); // gas savings
+        require(amount0Out &lt; _reserve0 &amp;&amp; amount1Out &lt; _reserve1, 'UniswapV2: INSUFFICIENT_LIQUIDITY');
+
+        uint balance0;
+        uint balance1;
+        { // scope for _token{0,1}, avoids stack too deep errors
+        address _token0 = token0;
+        address _token1 = token1;
+        require(to != _token0 &amp;&amp; to != _token1, 'UniswapV2: INVALID_TO');
+        if (amount0Out &gt; 0) _safeTransfer(_token0, to, amount0Out); // optimistically transfer tokens
+        if (amount1Out &gt; 0) _safeTransfer(_token1, to, amount1Out); // optimistically transfer tokens
+        if (data.length &gt; 0) IUniswapV2Callee(to).uniswapV2Call(msg.sender, amount0Out, amount1Out, data);
+        balance0 = IERC20Uniswap(_token0).balanceOf(address(this));
+        balance1 = IERC20Uniswap(_token1).balanceOf(address(this));
+        }
+        uint amount0In = balance0 &gt; _reserve0 - amount0Out ? balance0 - (_reserve0 - amount0Out) : 0;
+        uint amount1In = balance1 &gt; _reserve1 - amount1Out ? balance1 - (_reserve1 - amount1Out) : 0;
+        require(amount0In &gt; 0 || amount1In &gt; 0, 'UniswapV2: INSUFFICIENT_INPUT_AMOUNT');
+        { // scope for reserve{0,1}Adjusted, avoids stack too deep errors
+        uint balance0Adjusted = balance0.mul(1000).sub(amount0In.mul(3));
+        uint balance1Adjusted = balance1.mul(1000).sub(amount1In.mul(3));
+        require(balance0Adjusted.mul(balance1Adjusted) &gt;= uint(_reserve0).mul(_reserve1).mul(1000**2), 'UniswapV2: K');
+        }
+
+        _update(balance0, balance1, _reserve0, _reserve1);
+        emit Swap(msg.sender, amount0In, amount1In, amount0Out, amount1Out, to);
+    }
+</code></pre>
+<p>根据AMM的K值守恒要求，当Swap完成时，uniswap底层应检查一下K值是否与交易前相等。<br>
+代码大概是 <code>balance0 * balance1 == K</code>这样子，至少应该是个<code>等于号</code>。<br>
+但是当我们跟进到<code>UniswapV2Pair:swap</code>函数时，发现检查K值守恒的用的是<code>&gt;=</code>号，对应代码是</p>
+<pre><code class="language-javascript">require(balance0Adjusted.mul(balance1Adjusted) &gt;= uint(_reserve0).mul(_reserve1).mul(1000**2), 'UniswapV2: K');
+</code></pre>
+<p>嘿嘿，神奇啊。这和预期的K值守恒完全不是一个意思呀。<br>
+带着充满好奇的满心欢喜，我们瞅瞅上面代码是咋写的。<br>
+等号左边儿咋害能比K值大呢?</p>
+<pre><code class="language-javascript">        uint balance0Adjusted = balance0.mul(1000).sub(amount0In.mul(3));
+        uint balance1Adjusted = balance1.mul(1000).sub(amount1In.mul(3));
+</code></pre>
+<p>瞅这两行，<code>balance0Adjusted</code>和<code>balance1Adjusted</code>是pair新余额的校准值。<br>
+校准的部分是刨去手续费的<code>amountIn</code>。<br>
+看到这里我就更懵了: 这一Adjust后，balance更小了。<br>
+这乘积肯定比K值小啊，咋害能大呢。</p>
+<h3 id="为啥不是小于k值">为啥不是小于K值</h3>
+<p>我们仔细看一下<code>amountIn</code>的来源，</p>
+<pre><code class="language-javascript">uint amount0In = balance0 &gt; _reserve0 - amount0Out ? balance0 - (_reserve0 - amount0Out) : 0;
+</code></pre>
+<p>可见<code>amountIn</code> 是 <code>真实balance - (reverse - amountOut)</code><br>
+所以<code>amountIn</code> 的含义是 <code>真实的输入量</code>，即包含<code>0.3%</code>手续费的那个<code>100%AmountIn</code>。</p>
+<p>这么一看我就悟了。<br>
+哦，我的老伙计。<br>
+用户把钱打进来的地方可是在swap函数调用之前呀。<br>
+如<code>UniswapV2Router02.sol:swapExactTokensForTokens</code>:</p>
+<pre><code class="language-javascript">    function swapExactTokensForTokens(
+        uint amountIn,
+        uint amountOutMin,
+        address[] calldata path,
+        address to,
+        uint deadline
+    ) external virtual override ensure(deadline) returns (uint[] memory amounts) {
+        amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path);
+        require(amounts[amounts.length - 1] &gt;= amountOutMin, 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
+        TransferHelper.safeTransferFrom(
+            path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]
+        );
+        _swap(amounts, path, to);
+    }
+</code></pre>
+<ul>
+<li>打钱的地方是<code>TransferHelper.safeTransferFrom</code></li>
+<li>这时候<code>balance</code>发生变化，增加了<code>100%AmountIn</code></li>
+<li>但是下面<code>_swap</code>兑换的时候，用的<code>AmountOut</code>是<code>getAmountOut</code>return的那个<code>99.7%AmountOut</code>。</li>
+<li>剩余的<code>0.3%feeValue</code>被留在了pair里面，造成了输入币<code>reverse</code>的增大。</li>
+</ul>
+<p>后面<code>pair.swap</code>时，通过<code>校准</code>将这<code>0.3%</code>异常抹除。<br>
+这时再比较K值，就不是小于而是相等啦。</p>
+<h3 id="为啥还能大于k值">为啥还能大于K值</h3>
+<p>ok <code>不是小于而是相等</code>的问题解决了。<br>
+剩下就是 <code>Uniswap</code>为啥还留了个<code>大于号</code>。</p>
+<pre><code class="language-javascript">require(balance0Adjusted.mul(balance1Adjusted) &gt;= uint(_reserve0).mul(_reserve1).mul(1000**2), 'UniswapV2: K');
+</code></pre>
+<p>要搞清楚这个问题，我们需要回到Uniswap第一次开始检查<code>K值守恒</code>的时间点:<br>
+<code>commit:580787051ed66b75210c14269a3a48b4bcdee620</code></p>
+<p>在这个版本中，人类历史上首次提出了<code>&quot;UniswapV2: K&quot;</code>的要求</p>
+<pre><code class="language-javascript">        } else {
+            ...
+            require(amountIn.mul(reserve0 - amountOut).mul(997) &gt;= amountOut.mul(reserve1).mul(1000), &quot;UniswapV2: K&quot;);
+            ...
+        }
+</code></pre>
+<p>哭辽，原来<code>swap方法</code>从一开始就没想过<code>等价交换</code>或者什么<code>K值守恒</code><br>
+它只是要求 扣除手续费后的<code>AmountIn</code> 要大于等于 取走的<code>AmountOut</code><br>
+换句话说:<br>
+<strong>你往<code>pair</code>里面多扔钱我不拦着；想多拿走?绝不可能!(╬￣皿￣)=○</strong></p>
+<h1 id="总结">总结</h1>
+<p>这么一追，我悟了。<br>
+<code>&gt;=</code>设计本身就是一个合约的利己行为。<br>
+Swap的K值守恒也只是限制<code>user</code>别换走额外的钱，<br>
+但你要是无偿提供点流动性，本合约绝不拦你~ ╰(￣▽￣)╭</p>
+<h1 id="碎碎念">碎碎念</h1>
+<p>使用<code>&gt;=</code>而不是<code>==</code>，放宽了K值守恒的限制，<br>
+这意味着攻击者有了更多的操作空间。<br>
+至于能怎么利用这个<code>小trick</code>，以后再想吧...</p>
+<h1 id="引用">引用</h1>
+<ul>
+<li><a href="https://hackmd.io/@HaydenAdams/HJ9jLsfTz#Providing-Liquidity">Uniswap Whitepaper</a></li>
+<li><a href="https://github.com/Uniswap/uniswap-v2-core/">Uniswap Core</a></li>
+<li><a href="https://github.com/Uniswap/uniswap-v2-periphery">Uniswap Periphery</a></li>
+</ul>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/lesslesssi-wei-dao-tu-greatergreater-du-shu-bi-ji/">《思维导图》读书笔记</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/he-yue-an-quan-3-burgerswap-chong-ru-lou-dong/">合约安全[3]: BurgerSwap重入漏洞</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86">前置知识</a>
+<ul>
+<li><a href="#amm%E7%9A%84k%E5%80%BC%E5%AE%88%E6%81%92">AMM的K值守恒</a></li>
+</ul>
+</li>
+<li><a href="#%E9%97%AE%E9%A2%98%E5%8F%91%E7%8E%B0">问题发现</a><br>
+*
+<ul>
+<li><a href="#%E4%B8%BA%E5%95%A5%E4%B8%8D%E6%98%AF%E5%B0%8F%E4%BA%8Ek%E5%80%BC">为啥不是小于K值</a></li>
+<li><a href="#%E4%B8%BA%E5%95%A5%E8%BF%98%E8%83%BD%E5%A4%A7%E4%BA%8Ek%E5%80%BC">为啥还能大于K值</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E7%A2%8E%E7%A2%8E%E5%BF%B5">碎碎念</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8">引用</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

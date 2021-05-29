@@ -1,0 +1,268 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>钱包安全:chrome插件中的钓鱼链接 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/qian-bao-an-quan-chrome-cha-jian-zhong-de-diao-yu-lian-jie.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">钱包安全:chrome插件中的钓鱼链接</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="摘要">摘要</h1>
+<p>2020年4月15日 chrome下架了49款有恶意钓鱼行为的插件。<br>
+4月19日phishfort 发表了一篇关于chrome 恶意插件的研究文章。<br>
+这里做个记录</p>
+<h1 id="攻击手段">攻击手段</h1>
+<p>这些恶意插件的攻击手段比较简单。<br>
+用户输入 钱包密码，钱包助记词后或其他敏感信息后，插件执行js，将隐私信息发送至攻击者的恶意网站server端。</p>
+<h3 id="恶意的server端域名">恶意的server端域名</h3>
+<ul>
+<li>analytics-server296.xyz</li>
+<li>coinomibeta.online</li>
+<li>completssl.com</li>
+<li>cxext.org</li>
+<li>ledger.productions</li>
+<li>ledgerwallet.xyz</li>
+<li>mecxanalytic.co</li>
+<li>networkforworking.com</li>
+<li>trxsecuredapi.co</li>
+<li>usermetrica.org</li>
+<li>walletbalance.org</li>
+<li>ledgers.tech</li>
+<li>vh368451.eurodir.ru</li>
+<li>xrpclaim.net</li>
+</ul>
+<h3 id="恶意插件的id">恶意插件的ID</h3>
+<blockquote>
+<p>afephhbbcdlgdehhddfnehfndnkfbgnm<br>
+agfjbfkpehcnceblmdahjaejpnnnkjdn<br>
+ahikdohkiedoomaklnohgdnmfcmbabcn<br>
+ahlfiinafajfmciaajgophipcfholmeh<br>
+akglkgdiggmkilkhejagginkngocbpbj<br>
+anihmmejabpaocacmeodiapbhpholaom<br>
+bhkcgfbaokmhglgipbppoobmoblcomhh<br>
+bkanfnnhokogflpnhnbfjdhbjdlgncdi<br>
+bpfdhglfmfepjhgnhnmclbfiknjnfblb<br>
+bpklfenmjhcjlocdicfadpfppcgojfjp<br>
+ckelhijilmmlmnaljmjpigfopkmfkoeh<br>
+dbcfhcelmjepboabieglhjejeolaopdl<br>
+dbcfokmgampdedgcefjahloodbgakkpl<br>
+ddohdfnenhipnhnbbfifknnhaomihcip<br>
+dehindejipifeaikcgbkdijgkbjliojc<br>
+dkhcmjfipgoapjamnngolidbcakpdhgf<br>
+effhjobodhmkbgfpgcdabfnjlnphakhb<br>
+egpnofbhgafhbkapdhedimohmainbiio<br>
+ehlgimmlmmcocemjadeafmohiplmgmei<br>
+epphnioigompfjaknnaokghgcncnjfbe<br>
+gbbpilgcdcmfppjkdociebhmcnbfbmod<br>
+glmbceclkhkaebcadgmbcjihllcnpmjh<br>
+gpffceikmehgifkjjginoibpceadefih<br>
+idnelecdpebmbpnmambnpcjogingdfco<br>
+ifceimlckdanenfkfoomccpcpemphlbg<br>
+ifmkfoeijeemajoodjfoagpbejmmnkhm<br>
+igkljanmhbnhedgkmgpkcgpjmociceim<br>
+ijhakgidfnlallpobldpbhandllbeobg<br>
+ijohicfhndicpnmkaldafhbecijhdikd<br>
+jbfponbaiamgjmfpfghcjjhddjdjdpna<br>
+jfamimfejiccpbnghhjfcibhkgblmiml<br>
+jlaaidmjgpgfkhehcljmeckhlaibgaol<br>
+kjnmimfgphmcppjhombdhhegpjphpiol<br>
+lfaahmcgahoalphllknbfcckggddoffj<br>
+mcbcknmlpfkbpogpnfcimfgdmchchmmg<br>
+mciddpldhpdpibckghnaoidpolnmighk<br>
+mjbimaghobnkobfefccnnnjedoefbafl<br>
+mnbhnjecaofgddbldmppbbdlokappkgk<br>
+nicmhgecboifljcnbbjlajbpagmhcclp<br>
+njhfmnfcoffkdjbgpannpgifnbgdihkl<br>
+noilkpnilphojpjaimfcnldblelgllaa<br>
+obcfoaeoidokjbaokikamaljjlpebofe<br>
+oejafikjmfmejaafjjkoeejjpdfkdkpc<br>
+ogaclpidpghafcnbchgpbigfegdbdikj<br>
+opmelhjohnmenjibglddlpmbpbocohck<br>
+pbilbjpkfbfbackdcejdmhdfgeldakkn<br>
+pcmdfnnipgpilomfclbnjpbdnmbcgjaf<br>
+pedokobimilhjemibclahcelgedmkgei<br>
+plnlhldekkpgnngfdbdhocnjfplgnekg</p>
+</blockquote>
+<h3 id="恶意的c2s-server-url">恶意的c2s server url</h3>
+<blockquote>
+<p>http://ledgerwallet.xyz/api.php<br>
+https://v1.ledgers.tech<br>
+https://coinomibeta.online/post/connexion.php<br>
+https://completssl.com/functions.php<br>
+https://completssl.com/ssnd_1.php<br>
+https://completssl.com/ssnd_el.php<br>
+https://completssl.com/ssnd_ex.php<br>
+https://completssl.com/ssnd_t.php<br>
+https://cxext.org/6721e14f0257a64f1f0a9114197d59ba/<br>
+https://docs.google.com/forms/d/1PXmiKeuYFdNS8D1q5yU1Cb7_9TwZQMbMCTl2PfSYhLI/formResponse<br>
+https://docs.google.com/forms/d/e/1FAIpQLSc1DTYAqXYnGTaUH0AIJa-rC2lk7V5nsE6tEdGIKXTKNm36HQ/formResponse<br>
+https://docs.google.com/forms/d/e/1FAIpQLScuQg9Rpct1ahMotYT12xBAt3MmcubQg-duV1a0BZ_vo1Tj4g/formResponse<br>
+https://ledger.productions/api_v1/<br>
+https://mecxanalytic.co/api_keystore.php<br>
+https://mecxanalytic.co/api_mnemonic.php<br>
+https://mecxanalytic.co/api_private.php<br>
+https://trxsecuredapi.co/api_ledger.php<br>
+https://usermetrica.org/api_v1/<br>
+http://vh368451.eurodir.ru/api/v1/<br>
+https://walletbalance.org/api_v1/<br>
+ws://analytics-server296.xyz:4367</p>
+</blockquote>
+<h1 id="如何防御来自插件的钓鱼攻击">如何防御来自插件的钓鱼攻击</h1>
+<ul>
+<li>不安装权限要求过于奇葩的插件</li>
+<li>限制插件的有权访问的网页</li>
+</ul>
+<blockquote>
+<p>右键点击插件图标，点击管理拓展，点击对应插件的详细信息。<br>
+将有权访问的网站，改成&quot;在特定网站上&quot;</p>
+</blockquote>
+<figure data-type="image" tabindex="1"><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy8yMDk1NTE4Ni00ZjE3NGYyMTlmN2Y5NjVjLnBuZw?x-oss-process=image/format,png" alt="权限" loading="lazy"></figure>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/pbft-shi-jian-min-gan-xing-yi-ji-gong-ji-fang-fa/">PBFT时间敏感性以及攻击方法</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/okchain-yuan-ma-yue-du-1hong-guan-kuang-jia/">okchain源码阅读[1]:宏观框架</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E6%91%98%E8%A6%81">摘要</a></li>
+<li><a href="#%E6%94%BB%E5%87%BB%E6%89%8B%E6%AE%B5">攻击手段</a><br>
+*
+<ul>
+<li><a href="#%E6%81%B6%E6%84%8F%E7%9A%84server%E7%AB%AF%E5%9F%9F%E5%90%8D">恶意的server端域名</a></li>
+<li><a href="#%E6%81%B6%E6%84%8F%E6%8F%92%E4%BB%B6%E7%9A%84id">恶意插件的ID</a></li>
+<li><a href="#%E6%81%B6%E6%84%8F%E7%9A%84c2s-server-url">恶意的c2s server url</a></li>
+</ul>
+</li>
+<li><a href="#%E5%A6%82%E4%BD%95%E9%98%B2%E5%BE%A1%E6%9D%A5%E8%87%AA%E6%8F%92%E4%BB%B6%E7%9A%84%E9%92%93%E9%B1%BC%E6%94%BB%E5%87%BB">如何防御来自插件的钓鱼攻击</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

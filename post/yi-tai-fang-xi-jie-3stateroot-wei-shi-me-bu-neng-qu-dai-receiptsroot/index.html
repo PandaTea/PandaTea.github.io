@@ -1,0 +1,222 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>以太坊细节[3]:StateRoot为什么不能取代ReceiptsRoot | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/yi-tai-fang-xi-jie-3stateroot-wei-shi-me-bu-neng-qu-dai-receiptsroot.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">以太坊细节[3]:StateRoot为什么不能取代ReceiptsRoot</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="背景">背景</h1>
+<p>在各种区块链项目中(例如以太坊),节点往往需要维护三个 Trie Root<br>
+https://github.com/ethereum/go-ethereum:44a3b8c04cf18dc0a796f96d5972beb0e3cbe79b:core/types/block.go,L69-86:<br>
+<img src="https://img-blog.csdnimg.cn/20200505213605448.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="block的header数据结构" loading="lazy"><br>
+stateRoot TransactionsRoot ReceiptsRoot<br>
+问题在于ReceiptsRoot的必要性。我们是否能省略ReceiptsRoot，仅检查stateRoot是否正确来对block的transaction是否执行正确。</p>
+<h3 id="root存储的内容">Root存储的内容</h3>
+<ul>
+<li><strong>TransactionsRoot</strong><br>
+TransactionsRoot 存储的是 block中transactions组成的Trie的Root<br>
+TransactionsRoot的作用最简单，用于接收者检查block中transactions的完整性。</li>
+<li><strong>ReceiptsRoot</strong><br>
+ReceiptsRoot存储的是交易回执内容<br>
+<img src="https://img-blog.csdnimg.cn/20200506170353571.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="receipts交易回执" loading="lazy"><br>
+receipt本身记录交易是否在block被成功执行。</li>
+</ul>
+<pre><code class="language-go">receipts, logs, usedGas, err := bc.processor.Process(block, statedb, bc.vmConfig)
+</code></pre>
+<ul>
+<li><strong>StateRoot</strong><br>
+StateRoot 记录的是 transaction执行结束之后的世界状态。</li>
+</ul>
+<pre><code class="language-go">	if root := statedb.IntermediateRoot(v.config.IsEIP158(header.Number)); header.Root != root {
+		return fmt.Errorf(&quot;invalid merkle root (remote: %x local: %x)&quot;, header.Root, root)
+	}
+</code></pre>
+<p>但是这个StateRoot 和 ReceiptRoot的作用仿佛就相似了。<br>
+都是检查状态改变结果是否正确。</p>
+<h1 id="receiptsroot与stateroot-作用的差异">ReceiptsRoot与StateRoot 作用的差异</h1>
+<p>作用上很相似，都是检查transaction执行结果是否正确。<br>
+为啥要实现两边呢，我们是否可以通过比较StateRoot和header中一致，来保障transaction的内容正确和执行顺序正确？</p>
+<p>仔细看一下Receipts的内容</p>
+<h3 id="receiptsroot">ReceiptsRoot</h3>
+<p><img src="https://img-blog.csdnimg.cn/20200505230638557.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"><br>
+我们发现除了result.Failed()来记录transaction执行是否成功外，还有一个receipt.GasUsed域值得关注。<br>
+这个域表示当前transaction执行后，该block一共消耗了多少Gas。<br>
+所以明显receiptsRoot还有transactions执行顺序的一致性。</p>
+<p>但是顺序一致，依旧可以通过stateRoot的一致来检查。</p>
+<h3 id="stateroot">StateRoot</h3>
+<p><img src="https://img-blog.csdnimg.cn/20200505230916831.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="state" loading="lazy"><br>
+我们看stateRoot的内容，有Account的内容。StateRoot更多是世界环境的Root。所以他更多是表达transaction执行后的世界。</p>
+<h3 id="另一种观点">另一种观点</h3>
+<p>StateRoot作为世界状态的Hash<br>
+上链后 所有节点对这个世界状态达成共识。<br>
+这便可以让节点们对一些 无法上链的本地信息，达成一致。</p>
+<p>例如<br>
+节点中存储的账户信息，某个账户有多少钱。<br>
+虽然可以正常执行transaction ，并且receipt也是一致的。<br>
+但两个节点的账户信息如果不一致 stateroot也不一致。</p>
+<p>所以StateRoot的本质是对一些无法上链的账户状态的一致性保障。</p>
+<h1 id="总结">总结</h1>
+<p>receiptRoot 和 StateRoot的作用都是检查transaction执行是否正确可靠。<br>
+不同点在于receiptRoot只是表示transaction执行成功失败还有执行顺序。<br>
+StateRoot的作用是记录 transaction执行结束之后的世界状态。</p>
+<p>注意，以太坊允许uncle block这种孤块的存在。<br>
+当一个BP节点本身处在一条非主流分叉上时，它所产生的StateRoot与接收者执行后的StateRoot不同<br>
+如果单纯比较StateRoot不同而盲目的认为BP节点是evil节点，就有些不公正。<br>
+我们可以通过比较receiptsRoot来对transaction的执行正确性达成一致，不必在乎执行的环境是否相同。<br>
+这样以太坊就对uncle block更加友善了。</p>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/gofuzz-mo-hu-ce-shi-keng-dian/">GoFuzz模糊测试坑点</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/xing-ji-zheng-ba-2-sc2replay-lu-xiang-hui-fang-python-ku-sc2reader-chang-yong-han-shu-zong-jie/">星际争霸2 sc2replay录像回放python库sc2reader常用函数总结</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E8%83%8C%E6%99%AF">背景</a><br>
+*
+<ul>
+<li><a href="#root%E5%AD%98%E5%82%A8%E7%9A%84%E5%86%85%E5%AE%B9">Root存储的内容</a></li>
+</ul>
+</li>
+<li><a href="#receiptsroot%E4%B8%8Estateroot-%E4%BD%9C%E7%94%A8%E7%9A%84%E5%B7%AE%E5%BC%82">ReceiptsRoot与StateRoot 作用的差异</a><br>
+*
+<ul>
+<li><a href="#receiptsroot">ReceiptsRoot</a></li>
+<li><a href="#stateroot">StateRoot</a></li>
+<li><a href="#%E5%8F%A6%E4%B8%80%E7%A7%8D%E8%A7%82%E7%82%B9">另一种观点</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

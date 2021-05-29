@@ -1,0 +1,261 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>NKN公链源码学习[1]:webgui的加密通信 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/nkn-gong-lian-yuan-ma-xue-xi-1webgui-de-jia-mi-tong-xin.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">NKN公链源码学习[1]:webgui的加密通信</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="背景">背景</h1>
+<p>NKN的web-gui即dashboard模块，在通信过程中，有参数的HTTP包都会进过一次AES对称加密。</p>
+<p>像这样</p>
+<pre><code class="language-HTTP">POST /api/wallet/open HTTP/1.1
+Host: 192.168.1.100:30000
+Content-Length: 63
+Accept: application/json, text/plain, */*
+Unix: 1588221168
+Origin: http://192.168.1.100:30000
+Content-Type: application/json;charset=UTF-8
+Cookie: i18n_redirected=en; session=MTU4ODIyMTE2M3xRY2VaUnlSclQ1V3lOUllOSzAzSHZnMWhaZkJPbWpELUVjSGZNcTdBVWpHNnZLa1lZakF6b08xbXlHUklLanVCWU9fWkJueThRY0VnVU1mWjBrbHNmWjVjTFY1bnAzZVBJZUFtM1l0ay02WjZtTkNmaTRTR1pCNkgtcWVZN2ZRd1B4TGZ8FlyZ4mfYPDAvX_64WpEYZxPLBMNqm4Zq9LwtHU3v0AI=
+Connection: close
+
+{&quot;data&quot;:&quot;3ddc98eb25e7f572a0294533187e0d24b0e71c76897f300ec8d6&quot;}
+</code></pre>
+<p>这里加密的data内容，其实是wallet的密码，即webgui的登陆密码。<br>
+阅读源码后总结了一下加密密钥的协商和使用的实现方法。</p>
+<h1 id="解密函数">解密函数</h1>
+<p>我们只研究接收者逻辑</p>
+<h3 id="decryptdata">DecryptData</h3>
+<pre><code class="language-go">func DecryptData(context *gin.Context, hasSeed bool) string {
+	...
+	seed := &quot;&quot;
+	wallet, exists := context.Get(&quot;wallet&quot;)
+	if exists &amp;&amp; hasSeed {
+		passwordKeyHash := wallet.(*vault.WalletImpl).Data.PasswordHash
+		seedByte := sha256.Sum256([]byte(passwordKeyHash))
+		seed = BytesToHexString(seedByte[:])
+	}
+
+	tick := time.Now().Unix()
+	padding := int64(serviceConfig.UnixRange)
+	session := sessions.Default(context)
+	token := session.Get(&quot;token&quot;)
+	...
+
+	for i := tick - padding; i &lt; tick+padding; i++ {
+		seedHash := BytesToHexString(HmacSha256([]byte(seed), []byte(token.(string)+strconv.FormatInt(i, 10))))
+		jsonData, err := AesDecrypt(body.Data, seedHash)
+		if err != nil {
+			continue
+		}
+		var data map[string]interface{}
+		err = json.Unmarshal([]byte(jsonData), &amp;data)
+		if err != nil {
+			continue
+		}
+		return jsonData
+	}
+	...
+	return &quot;&quot;
+}
+</code></pre>
+<h4 id="解释一下代码">解释一下代码</h4>
+<p>记 AES解密密钥为decrypt_key<br>
+如果函数传入了hasSeed为true,<br>
+<strong>decrypt_key = passwordHash + token</strong><br>
+如果hasSeed为false<br>
+<strong>decrypt_key = token</strong></p>
+<p>可见这个token是从session中取出的，所以token值是与服务器同步的，客户端不可控。<br>
+客户端在加密的时候要使用&quot;<strong>正确的</strong>&quot;token</p>
+<h3 id="token">token</h3>
+<p>服务器的token 每60秒更新一次，是一个uuid。<br>
+token的定义和更新代码如下：</p>
+<pre><code class="language-go">app.Use(func(context *gin.Context) {
+		session := sessions.Default(context)
+
+		now := time.Now().Unix()
+		if serviceConfig.TokenExp == 0 || serviceConfig.TokenExp+serviceConfig.TokenExpSec &lt; now {
+			token := uuid.NewUUID().String()
+			serviceConfig.Token = token
+			serviceConfig.TokenExp = now + serviceConfig.TokenExpSec
+
+			session.Set(&quot;token&quot;, token)
+			session.Save()
+		}
+
+		if session.Get(&quot;token&quot;) == nil {
+			session.Set(&quot;token&quot;, serviceConfig.Token)
+			session.Save()
+		}
+
+		context.Next()
+	})
+</code></pre>
+<p>只要在规定时间范围内使用token加密，就可以在服务器端进行解密<br>
+范围是 token的时间戳 加减padding</p>
+<pre><code class="language-go">padding := int64(serviceConfig.UnixRange)
+</code></pre>
+<h3 id="passwordhash">PasswordHash</h3>
+<p>解密密钥的另一个部分是PasswordHash<br>
+这个在设计的时候被设计成 secret token<br>
+解密密钥的秘密性就体现在PasswordHash的不可知</p>
+<p>对于敏感接口的密文，需要PasswordHash和token都正确才能解密</p>
+<h1 id="总结">总结</h1>
+<p>在NKN中 token被理解为可公开的部分密钥，PasswordHash为不可公开的部分。<br>
+两部分组合才能解密。</p>
+<p>但问题在于，wallet/open接口默认hasSeed为空，解密不需要PasswordHash。<br>
+也就是说wallet/open接口发送的密文，本质上是可以破解的。</p>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/xing-ji-zheng-ba-2-sc2replay-lu-xiang-hui-fang-python-ku-sc2reader-chang-yong-han-shu-zong-jie/">星际争霸2 sc2replay录像回放python库sc2reader常用函数总结</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/gai-lu-fen-bu-he-sui-ji-bian-liang-du-li-xing/">概率分布和随机变量独立性</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E8%83%8C%E6%99%AF">背景</a></li>
+<li><a href="#%E8%A7%A3%E5%AF%86%E5%87%BD%E6%95%B0">解密函数</a><br>
+*
+<ul>
+<li><a href="#decryptdata">DecryptData</a>
+<ul>
+<li><a href="#%E8%A7%A3%E9%87%8A%E4%B8%80%E4%B8%8B%E4%BB%A3%E7%A0%81">解释一下代码</a></li>
+</ul>
+</li>
+<li><a href="#token">token</a></li>
+<li><a href="#passwordhash">PasswordHash</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

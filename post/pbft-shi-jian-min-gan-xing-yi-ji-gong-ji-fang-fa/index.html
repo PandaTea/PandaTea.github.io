@@ -1,0 +1,219 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>PBFT时间敏感性以及攻击方法 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/pbft-shi-jian-min-gan-xing-yi-ji-gong-ji-fang-fa.jpeg);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">PBFT时间敏感性以及攻击方法</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="背景">背景</h1>
+<p>Andrew Miller 设计了新的共识 <a href="https://github.com/amiller/HoneyBadgerBFT">HoneyBadgerBFT</a>，<a href="https://eprint.iacr.org/2016/199.pdf">论文</a>中提到了BFT共识严重依赖时序假设，所造成的脆弱性。<br>
+在论文的附录中，Andrew Miller 介绍了BFT的攻击方法，本文将对该方法进行翻译和介绍。</p>
+<p>另外本文不再对BFT的时序脆弱性进行论证，详情可见<a href="https://eprint.iacr.org/2016/199.pdf">英文论文</a>或者 <a href="https://download.csdn.net/download/cemao4548/12381318">中文论文</a>。</p>
+<h1 id="正文">正文</h1>
+<p>PBFT包括两个主要的工作流<br>
+1、网络环境良好情况下的<code>正常工作模式</code>(网络节点都同步 而且 leader运行正常)<br>
+2、用于更换崩溃leader的<code>view-change模式</code></p>
+<h3 id="正常工作模式">正常工作模式</h3>
+<p>其中模式一，包含三个子协议 Pre-Prepare,Prepare,Commit.<br>
+当leader收到客户端的transaction时，根据transaction广播<code>pre-prepare</code>消息。<br>
+收到<code>pre-prepare</code>消息的节点，广播<code>prepare</code>消息。<br>
+当节点收到2f个<code>preprare</code>消息时，广播<code>commit</code>消息。<br>
+当节点收到2f+1个<code>commit</code>消息时，处理transaction。</p>
+<h3 id="view-change模式">view-change模式</h3>
+<p>当<code>正常工作模式</code>出现超时，共识发生停滞的时候。节点会更换至<code>view-change模式</code>。并将节点本地的<code>view-number++</code>，同时广播<code>view-change</code>消息<br>
+如果节点的<code>正常工作模式</code>没有出现超时，但是收到了f+1个<code>view-change</code>消息。也会切换到<code>view-change</code>模式，并将节点本地的<code>view-number++</code>，同时广播<code>view-change</code>消息。</p>
+<p><code>view-change</code>工作模式规定新的leader为 <code>view-change</code>消息的<code>height</code>mod <code>节点总数N</code>。因此新的leader的转换过程，是在节点集合中循环的。</p>
+<p>当节点发现自己就是新的view的leader，而且收到了2f+1个<code>view-change</code>消息时，广播<code>NEW_VIEW</code>消息。收到的2f+1个<code>view-change</code>消息被组合起来作为<code>NEW-VIEW</code>消息的proof。</p>
+<p>当节点接收到一个 number大于等于自己当前view-number的<code>NEW-VIEW</code>消息时，更新自己的view-number到<code>NEW-VIEW</code>消息的number。<br>
+如果节点收到的<code>NEW-VIEW</code>number小于自己的当前number,则忽略。</p>
+<p>节点进入view-change模式后，维护一个timeout计时器。<br>
+每一次<code>view-change</code>工作模式的失败(例如超时，即在timeout时间内收不到NEW-VIEW消息）都会使timeout计时器的超时时间翻倍。</p>
+<h3 id="断断续续的正常工作模式将会阻碍pbft">断断续续的正常工作模式将会阻碍PBFT</h3>
+<p>我们会设计一个恶意的proxy调度器。拦截并延迟发给leader的消息。</p>
+<p>下图展示了攻击的整个过程<br>
+其中<br>
+〇 后面的消息是该列表示的节点向外发出的消息<br>
+•  后面的消息是该列表示的节点接受到的消息<br>
+❌表示收到的消息view已经过时，因而忽略。<br>
+红色区域表示 延时发送<br>
+粉色区域表示 延时接受<br>
+在每一格的右下角会标注该列节点所处的 view</p>
+<p><img src="https://img-blog.csdnimg.cn/20200508143538591.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"><br>
+从图中我们可以看出。<br>
+<strong>第一阶段</strong><br>
+client向0,1,2,3四个节点发出Req。<br>
+作为leader节点的0 向外发出PP 准备挖矿<br>
+但是这个PP为攻击者抑制住了<br>
+所有节点在∆时间内 没有收到PP，便误认为是leader崩溃，进入view-change模式</p>
+<p><strong>第二阶段</strong><br>
+节点0123进入view-change模式<br>
+节点0123向外发出V1，试图更换view，试图将leader更换为1<br>
+这时候，攻击者抑制节点1接受V1消息<br>
+使得节点023更新到了view1，同时leader也变成了节点1<br>
+只有节点1没有收到V1,于是等待大家推选出新的leader</p>
+<p><strong>第三阶段</strong><br>
+节点1接收到了刚刚被攻击者抑制的V1消息，发现大家选了自己作为leader<br>
+于是向外宣布就职，发出消息N1PP1<br>
+节点023由于没有在阶段2的时间内收到N1PP1，以为节点1已经崩溃，无法胜任leader。故向外发送V2宣布，继续大选。<br>
+节点1收到了V2，发现自己错过了就职时间，很遗憾，只能附和V2.继续推选其他leader。<br>
+此时攻击者抑制节点2接受V2消息。<br>
+截止当前 节点013都认为节点2是新的leader<br>
+只有身为leader的节点2还不知情，继续等待大家选举leader</p>
+<p><strong>第四阶段</strong><br>
+由于没有收到leader发出的就职消息，大家以为节点2已经崩溃。于是发起新的大选V3<br>
+节点2也在收到V2后又收到V3，发现自己已经错过了就职时间。很遗憾但是只能附和V3</p>
+<p>不断循环上述过程，所有矿工都陷入无尽的大选循环当中，而不从事任何劳动。导致共识停滞。</p>
+<h3 id="总结">总结</h3>
+<p>只要攻击者能抑制第一个leader发出PP,并顺次抑制其他leader接收Vn<br>
+整个网络中的共识就会永久停滞。</p>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/dnbft-gong-shi-yi-chong-ke-dong-tai-diao-jie-wang-luo-jie-dian-shu-de-pbft-you-hua-fang-an/">DNBFT共识——一种可动态调节网络节点数的PBFT优化方案</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/qian-bao-an-quan-chrome-cha-jian-zhong-de-diao-yu-lian-jie/">钱包安全:chrome插件中的钓鱼链接</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E8%83%8C%E6%99%AF">背景</a></li>
+<li><a href="#%E6%AD%A3%E6%96%87">正文</a><br>
+*
+<ul>
+<li><a href="#%E6%AD%A3%E5%B8%B8%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F">正常工作模式</a></li>
+<li><a href="#view-change%E6%A8%A1%E5%BC%8F">view-change模式</a></li>
+<li><a href="#%E6%96%AD%E6%96%AD%E7%BB%AD%E7%BB%AD%E7%9A%84%E6%AD%A3%E5%B8%B8%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F%E5%B0%86%E4%BC%9A%E9%98%BB%E7%A2%8Dpbft">断断续续的正常工作模式将会阻碍PBFT</a></li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

@@ -1,0 +1,228 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>机器学习[2]:模型评估 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/ji-qi-xue-xi-2mo-xing-ping-gu.jpeg);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">机器学习[2]:模型评估</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><p>对生成的模型进行比较，以得到最好的训练结果。需要使用评估算法进行评估。</p>
+<h3 id="评估算法">评估算法</h3>
+<ul>
+<li>分离训练数据集和评估数据集
+<ul>
+<li>66.7% + 33.3%</li>
+</ul>
+</li>
+<li>K折交叉验证分离
+<ul>
+<li>把data分为K组，每组都单独做一次 validation_data</li>
+</ul>
+</li>
+<li>弃一交叉验证分离
+<ul>
+<li>data中的每一个数据，都做一次validation</li>
+</ul>
+</li>
+<li>重复随机评估
+<ul>
+<li>随机分组，作validation</li>
+</ul>
+</li>
+</ul>
+<h3 id="混淆矩阵相关">混淆矩阵相关</h3>
+<h4 id="图形分类">图形分类</h4>
+<ul>
+<li>错误率</li>
+<li>Accurancy</li>
+<li>Precision</li>
+<li>Recall</li>
+<li>F1-Score</li>
+<li>TPR</li>
+<li>FPR</li>
+<li>PRC曲线
+<ul>
+<li>Precision作Y，Recall作X</li>
+<li>曲线下方面积为1时，性能最理想。</li>
+</ul>
+</li>
+<li>ROC曲线
+<ul>
+<li>TPR作Y，FPR作X</li>
+<li>AUC曲线的Y值为ROC曲线下方的面积</li>
+<li>曲线越靠左上，性能越好</li>
+</ul>
+</li>
+</ul>
+<h4 id="目标检测">目标检测</h4>
+<ul>
+<li>IOU</li>
+<li>AP</li>
+<li>mAP</li>
+</ul>
+<h4 id="回归类型">回归类型</h4>
+<ul>
+<li>MAE</li>
+<li>RMSE</li>
+</ul>
+<h3 id="reference">Reference</h3>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/74493056">常见的模型算法评估指标 - 人工智能技术干货的文章 - 知乎</a></li>
+</ul>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/sui-xiang-ji-yi-yu-shi-jian/">随想：记忆与时间</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/ji-qi-xue-xi-1te-zheng-xuan-ze/">机器学习[1]:特征选择</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E8%AF%84%E4%BC%B0%E7%AE%97%E6%B3%95">评估算法</a></li>
+<li><a href="#%E6%B7%B7%E6%B7%86%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3">混淆矩阵相关</a>
+<ul>
+<li><a href="#%E5%9B%BE%E5%BD%A2%E5%88%86%E7%B1%BB">图形分类</a></li>
+<li><a href="#%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B">目标检测</a></li>
+<li><a href="#%E5%9B%9E%E5%BD%92%E7%B1%BB%E5%9E%8B">回归类型</a></li>
+</ul>
+</li>
+<li><a href="#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

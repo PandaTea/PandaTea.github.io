@@ -2,13 +2,271 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.leepanda.top</id>
     <title>戏</title>
-    <updated>2021-05-29T10:36:52.081Z</updated>
+    <updated>2021-05-29T10:43:25.182Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.leepanda.top"/>
     <link rel="self" href="https://blog.leepanda.top/atom.xml"/>
     <logo>https://blog.leepanda.top/images/avatar.png</logo>
     <icon>https://blog.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 戏</rights>
+    <entry>
+        <title type="html"><![CDATA[okchain源码阅读1:宏观框架]]></title>
+        <id>https://blog.leepanda.top/post/okchain-yuan-ma-yue-du-1hong-guan-kuang-jia/</id>
+        <link href="https://blog.leepanda.top/post/okchain-yuan-ma-yue-du-1hong-guan-kuang-jia/">
+        </link>
+        <updated>2021-05-29T10:41:47.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="摘要">摘要</h1>
+<p>okchain作为okex的公链项目，功能面向交易所交易撮合。<br>
+代码实现上，基于cosmos和tendermint两个框架来实现。<br>
+这里记录一下他的实现的大概框架。<br>
+公链项目链接是https://github.com/okex/okchain</p>
+<hr>
+<h1 id="重点框架">重点框架</h1>
+<ul>
+<li>投票机制——一票多投<br>
+涉及模块</li>
+</ul>
+<blockquote>
+<p>staking 投票质押逻辑<br>
+distribution<br>
+slashing  非法投票惩罚 ( 感觉这个会是审计重点</p>
+</blockquote>
+<ul>
+<li>opendex<br>
+涉及模块</li>
+</ul>
+<blockquote>
+<p>order<br>
+token<br>
+dex</p>
+</blockquote>
+<hr>
+<h1 id="投票机制">投票机制</h1>
+<h3 id="创建validator或cva">创建validator或cva</h3>
+<ul>
+<li>msd数量就是va的初始票数，msd对应的初始票不能一票多投。</li>
+<li>va可以是脱离node的存在。可以通过unbond操作使node和va分开。</li>
+<li>任意一个va最终所得票(share) == msd + 其他节点投给自己的token</li>
+</ul>
+<h3 id="注销va或cva">注销va或cva</h3>
+<p>状态改变<br>
+<code>bonded -&gt; unbonding -&gt; unbonded</code></p>
+<ul>
+<li>该操作是赎回msd的唯一手段。</li>
+</ul>
+<h3 id="投票">投票</h3>
+<ul>
+<li>投票的权重每周衰减一次。</li>
+</ul>
+<h3 id="撤销投票">撤销投票</h3>
+<p>就是撤销投票</p>
+<h3 id="抵押">抵押</h3>
+<p>就是抵押</p>
+<hr>
+<h3 id="如何出块">如何出块</h3>
+<p>252个块一轮，21个va轮流出块。<br>
+每轮结束 重新选举21个va。</p>
+<h3 id="如何选举">如何选举</h3>
+<p>share得票按数量排序，选前21个。其他为cva。</p>
+<h3 id="增发">增发</h3>
+<p>每年增发1%<br>
+没3秒一个块，一年有10512000个块。</p>
+<h3 id="奖励">奖励</h3>
+<p>每个块的奖励1/4给va，3/4给投票给va的va和cva们。<br>
+每个块上链时立刻结算，会存放到奖金池中，需要节点自己手动领取。</p>
+<hr>
+<h1 id="opendex">opendex</h1>
+<h3 id="基本功能">基本功能</h3>
+<ul>
+<li>上架数字资产交易对</li>
+</ul>
+<blockquote>
+<p>Dex运营方发型数字资产交易对，手续费20000OKT。</p>
+</blockquote>
+<ul>
+<li>下架数字资产交易对</li>
+</ul>
+<blockquote>
+<p>DEX运营方下架数字资产交易对，手续费0.0125OKT。</p>
+</blockquote>
+<ul>
+<li>增加数字资产交易对撮合金</li>
+</ul>
+<blockquote>
+<p>DEX运营方抵押任意数量OKT，优先撮合撮合金高的币对交易，手续费归DEX运营方</p>
+</blockquote>
+<ul>
+<li>提取数字资产交易对撮合金</li>
+<li>手续费</li>
+</ul>
+<blockquote>
+<p>预先锁定259200个区块高度所使用的手续费(单位OKT)，余额不足下单失败，默认0.25920OKT。当订单被撮合或者过期时，将手续费分给BP节点们。<br>
+多余的手续费会返还。</p>
+</blockquote>
+<h3 id="额外功能">额外功能</h3>
+<ul>
+<li>限制数字资产交易对的高频上架</li>
+<li>限制重名币或诈骗币</li>
+<li>限制垃圾币和有价值的币之间产生系统资源竞争</li>
+<li>交易对所有权转移</li>
+</ul>
+<hr>
+<h1 id="va-bond状态变换">va bond状态变换</h1>
+<p>每个va都维护了state变量，来描述va的合法性。是正常运行、崩溃、还是非法运行等。<br>
+va创建之后会进入unbonded状态。被区块确认权限之后，进入bonded状态。</p>
+<h3 id="bonded-unbonding">bonded -&gt; unbonding</h3>
+<ul>
+<li>执行destroy validator</li>
+<li>出块超时</li>
+<li>正常轮替</li>
+</ul>
+<h3 id="unbonding-unbonded">unbonding -&gt; unbonded</h3>
+<ul>
+<li>unbonding周期结束 自动进入unbonded</li>
+</ul>
+<h3 id="unbonded-bonded">unbonded -&gt; bonded</h3>
+<ul>
+<li>正常轮替 (但是如果jailed，需要提前发起unjailed tx</li>
+</ul>
+<h3 id="unbonded-kicked-off">unbonded -&gt; kicked off</h3>
+<p>share 和msd都为0，就会被剔除va set。<br>
+也就是没人选它，把投给他的token都赎回。而且他自己也赎回了msd</p>
+<h3 id="unbonding-kicked-off">unbonding -&gt; kicked off</h3>
+<p>unbonding周期结束后，如果 share == 0 and msd == 0,就直接kicked off</p>
+<h3 id="unbonding-bonded">unbonding -&gt; bonded</h3>
+<p>无需等待unbonding周期结束，过程中如果share票数极高，排名在全网前21名内，直接进入bonded状态。</p>
+<hr>
+<h1 id="slashing">slashing</h1>
+<p>节点非法行为的处罚机制</p>
+<h3 id="在同一高度对多个block签名">在同一高度，对多个block签名。</h3>
+<ul>
+<li>罚款所有抵押的5%</li>
+<li>bonded -&gt; unbonding</li>
+<li>jailed 为 无期徒刑，不能上诉。</li>
+</ul>
+<h3 id="validator-漏签名了太多的block">validator 漏签名了太多的block</h3>
+<ul>
+<li>漏签50个block 会惩罚一次</li>
+<li>每次惩罚 va全部抵押的 1%</li>
+<li>jailed 600s 刑满之后，要主动发起unjailed tx才能被释放。</li>
+</ul>
+<h3 id="主动发送-destroy-validator交易">主动发送 destroy validator交易</h3>
+<ul>
+<li>bonded -&gt; unbonding</li>
+<li>unbonding -&gt; unbonding</li>
+<li>jailed 为无期徒刑</li>
+<li>msd进入赎回状态</li>
+</ul>
+<hr>
+<h1 id="遗留问题">遗留问题</h1>
+<h3 id="文档中的概念疑惑点">文档中的概念疑惑点</h3>
+<ul>
+<li>数字资产交易对是个啥</li>
+<li>最小自委托msd是什么</li>
+<li>va从unbonded到bonded这个确认promotion的过程怎么实现的？</li>
+<li>bonded到底是什么意思？区分va和cva?</li>
+<li>正常轮替是什么意思</li>
+<li>unbonding 周期具体实现？时间还是啥？</li>
+<li>va miss 签名 指的是不是 没有vote</li>
+<li>miss50  是连续还是累计？</li>
+</ul>
+<h3 id="可能出现的问题">可能出现的问题</h3>
+<ul>
+<li>返还手续费这个地方 有没有快乐溢出。</li>
+<li>余额不足下单失败的地方，有没有快乐溢出。</li>
+<li>如何限制重名币，是否存在恶意抢注币名</li>
+<li>恶意诬陷validator 使之jailed</li>
+<li>如何判定MSD初始票和一般票之间的区别，从而限制一票多投。</li>
+<li>赎回msd的时候，能不能做些文章，比如归还给谁；先还钱后注销；等问题。</li>
+<li>能不能给死人投票？只要票数足够，死人无法卸任？</li>
+<li>block出块时签名如果重用，直接死刑。这个如果能诬陷就严重了。</li>
+<li>以他人身份发送 destroy validator交易，判死刑</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[一篇文章看懂cosmos重委托漏洞]]></title>
+        <id>https://blog.leepanda.top/post/yi-pian-wen-zhang-kan-dong-cosmos-chong-wei-tuo-lou-dong/</id>
+        <link href="https://blog.leepanda.top/post/yi-pian-wen-zhang-kan-dong-cosmos-chong-wei-tuo-lou-dong/">
+        </link>
+        <updated>2021-05-29T10:39:17.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="摘要">摘要</h1>
+<p>Cosmos SDK 在 2019年 5 月底发现存在严重安全漏洞，该团队随后发布了补丁，并与全球验证人共同进行了升级，从收到漏洞报告到修复主网共用了72小时。</p>
+<blockquote>
+<p>攻击者可利用该漏洞绕过委托金赎回时的锁定时间。</p>
+</blockquote>
+<p>在介绍漏洞细节之前，先介绍一下cosmos的投票机制。</p>
+<h3 id="staking投票机制">staking：投票机制</h3>
+<p>Cosmos中持币人可以将自己的货币委托给validator，当validator出块时，持币人获得收益。<br>
+当持币人遇到了佣金更低、网络状态更好的validator，不想继续委托原来的validator时。<br>
+可以unbond之前的validator。这需要等待21天。21天结束之后，委托的货币会被返还，然后持币人就可以委托其他validator了。</p>
+<h3 id="redelegation一键更换validator">redelegation：一键更换validator</h3>
+<p>redelegation功能 使持币人不用等待21天的unbonding周期，可以立即更换至其他validators。<br>
+唯一的限制是21天时间内，最多更换7次validators。<br>
+目前 Cosmostation 钱包已经支持redelegation功能。<br>
+<img src="https://img-blog.csdnimg.cn/20200511143059990.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="redelegation截图" loading="lazy"></p>
+<h1 id="漏洞介绍">漏洞介绍</h1>
+<p>Cosmos重委托漏洞，使得持币人在赎回委托金时，不必再等待21天的时间。<br>
+Cosmos 团队的 Jack Zampolin 分享了一个程序，可以发现那些利用漏洞提前撤回委托的恶意交易。<br>
+<img src="https://img-blog.csdnimg.cn/20200511150056418.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="Jack Zampolin" loading="lazy"></p>
+<p>该漏洞导致7250个Atom代币被提前赎回，当时每个Atom价值6美元。<br>
+截止2019年5月31日，使用上述恶意方法解除委托的 Atoms 大约为43,500美元。</p>
+<h3 id="补丁代码分析">补丁代码分析</h3>
+<p>Cosmos SDK 0.34.6 版本发布了重委托漏洞的补丁，并在区块高度 482100 时（大约2019年5月31日早上 10 点）生效。</p>
+<p>cosmos重委托漏洞 补丁commit 链接如下：<br>
+<a href="https://github.com/cosmos/cosmos-sdk/commit/80234baf91a15dd9a7df8dca38677b66b8d148c1">https://github.com/cosmos/cosmos-sdk/commit/80234baf91a15dd9a7df8dca38677b66b8d148c1</a></p>
+<p>代码修改的重点在于<br>
+github.com/cosmos/cosmos-sdk/x/staking/keeper/delegation.go,L585-L638:<br>
+Keeper.Undelegate函数<br>
+<img src="https://img-blog.csdnimg.cn/20200511174633935.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="代码修改" loading="lazy"><br>
+可见Undelegate函数中592行做了一个硬分叉，分叉高度是<code>UndelegatePatchHeight</code>等于<code>482100</code>。</p>
+<p>在分叉高度前的代码中，有一处关于<code>completeNow</code>的判断</p>
+<pre><code class="language-go">if completeNow {
+	balance := sdk.NewCoin(k.BondDenom(ctx), returnAmount)
+	if !balance.IsZero() {
+		if _, err := k.bankKeeper.UndelegateCoins(ctx, delAddr, sdk.Coins{balance}); err != nil {
+			return completionTime, err
+		}
+	}
+	return completionTime, nil
+}
+</code></pre>
+<p>如果completeNow等于 True，就直接退还委托的货币，而无需等待21天。<br>
+在Keeper.getBeginInfo函数中，我们发现<br>
+要使completeNow == True，需要<code>validator.status == sdk.Unbonded</code><br>
+<img src="https://img-blog.csdnimg.cn/20200511200014718.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="completeNow=True" loading="lazy"></p>
+<h3 id="不同的completetime-completenow">不同的completeTime / completeNow</h3>
+<p>当持币人想要撤销对validator的委托时，需要等待completeTime后，委托金才会返还给持币人。<br>
+对于completeTime，不同情况有不同的值。</p>
+<ul>
+<li>如果validator此时是Bonded状态，赎回委托金需要经历21天的时间。</li>
+<li>如果validator处于UnBonding状态，持币人从该validator解绑定需要的锁定期等于该validator的锁定期（小于或等于21天）。</li>
+<li>如果validator处于UnBonded状态，则不需要锁定期，持币人抵押的股权可立即变回代币。这也就是上面代码中提到的<code>validator.status == sdk.Unbonded</code>则<code>completeNow == True</code></li>
+</ul>
+<p>这样设计的本意的是，当validator节点因作恶或意外被Jail后，持币人可以尽快取回抵押的股权，避免造成损失。</p>
+<h3 id="漏洞利用方法">漏洞利用方法</h3>
+<p>攻击者想要撤销对validatorA的委托，拿回委托金。但是又不想等待21天的unbonding。<br>
+于是攻击者使用cosmostation钱包提供的redelegation方法，将委托对象立刻转换为一个状态为Unbonded的validator。<br>
+接着再进行undelegate操作，Keeper.Undelegate函数收到<code>completeNow == True</code><br>
+便调用<code>k.bankKeeper.UndelegateCoins</code>立刻归还了委托金。<br>
+攻击者便可以绕过锁定期限制，瞬间赎回委托金。</p>
+<h3 id="漏洞危害">漏洞危害</h3>
+<p>漏洞不会造成用户的财产损失，但是可以让攻击者绕过21天的委托金锁定。<br>
+这会让cosmos设计的经济模型变得不稳定，破坏交易的公平。</p>
+<h1 id="总结">总结</h1>
+<p>cosmos重委托漏洞的本质，是新功能redelegation和旧功能unbonded立刻赎回机制，两者的逻辑出现冲突。<br>
+在开发过程中，开发人员需要对新功能可能涉及到的旧代码有充分的了解。</p>
+<h1 id="参考资料">参考资料</h1>
+<blockquote>
+<p><a href="https://blog.csdn.net/yelong0201/article/details/79643072">Cosmos staking module</a><br>
+<a href="https://medium.com/node-a-team/cosmos-hub-security-vulnerability-regarding-redelegation-and-unbonding-e6a2cf03e928">Node A-Team 分析文章 Cosmos Hub Security Vulnerability regarding Redelegation and Unbonding</a><br>
+<a href="https://www.chainnews.com/articles/159067316137.htm">Cosmos攻略：Staking 新手实用工具指南</a><br>
+<a href="https://blog.csdn.net/weixin_37504041/article/details/100164596">cosmos源码分析之四Staking模块</a><br>
+<a href="https://forum.cosmos.network/u/jessysaurusrex/activity/topics">jessysaurusrex 记录的几个cosmos 1day</a><br>
+<a href="https://www.jianshu.com/p/0878e5be0546">Cosmos的解绑定漏洞分析</a></p>
+</blockquote>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[合约安全(2) Bancor Network权限配置错误漏洞]]></title>
         <id>https://blog.leepanda.top/post/he-yue-an-quan-2-bancor-network-quan-xian-pei-zhi-cuo-wu-lou-dong/</id>
@@ -69,7 +327,7 @@ DATA的总发行量也没有这么多呀<br>
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[合约安全(1):Balancer中通货紧缩货币的套利攻击详解]]></title>
+        <title type="html"><![CDATA[合约安全(1) Balancer中通货紧缩货币的套利攻击详解]]></title>
         <id>https://blog.leepanda.top/post/he-yue-an-quan-1balancer-zhong-tong-huo-jin-suo-huo-bi-de-tao-li-gong-ji-xiang-jie/</id>
         <link href="https://blog.leepanda.top/post/he-yue-an-quan-1balancer-zhong-tong-huo-jin-suo-huo-bi-de-tao-li-gong-ji-xiang-jie/">
         </link>
@@ -570,105 +828,6 @@ Geth的下行带宽 要求 60kb/s</p>
 帮他盖好被子，拉上窗帘，就可以安静的溜了。<br>
 （ 被子盖过头，道一声 阿门 ）<br>
 <img src="https://blog.leepanda.top/post-images/1619085605044.png" alt="水啦" loading="lazy"></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Pyre救赎路线分析]]></title>
-        <id>https://blog.leepanda.top/post/pyre-jiu-shu-lu-xian-fen-xi/</id>
-        <link href="https://blog.leepanda.top/post/pyre-jiu-shu-lu-xian-fen-xi/">
-        </link>
-        <updated>2021-04-22T07:08:42.000Z</updated>
-        <content type="html"><![CDATA[<p>相比《Transistor》，PYRE中的人物更多，性格各不相同，感情线更多了，这里做个小记录。<br>
-笔者的救赎顺序:<br>
-乔达里尔、鸟妹妹(非新夜翼)、Tizo、海蛇、赫得文、大树、恶魔奶爸(非新夜翼)</p>
-<h3 id="为什么要回人间">为什么要回人间？:</h3>
-<p>Reader：没兴趣、不想回<br>
-赫得文：想女朋友了<br>
-乔达里尔：回不回都行...<br>
-狗哥: 回家找妈妈，还贷款，做生意养家。希望妈妈不要知道自己其实过得很不好...<br>
-菲菲（野蛮人女孩，下文统一称为菲菲）：人间也没人要我，在下届还有朋友，有著者,有远古知识。不愿意回人间。<br>
-Tizo: 精灵本就该呆在下届，没必要去人间。<br>
-海蛇：也许回到上界，就可以夺回尊严和荣耀。 但没必要。<br>
-鸟姐: 回去找妹妹，希望妹妹不要过打打杀杀的生活。<br>
-大树：生活在水深火热之中的联邦百姓需要解放。<br>
-巫婆姐姐: 大树去哪，我去哪</p>
-<h3 id="个人事业线">个人事业线：</h3>
-<p>大树.革命<br>
-海蛇.骑士的荣耀<br>
-鸟妹: 高翼族复仇，毁灭联邦<br>
-巫婆姐姐：成就大树的事业<br>
-菲菲：学业</p>
-<h3 id="感情线">感情线:</h3>
-<p>赫得文 x 乔德利尔  好丽友<br>
-赫得文 x 赫夫人  爱情<br>
-大树 x 巫婆姐姐  爱情<br>
-大树 x 恶魔奶爸   好丽友<br>
-鸟姐 x 鸟妹  好丽友<br>
-鸟姐 x 狗狗  爱情<br>
-菲菲 x 狗小哥  爱情<br>
-菲菲 x Tizo  好丽友<br>
-乔达里尔 x 老伊  爱情<br>
-<strong>感情线总结如下</strong><br>
-<img src="https://blog.leepanda.top/post-images/1619075425778.jpg" alt="PYRE主人公感情关系" loading="lazy"><br>
-这里解释一下。</p>
-<ul>
-<li>狗狗和赫得文 是有强烈个人意愿 回人间</li>
-<li>乔达里尔、鸟妹、恶魔奶爸、大树 对革命帮助大，考虑回人间</li>
-<li>Tizo和海蛇 纯粹是个人爱好，回不回人间 都行。</li>
-<li>盲目姐一定要跟着Reader ，而Reader本身去哪都行</li>
-<li>鸟姐 和 狗狗有爱情线，最好在一起；</li>
-<li>巫婆姐姐和树人有爱情线，最好在一起。</li>
-<li>同时 鸟姐和巫婆还是闺蜜，最好在一起。</li>
-<li>菲菲对远古知识有渴望 同时 和老狗之子有爱情线，是有强烈意愿留在下界</li>
-<li>老伊 对 乔达里尔有爱情线，最好在一起。</li>
-<li>霸克 和 狗狗关系不好，不要放一起。</li>
-</ul>
-<h3 id="总结">总结</h3>
-<h5 id="救赎方案">救赎方案：</h5>
-<ul>
-<li>革命为第一目标的最优救赎方案为:<br>
-[乔达里尔、恶魔奶爸(非新夜翼)、大树、鸟妹(非新夜翼)、赫得文、鸟姐、巫婆姐姐 ]</li>
-<li>情感为第一目标的最优救赎方案为：<br>
-[狗狗、赫得文、鸟姐、鸟妹(非新夜翼)、巫婆姐姐、大树、恶魔奶爸(非新夜翼)]</li>
-</ul>
-<h5 id="游戏小技巧">游戏小技巧:</h5>
-<ul>
-<li>反马太效应:<br>
-送走的都是熟练度高的角色，所以不要在 计划要救赎的人身上投入太多财力和个人情感。</li>
-<li>仪式战略:<br>
-一后卫 x 两个得分<br>
-如: 大树 + Tizo + 鸟姐<br>
-一后卫 x 一个得分 x 一个杀手<br>
-如：乔达里尔 + 狗狗 + 巫婆姐姐</li>
-</ul>
-<p><strong>最后的小牢骚：</strong><br>
-PYRE在游戏模式 故事剧情 音乐 画面 四个方面都好棒。画风优雅，视频流畅，音乐震撼，剧情新颖，游戏模式有很有创意。<br>
-<a href="http://www.supergiantgames.com">Supergiant</a>的新作Hades要出了,期待一波。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[APEX 压枪练习]]></title>
-        <id>https://blog.leepanda.top/post/apex-ya-qiang-lian-xi/</id>
-        <link href="https://blog.leepanda.top/post/apex-ya-qiang-lian-xi/">
-        </link>
-        <updated>2021-04-22T06:26:17.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="背景">背景</h1>
-<p>练一下最喜欢的两把中远火力。</p>
-<h3 id="喷火轻机枪">喷火轻机枪</h3>
-<p>喷火轻机枪 无弹匣 35发子弹，630点伤害</p>
-<p>35 -&gt; 28，共126点伤害，向右下方向用力拉枪</p>
-<p>28 -&gt; 25 , 累计180点伤害，向左 稍稍拉枪</p>
-<p>25 -&gt; 11，累计432点伤害，向右下用力拉枪，</p>
-<p>最后11发，向左用力拉枪。</p>
-<h3 id="r301卡宾枪">R301卡宾枪</h3>
-<p>R301卡宾枪 无弹匣 18发子弹，共252点伤害</p>
-<p>前14发子弹，196点伤害，用力向6点半方向拉枪</p>
-<p>最后4发子弹，向右稍稍收枪。</p>
-<h1 id="心得">心得</h1>
-<p>这个过程有点像练字，<br>
-可以现研究一下 第几发子弹开始改变后坐力方向，</p>
-<p>然后分为多个笔画，一步一步练。</p>
-<p>实战中能站着不动让我压枪对着头打得敌人，根本没有..</p>
 ]]></content>
     </entry>
 </feed>

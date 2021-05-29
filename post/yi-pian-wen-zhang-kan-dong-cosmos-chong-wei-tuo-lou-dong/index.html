@@ -1,0 +1,241 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>一篇文章看懂cosmos重委托漏洞 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/yi-pian-wen-zhang-kan-dong-cosmos-chong-wei-tuo-lou-dong.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">一篇文章看懂cosmos重委托漏洞</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="摘要">摘要</h1>
+<p>Cosmos SDK 在 2019年 5 月底发现存在严重安全漏洞，该团队随后发布了补丁，并与全球验证人共同进行了升级，从收到漏洞报告到修复主网共用了72小时。</p>
+<blockquote>
+<p>攻击者可利用该漏洞绕过委托金赎回时的锁定时间。</p>
+</blockquote>
+<p>在介绍漏洞细节之前，先介绍一下cosmos的投票机制。</p>
+<h3 id="staking投票机制">staking：投票机制</h3>
+<p>Cosmos中持币人可以将自己的货币委托给validator，当validator出块时，持币人获得收益。<br>
+当持币人遇到了佣金更低、网络状态更好的validator，不想继续委托原来的validator时。<br>
+可以unbond之前的validator。这需要等待21天。21天结束之后，委托的货币会被返还，然后持币人就可以委托其他validator了。</p>
+<h3 id="redelegation一键更换validator">redelegation：一键更换validator</h3>
+<p>redelegation功能 使持币人不用等待21天的unbonding周期，可以立即更换至其他validators。<br>
+唯一的限制是21天时间内，最多更换7次validators。<br>
+目前 Cosmostation 钱包已经支持redelegation功能。<br>
+<img src="https://img-blog.csdnimg.cn/20200511143059990.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="redelegation截图" loading="lazy"></p>
+<h1 id="漏洞介绍">漏洞介绍</h1>
+<p>Cosmos重委托漏洞，使得持币人在赎回委托金时，不必再等待21天的时间。<br>
+Cosmos 团队的 Jack Zampolin 分享了一个程序，可以发现那些利用漏洞提前撤回委托的恶意交易。<br>
+<img src="https://img-blog.csdnimg.cn/20200511150056418.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="Jack Zampolin" loading="lazy"></p>
+<p>该漏洞导致7250个Atom代币被提前赎回，当时每个Atom价值6美元。<br>
+截止2019年5月31日，使用上述恶意方法解除委托的 Atoms 大约为43,500美元。</p>
+<h3 id="补丁代码分析">补丁代码分析</h3>
+<p>Cosmos SDK 0.34.6 版本发布了重委托漏洞的补丁，并在区块高度 482100 时（大约2019年5月31日早上 10 点）生效。</p>
+<p>cosmos重委托漏洞 补丁commit 链接如下：<br>
+<a href="https://github.com/cosmos/cosmos-sdk/commit/80234baf91a15dd9a7df8dca38677b66b8d148c1">https://github.com/cosmos/cosmos-sdk/commit/80234baf91a15dd9a7df8dca38677b66b8d148c1</a></p>
+<p>代码修改的重点在于<br>
+github.com/cosmos/cosmos-sdk/x/staking/keeper/delegation.go,L585-L638:<br>
+Keeper.Undelegate函数<br>
+<img src="https://img-blog.csdnimg.cn/20200511174633935.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="代码修改" loading="lazy"><br>
+可见Undelegate函数中592行做了一个硬分叉，分叉高度是<code>UndelegatePatchHeight</code>等于<code>482100</code>。</p>
+<p>在分叉高度前的代码中，有一处关于<code>completeNow</code>的判断</p>
+<pre><code class="language-go">if completeNow {
+	balance := sdk.NewCoin(k.BondDenom(ctx), returnAmount)
+	if !balance.IsZero() {
+		if _, err := k.bankKeeper.UndelegateCoins(ctx, delAddr, sdk.Coins{balance}); err != nil {
+			return completionTime, err
+		}
+	}
+	return completionTime, nil
+}
+</code></pre>
+<p>如果completeNow等于 True，就直接退还委托的货币，而无需等待21天。<br>
+在Keeper.getBeginInfo函数中，我们发现<br>
+要使completeNow == True，需要<code>validator.status == sdk.Unbonded</code><br>
+<img src="https://img-blog.csdnimg.cn/20200511200014718.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="completeNow=True" loading="lazy"></p>
+<h3 id="不同的completetime-completenow">不同的completeTime / completeNow</h3>
+<p>当持币人想要撤销对validator的委托时，需要等待completeTime后，委托金才会返还给持币人。<br>
+对于completeTime，不同情况有不同的值。</p>
+<ul>
+<li>如果validator此时是Bonded状态，赎回委托金需要经历21天的时间。</li>
+<li>如果validator处于UnBonding状态，持币人从该validator解绑定需要的锁定期等于该validator的锁定期（小于或等于21天）。</li>
+<li>如果validator处于UnBonded状态，则不需要锁定期，持币人抵押的股权可立即变回代币。这也就是上面代码中提到的<code>validator.status == sdk.Unbonded</code>则<code>completeNow == True</code></li>
+</ul>
+<p>这样设计的本意的是，当validator节点因作恶或意外被Jail后，持币人可以尽快取回抵押的股权，避免造成损失。</p>
+<h3 id="漏洞利用方法">漏洞利用方法</h3>
+<p>攻击者想要撤销对validatorA的委托，拿回委托金。但是又不想等待21天的unbonding。<br>
+于是攻击者使用cosmostation钱包提供的redelegation方法，将委托对象立刻转换为一个状态为Unbonded的validator。<br>
+接着再进行undelegate操作，Keeper.Undelegate函数收到<code>completeNow == True</code><br>
+便调用<code>k.bankKeeper.UndelegateCoins</code>立刻归还了委托金。<br>
+攻击者便可以绕过锁定期限制，瞬间赎回委托金。</p>
+<h3 id="漏洞危害">漏洞危害</h3>
+<p>漏洞不会造成用户的财产损失，但是可以让攻击者绕过21天的委托金锁定。<br>
+这会让cosmos设计的经济模型变得不稳定，破坏交易的公平。</p>
+<h1 id="总结">总结</h1>
+<p>cosmos重委托漏洞的本质，是新功能redelegation和旧功能unbonded立刻赎回机制，两者的逻辑出现冲突。<br>
+在开发过程中，开发人员需要对新功能可能涉及到的旧代码有充分的了解。</p>
+<h1 id="参考资料">参考资料</h1>
+<blockquote>
+<p><a href="https://blog.csdn.net/yelong0201/article/details/79643072">Cosmos staking module</a><br>
+<a href="https://medium.com/node-a-team/cosmos-hub-security-vulnerability-regarding-redelegation-and-unbonding-e6a2cf03e928">Node A-Team 分析文章 Cosmos Hub Security Vulnerability regarding Redelegation and Unbonding</a><br>
+<a href="https://www.chainnews.com/articles/159067316137.htm">Cosmos攻略：Staking 新手实用工具指南</a><br>
+<a href="https://blog.csdn.net/weixin_37504041/article/details/100164596">cosmos源码分析之四Staking模块</a><br>
+<a href="https://forum.cosmos.network/u/jessysaurusrex/activity/topics">jessysaurusrex 记录的几个cosmos 1day</a><br>
+<a href="https://www.jianshu.com/p/0878e5be0546">Cosmos的解绑定漏洞分析</a></p>
+</blockquote>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://blog.leepanda.top/post/okchain-yuan-ma-yue-du-1hong-guan-kuang-jia/">okchain源码阅读1:宏观框架</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/he-yue-an-quan-2-bancor-network-quan-xian-pei-zhi-cuo-wu-lou-dong/">合约安全(2) Bancor Network权限配置错误漏洞</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E6%91%98%E8%A6%81">摘要</a><br>
+*
+<ul>
+<li><a href="#staking%E6%8A%95%E7%A5%A8%E6%9C%BA%E5%88%B6">staking：投票机制</a></li>
+<li><a href="#redelegation%E4%B8%80%E9%94%AE%E6%9B%B4%E6%8D%A2validator">redelegation：一键更换validator</a></li>
+</ul>
+</li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E4%BB%8B%E7%BB%8D">漏洞介绍</a><br>
+*
+<ul>
+<li><a href="#%E8%A1%A5%E4%B8%81%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90">补丁代码分析</a></li>
+<li><a href="#%E4%B8%8D%E5%90%8C%E7%9A%84completetime-completenow">不同的completeTime / completeNow</a></li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E6%96%B9%E6%B3%95">漏洞利用方法</a></li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E5%8D%B1%E5%AE%B3">漏洞危害</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

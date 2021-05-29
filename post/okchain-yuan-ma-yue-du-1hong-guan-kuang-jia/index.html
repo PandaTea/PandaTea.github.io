@@ -1,0 +1,364 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>okchain源码阅读1:宏观框架 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/okchain-yuan-ma-yue-du-1hong-guan-kuang-jia.jpg);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">okchain源码阅读1:宏观框架</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="摘要">摘要</h1>
+<p>okchain作为okex的公链项目，功能面向交易所交易撮合。<br>
+代码实现上，基于cosmos和tendermint两个框架来实现。<br>
+这里记录一下他的实现的大概框架。<br>
+公链项目链接是https://github.com/okex/okchain</p>
+<hr>
+<h1 id="重点框架">重点框架</h1>
+<ul>
+<li>投票机制——一票多投<br>
+涉及模块</li>
+</ul>
+<blockquote>
+<p>staking 投票质押逻辑<br>
+distribution<br>
+slashing  非法投票惩罚 ( 感觉这个会是审计重点</p>
+</blockquote>
+<ul>
+<li>opendex<br>
+涉及模块</li>
+</ul>
+<blockquote>
+<p>order<br>
+token<br>
+dex</p>
+</blockquote>
+<hr>
+<h1 id="投票机制">投票机制</h1>
+<h3 id="创建validator或cva">创建validator或cva</h3>
+<ul>
+<li>msd数量就是va的初始票数，msd对应的初始票不能一票多投。</li>
+<li>va可以是脱离node的存在。可以通过unbond操作使node和va分开。</li>
+<li>任意一个va最终所得票(share) == msd + 其他节点投给自己的token</li>
+</ul>
+<h3 id="注销va或cva">注销va或cva</h3>
+<p>状态改变<br>
+<code>bonded -&gt; unbonding -&gt; unbonded</code></p>
+<ul>
+<li>该操作是赎回msd的唯一手段。</li>
+</ul>
+<h3 id="投票">投票</h3>
+<ul>
+<li>投票的权重每周衰减一次。</li>
+</ul>
+<h3 id="撤销投票">撤销投票</h3>
+<p>就是撤销投票</p>
+<h3 id="抵押">抵押</h3>
+<p>就是抵押</p>
+<hr>
+<h3 id="如何出块">如何出块</h3>
+<p>252个块一轮，21个va轮流出块。<br>
+每轮结束 重新选举21个va。</p>
+<h3 id="如何选举">如何选举</h3>
+<p>share得票按数量排序，选前21个。其他为cva。</p>
+<h3 id="增发">增发</h3>
+<p>每年增发1%<br>
+没3秒一个块，一年有10512000个块。</p>
+<h3 id="奖励">奖励</h3>
+<p>每个块的奖励1/4给va，3/4给投票给va的va和cva们。<br>
+每个块上链时立刻结算，会存放到奖金池中，需要节点自己手动领取。</p>
+<hr>
+<h1 id="opendex">opendex</h1>
+<h3 id="基本功能">基本功能</h3>
+<ul>
+<li>上架数字资产交易对</li>
+</ul>
+<blockquote>
+<p>Dex运营方发型数字资产交易对，手续费20000OKT。</p>
+</blockquote>
+<ul>
+<li>下架数字资产交易对</li>
+</ul>
+<blockquote>
+<p>DEX运营方下架数字资产交易对，手续费0.0125OKT。</p>
+</blockquote>
+<ul>
+<li>增加数字资产交易对撮合金</li>
+</ul>
+<blockquote>
+<p>DEX运营方抵押任意数量OKT，优先撮合撮合金高的币对交易，手续费归DEX运营方</p>
+</blockquote>
+<ul>
+<li>提取数字资产交易对撮合金</li>
+<li>手续费</li>
+</ul>
+<blockquote>
+<p>预先锁定259200个区块高度所使用的手续费(单位OKT)，余额不足下单失败，默认0.25920OKT。当订单被撮合或者过期时，将手续费分给BP节点们。<br>
+多余的手续费会返还。</p>
+</blockquote>
+<h3 id="额外功能">额外功能</h3>
+<ul>
+<li>限制数字资产交易对的高频上架</li>
+<li>限制重名币或诈骗币</li>
+<li>限制垃圾币和有价值的币之间产生系统资源竞争</li>
+<li>交易对所有权转移</li>
+</ul>
+<hr>
+<h1 id="va-bond状态变换">va bond状态变换</h1>
+<p>每个va都维护了state变量，来描述va的合法性。是正常运行、崩溃、还是非法运行等。<br>
+va创建之后会进入unbonded状态。被区块确认权限之后，进入bonded状态。</p>
+<h3 id="bonded-unbonding">bonded -&gt; unbonding</h3>
+<ul>
+<li>执行destroy validator</li>
+<li>出块超时</li>
+<li>正常轮替</li>
+</ul>
+<h3 id="unbonding-unbonded">unbonding -&gt; unbonded</h3>
+<ul>
+<li>unbonding周期结束 自动进入unbonded</li>
+</ul>
+<h3 id="unbonded-bonded">unbonded -&gt; bonded</h3>
+<ul>
+<li>正常轮替 (但是如果jailed，需要提前发起unjailed tx</li>
+</ul>
+<h3 id="unbonded-kicked-off">unbonded -&gt; kicked off</h3>
+<p>share 和msd都为0，就会被剔除va set。<br>
+也就是没人选它，把投给他的token都赎回。而且他自己也赎回了msd</p>
+<h3 id="unbonding-kicked-off">unbonding -&gt; kicked off</h3>
+<p>unbonding周期结束后，如果 share == 0 and msd == 0,就直接kicked off</p>
+<h3 id="unbonding-bonded">unbonding -&gt; bonded</h3>
+<p>无需等待unbonding周期结束，过程中如果share票数极高，排名在全网前21名内，直接进入bonded状态。</p>
+<hr>
+<h1 id="slashing">slashing</h1>
+<p>节点非法行为的处罚机制</p>
+<h3 id="在同一高度对多个block签名">在同一高度，对多个block签名。</h3>
+<ul>
+<li>罚款所有抵押的5%</li>
+<li>bonded -&gt; unbonding</li>
+<li>jailed 为 无期徒刑，不能上诉。</li>
+</ul>
+<h3 id="validator-漏签名了太多的block">validator 漏签名了太多的block</h3>
+<ul>
+<li>漏签50个block 会惩罚一次</li>
+<li>每次惩罚 va全部抵押的 1%</li>
+<li>jailed 600s 刑满之后，要主动发起unjailed tx才能被释放。</li>
+</ul>
+<h3 id="主动发送-destroy-validator交易">主动发送 destroy validator交易</h3>
+<ul>
+<li>bonded -&gt; unbonding</li>
+<li>unbonding -&gt; unbonding</li>
+<li>jailed 为无期徒刑</li>
+<li>msd进入赎回状态</li>
+</ul>
+<hr>
+<h1 id="遗留问题">遗留问题</h1>
+<h3 id="文档中的概念疑惑点">文档中的概念疑惑点</h3>
+<ul>
+<li>数字资产交易对是个啥</li>
+<li>最小自委托msd是什么</li>
+<li>va从unbonded到bonded这个确认promotion的过程怎么实现的？</li>
+<li>bonded到底是什么意思？区分va和cva?</li>
+<li>正常轮替是什么意思</li>
+<li>unbonding 周期具体实现？时间还是啥？</li>
+<li>va miss 签名 指的是不是 没有vote</li>
+<li>miss50  是连续还是累计？</li>
+</ul>
+<h3 id="可能出现的问题">可能出现的问题</h3>
+<ul>
+<li>返还手续费这个地方 有没有快乐溢出。</li>
+<li>余额不足下单失败的地方，有没有快乐溢出。</li>
+<li>如何限制重名币，是否存在恶意抢注币名</li>
+<li>恶意诬陷validator 使之jailed</li>
+<li>如何判定MSD初始票和一般票之间的区别，从而限制一票多投。</li>
+<li>赎回msd的时候，能不能做些文章，比如归还给谁；先还钱后注销；等问题。</li>
+<li>能不能给死人投票？只要票数足够，死人无法卸任？</li>
+<li>block出块时签名如果重用，直接死刑。这个如果能诬陷就严重了。</li>
+<li>以他人身份发送 destroy validator交易，判死刑</li>
+</ul>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> </div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/yi-pian-wen-zhang-kan-dong-cosmos-chong-wei-tuo-lou-dong/">一篇文章看懂cosmos重委托漏洞</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E6%91%98%E8%A6%81">摘要</a></li>
+<li><a href="#%E9%87%8D%E7%82%B9%E6%A1%86%E6%9E%B6">重点框架</a></li>
+<li><a href="#%E6%8A%95%E7%A5%A8%E6%9C%BA%E5%88%B6">投票机制</a><br>
+*
+<ul>
+<li><a href="#%E5%88%9B%E5%BB%BAvalidator%E6%88%96cva">创建validator或cva</a></li>
+<li><a href="#%E6%B3%A8%E9%94%80va%E6%88%96cva">注销va或cva</a></li>
+<li><a href="#%E6%8A%95%E7%A5%A8">投票</a></li>
+<li><a href="#%E6%92%A4%E9%94%80%E6%8A%95%E7%A5%A8">撤销投票</a></li>
+<li><a href="#%E6%8A%B5%E6%8A%BC">抵押</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E5%87%BA%E5%9D%97">如何出块</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E9%80%89%E4%B8%BE">如何选举</a></li>
+<li><a href="#%E5%A2%9E%E5%8F%91">增发</a></li>
+<li><a href="#%E5%A5%96%E5%8A%B1">奖励</a></li>
+</ul>
+</li>
+<li><a href="#opendex">opendex</a><br>
+*
+<ul>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E5%8A%9F%E8%83%BD">基本功能</a></li>
+<li><a href="#%E9%A2%9D%E5%A4%96%E5%8A%9F%E8%83%BD">额外功能</a></li>
+</ul>
+</li>
+<li><a href="#va-bond%E7%8A%B6%E6%80%81%E5%8F%98%E6%8D%A2">va bond状态变换</a><br>
+*
+<ul>
+<li><a href="#bonded-unbonding">bonded -&gt; unbonding</a></li>
+<li><a href="#unbonding-unbonded">unbonding -&gt; unbonded</a></li>
+<li><a href="#unbonded-bonded">unbonded -&gt; bonded</a></li>
+<li><a href="#unbonded-kicked-off">unbonded -&gt; kicked off</a></li>
+<li><a href="#unbonding-kicked-off">unbonding -&gt; kicked off</a></li>
+<li><a href="#unbonding-bonded">unbonding -&gt; bonded</a></li>
+</ul>
+</li>
+<li><a href="#slashing">slashing</a><br>
+*
+<ul>
+<li><a href="#%E5%9C%A8%E5%90%8C%E4%B8%80%E9%AB%98%E5%BA%A6%E5%AF%B9%E5%A4%9A%E4%B8%AAblock%E7%AD%BE%E5%90%8D">在同一高度，对多个block签名。</a></li>
+<li><a href="#validator-%E6%BC%8F%E7%AD%BE%E5%90%8D%E4%BA%86%E5%A4%AA%E5%A4%9A%E7%9A%84block">validator 漏签名了太多的block</a></li>
+<li><a href="#%E4%B8%BB%E5%8A%A8%E5%8F%91%E9%80%81-destroy-validator%E4%BA%A4%E6%98%93">主动发送 destroy validator交易</a></li>
+</ul>
+</li>
+<li><a href="#%E9%81%97%E7%95%99%E9%97%AE%E9%A2%98">遗留问题</a><br>
+*
+<ul>
+<li><a href="#%E6%96%87%E6%A1%A3%E4%B8%AD%E7%9A%84%E6%A6%82%E5%BF%B5%E7%96%91%E6%83%91%E7%82%B9">文档中的概念疑惑点</a></li>
+<li><a href="#%E5%8F%AF%E8%83%BD%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98">可能出现的问题</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

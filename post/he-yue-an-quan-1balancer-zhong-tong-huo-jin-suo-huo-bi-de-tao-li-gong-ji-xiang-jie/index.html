@@ -1,0 +1,271 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>合约安全(1):Balancer中通货紧缩货币的套利攻击详解 | 戏</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://blog.leepanda.top/styles/main.css">
+          <script src="https://blog.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://blog.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://blog.leepanda.top/post-images/he-yue-an-quan-1balancer-zhong-tong-huo-jin-suo-huo-bi-de-tao-li-gong-ji-xiang-jie.png);" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">合约安全(1):Balancer中通货紧缩货币的套利攻击详解</div>
+                           <a  class="index-list-biaoqian ">2021-05-29</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="abstract">Abstract</h1>
+<p>消息来源：2020.6.29 链闻看天下<br>
+<a href="https://www.chainnews.com/articles/961746731123.htm">当红流动性挖矿 DeFi 项目 Balancer 如何被攻击？官方这么说</a><br>
+文中简要描述了攻击发生时间和危害，没有详细描述漏洞细节。</p>
+<p>漏洞详细介绍可参考文章<a href="https://medium.com/@1inch.exchange/balancer-hack-2020-a8f7131c980e">《Balancer Pool with STA Deflationary Token Incident》</a></p>
+<h1 id="概念介绍">概念介绍</h1>
+<h3 id="滑点-slippage">滑点 slippage</h3>
+<p>在买卖 token 时，期望的交易价格和实际支付的价格之间的差别，称之为交易滑点。</p>
+<h3 id="流通池">流通池</h3>
+<p>用户将资产转入交易平台之中获得收益，而在平台中的总资产额度，就构成了流通池。<br>
+流通池中代币总额越多，深度越好，大额交易带来的影响也就更小，不至于因为一笔几十万美元的交易就让价格产生大幅波动。<br>
+Defi的一个风险点就是流通池不够大，容易产生较大滑点。</p>
+<h3 id="流动性挖矿-liquidity-mining">流动性挖矿 liquidity mining</h3>
+<p>用户将自己的token放到交易所的流通池中，交易所则将等值的交易所代币发放给用户。<br>
+这样一来，用户为交易所提供了流通池的部分深度。同时，用户可以享受交易所挖矿带来的分红。</p>
+<h3 id="自动化做市商-amm">自动化做市商 AMM</h3>
+<p>AMM是一种即时兑换模式。<br>
+通常的交易所(中心化/去中心化)，需要买卖双方对价格达成一致，才能完成交易；而AMM 只需买方认可流通池中的token价格即可完成交易。</p>
+<pre><code>类比到游戏当中，就是玩家交易所 和 游戏NPC商人的区别。
+在玩家交易所中，需要买方玩家的出价 和 卖方的出价一致，才能达成交易。 这需要双方的互动。
+在游戏NPC商人中，无论是买方还是卖方，玩家只需要认可NPC给出的一口价，就可以完成交易。(例如把打怪获得的装备卖给武器商人，多少钱武器商人说了算，没有回旋余地)至于NPC给出的价格，则是按照游戏中的规则，对武器进行估值（蓝色装备10金币，紫色装备100金币等）
+AMM就是这样一个武器商人，他会按照既定规则对token进行估值，并跟用户进行即时交易。
+</code></pre>
+<h3 id="uniswap">Uniswap</h3>
+<p>Uniswap 就是一个AMM实例，官网是 : <a href="https://uniswap.exchange">https://uniswap.exchange</a><br>
+Uniswap 采取的算法为固定乘积的方式 : 可以用方程式 X * Y= K 来表示。这里，K 是个常数。<br>
+假设有这样一个交易池，其中有 50 个以太坊，有 1 万美元，而 K 的值恒定，为 1 万。<br>
+假设 X 表示以太坊的供应量 50， Y 是 ETH 交易时的价格。<br>
+在这种情况下，Y 的价格会是 10,000/50 = 200， 因为 K = 10000 是个常数值。<br>
+如果有人购买了以太坊，交易池子中的以太坊会减少，而美元的总量会增加。</p>
+<ul>
+<li>假设用户用 200 美元的价格，购买了 2 个以太坊。X 变为 48，Y 变成 10000/48 = 208 元。</li>
+<li>假设用户出售 7 个以太坊，X 变为 55 。Y  变成 10000/55 = 181 美元。</li>
+</ul>
+<h3 id="通缩货币模型">通缩货币模型</h3>
+<p>即被设计成&quot;越用越少&quot;的token。<br>
+举例如下</p>
+<pre><code>func token.Transfor(from,to,Amount):
+	from.Amount -= Amount
+	to.Amount += ( Amount - 1ETH )
+</code></pre>
+<p>当from把10000 ETH 转给 to时，from虽然减少了10000 个 ETH，但是 to 只收到了9999个 ETH。这就导致token总量越来越少。<br>
+实现了货币的通缩。</p>
+<h1 id="攻击过程">攻击过程</h1>
+<p>攻击对应的transaction是<a href="https://etherscan.io/tx/0x013be97768b702fe8eccef1a40544d5ecb3c1961ad5f87fee4d16fdc08c78106">https://etherscan.io/tx/0x013be97768b702fe8eccef1a40544d5ecb3c1961ad5f87fee4d16fdc08c78106</a></p>
+<p>其中Token Transfer如下：<br>
+<img src="https://img-blog.csdnimg.cn/20200705132655398.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="交易内容如下" loading="lazy"><br>
+etherscan自带的explorer不太好看细节，这里推荐使用<a href="https://oko.palkeo.com/0x013be97768b702fe8eccef1a40544d5ecb3c1961ad5f87fee4d16fdc08c78106/">OKO contract explorer</a><br>
+界面如下，可以看到函数调用顺序<br>
+<img src="https://img-blog.csdnimg.cn/2020070513444497.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="Call Tree" loading="lazy"></p>
+<h3 id="step1-flash-loan-借钱搞事">Step1 flash loan 借钱搞事</h3>
+<p>Defi相关攻击中，有部分攻击是需要资金成本的。闪电贷的出现，使这种资金成本不再是攻击者的障碍。</p>
+<ul>
+<li>我们看到Transaction首先调用了两次approve函数，来批准 WETH9和STA 代理用户转账。<br>
+<img src="https://img-blog.csdnimg.cn/202007051344102.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="approve" loading="lazy"></li>
+<li>接着是一记operate函数，从dYdX进行闪电贷。一共借了104331.302778 × 10¹⁸ WETH<br>
+<img src="https://img-blog.csdnimg.cn/20200705142758939.png" alt="在这里插入图片描述" loading="lazy"></li>
+</ul>
+<h3 id="step2-用weth换sta使sta数量减少并升值">Step2 用WETH换STA，使STA数量减少，并升值。</h3>
+<ul>
+<li>然后攻击者分多次调用 swapExactAmountln函数，将借来的WETH换成STA。<br>
+<img src="https://img-blog.csdnimg.cn/20200705142937700.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="swapExactAmountln" loading="lazy"><br>
+这里注意，由于STA是通货紧缩模型货币。上述swapExactAmountln函数发生时，流通池中的STA总数回减少，攻击者得到的STA也减少了，收到的STA的总数量是小于WETH数量除以两者价值比的。<br>
+数量的下降，导致了STA单价上升(因为Uniswap中的K值不变，数量少则单价升高)。</li>
+</ul>
+<h3 id="step3-用sta换weth配合gulp函数获得额外weth">Step3 用STA换WETH，配合gulp函数，获得额外WETH。</h3>
+<ul>
+<li>最后，攻击者多次先后调用  swapExactAmountln 和 gulp函数，将STA换回WETH。<br>
+<img src="https://img-blog.csdnimg.cn/20200705152219583.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"><br>
+这里注意，如果没有配合gulp使用，STA的单价会随着swapExactAmountln的调用，越来越低。<br>
+到最后STA单价会低到攻击者无法获利，不过是把WETH换成了STA，然后又换了回来。<br>
+我们看一下gulp函数的定义。</li>
+</ul>
+<pre><code>function gulp(address token)
+        external
+        _logs_
+        _lock_
+    {
+        require(_records[token].bound, &quot;ERR_NOT_BOUND&quot;);
+        _records[token].balance = IERC20(token).balanceOf(address(this));
+    }
+</code></pre>
+<p>可见gulp是对STA单价进行一个校准，校准函数是ERC20的balanceOf。而不是用的当前流通池中预期的价格。<br>
+所以，这里会产生一个偏差，STA的单价会被固定在高位。不会随着swapExactAmountln的调用而减少。</p>
+<h3 id="step4-还清flash-loan贷款套利离开">Step4 还清flash loan贷款，套利离开</h3>
+<ul>
+<li>最终，攻击者得到了超量的WETH，并向dYdX归还了借来的104331.302778 × 10¹⁸ WETH<br>
+<img src="https://img-blog.csdnimg.cn/20200705162120151.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="还钱" loading="lazy"><br>
+并取出利润。<br>
+<img src="https://img-blog.csdnimg.cn/20200705162354515.png" alt="拿钱走人" loading="lazy"></li>
+</ul>
+<h1 id="discussion">Discussion</h1>
+<p>攻击发生在2020年6月29日，造成了50w美元的损失。6月30日，balancer Labs宣布已经奖励了Bug finder Hex_Capital。并将会为所有funder报销整个攻击事件中的所有损失。</p>
+<h1 id="references">References</h1>
+<ul>
+<li>攻击交易详情 https://oko.palkeo.com/0x013be97768b702fe8eccef1a40544d5ecb3c1961ad5f87fee4d16fdc08c78106/</li>
+<li>攻击事件记录 https://medium.com/@1inch.exchange/balancer-hack-2020-a8f7131c980e</li>
+<li>balancer 官方twitter https://twitter.com/BalancerLabs</li>
+<li>ERC20智能合约实现代码 https://zhuanlan.zhihu.com/p/104527883</li>
+</ul>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> </div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://blog.leepanda.top/post/yi-tai-fang-xi-jie-xiao-xi-ji-zhi/">以太坊细节-消息机制</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://blog.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D">概念介绍</a><br>
+*
+<ul>
+<li><a href="#%E6%BB%91%E7%82%B9-slippage">滑点 slippage</a></li>
+<li><a href="#%E6%B5%81%E9%80%9A%E6%B1%A0">流通池</a></li>
+<li><a href="#%E6%B5%81%E5%8A%A8%E6%80%A7%E6%8C%96%E7%9F%BF-liquidity-mining">流动性挖矿 liquidity mining</a></li>
+<li><a href="#%E8%87%AA%E5%8A%A8%E5%8C%96%E5%81%9A%E5%B8%82%E5%95%86-amm">自动化做市商 AMM</a></li>
+<li><a href="#uniswap">Uniswap</a></li>
+<li><a href="#%E9%80%9A%E7%BC%A9%E8%B4%A7%E5%B8%81%E6%A8%A1%E5%9E%8B">通缩货币模型</a></li>
+</ul>
+</li>
+<li><a href="#%E6%94%BB%E5%87%BB%E8%BF%87%E7%A8%8B">攻击过程</a><br>
+*
+<ul>
+<li><a href="#step1-flash-loan-%E5%80%9F%E9%92%B1%E6%90%9E%E4%BA%8B">Step1 flash loan 借钱搞事</a></li>
+<li><a href="#step2-%E7%94%A8weth%E6%8D%A2sta%E4%BD%BFsta%E6%95%B0%E9%87%8F%E5%87%8F%E5%B0%91%E5%B9%B6%E5%8D%87%E5%80%BC">Step2 用WETH换STA，使STA数量减少，并升值。</a></li>
+<li><a href="#step3-%E7%94%A8sta%E6%8D%A2weth%E9%85%8D%E5%90%88gulp%E5%87%BD%E6%95%B0%E8%8E%B7%E5%BE%97%E9%A2%9D%E5%A4%96weth">Step3 用STA换WETH，配合gulp函数，获得额外WETH。</a></li>
+<li><a href="#step4-%E8%BF%98%E6%B8%85flash-loan%E8%B4%B7%E6%AC%BE%E5%A5%97%E5%88%A9%E7%A6%BB%E5%BC%80">Step4 还清flash loan贷款，套利离开</a></li>
+</ul>
+</li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p></p>
+                  </div>
+              </footer>
+    </body>
+</html>

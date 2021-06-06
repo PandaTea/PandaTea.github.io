@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.leepanda.top</id>
-    <title>戏</title>
-    <updated>2021-06-06T08:10:38.105Z</updated>
+    <title>Panda Tea</title>
+    <updated>2021-06-06T08:16:32.001Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.leepanda.top"/>
     <link rel="self" href="https://www.leepanda.top/atom.xml"/>
+    <subtitle>一个贫穷的黑魔法师，一事无成，但朋友们爱我。</subtitle>
     <logo>https://www.leepanda.top/images/avatar.png</logo>
     <icon>https://www.leepanda.top/favicon.ico</icon>
-    <rights>All rights reserved 2021, 戏</rights>
+    <rights>All rights reserved 2021, Panda Tea</rights>
     <entry>
         <title type="html"><![CDATA[胖达和他的朋友们]]></title>
         <id>https://www.leepanda.top/post/about/</id>

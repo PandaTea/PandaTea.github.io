@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.leepanda.top</id>
     <title>戏</title>
-    <updated>2021-06-05T16:14:00.557Z</updated>
+    <updated>2021-06-06T08:10:14.228Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.leepanda.top"/>
     <link rel="self" href="https://www.leepanda.top/atom.xml"/>
@@ -10,12 +10,26 @@
     <icon>https://www.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, 戏</rights>
     <entry>
-        <title type="html"><![CDATA[下半年规划]]></title>
-        <id>https://www.leepanda.top/post/xia-ban-nian-gui-hua/</id>
-        <link href="https://www.leepanda.top/post/xia-ban-nian-gui-hua/">
+        <title type="html"><![CDATA[胖达和他的朋友们]]></title>
+        <id>https://www.leepanda.top/post/about/</id>
+        <link href="https://www.leepanda.top/post/about/">
         </link>
-        <updated>2021-06-05T15:55:15.000Z</updated>
-        <content type="html"><![CDATA[<p>试图对下班年设立一个小目标。我还不能躺平啊</p>
+        <updated>2021-06-06T06:19:02.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="关于我">关于我</h3>
+<p>ID 是 Panda，读作&quot;胖达&quot;<br>
+指的是这只温柔可爱的熊猫子！(´▽`ʃ♡ƪ)<br>
+<img src="https://www.leepanda.top/post-images/1622961691974.png" alt="熊熊遇见你！" width="200" height="200" loading="lazy"></p>
+<blockquote>
+<p>图片来自超可爱的动画片《熊熊遇见你》<br>
+<s>没看过的，快去看！</s></p>
+</blockquote>
+<p>江苏大学 战斗魔法系毕业，又叫网络空间安全系。</p>
+<h3 id="好朋友们">好朋友们！</h3>
+<ul>
+<li><a href="https://www.boringboys.top">BoringBoys 同样是战斗魔法专业的涛涛子</a></li>
+<li><a href="https://xchens.cn/index">xchens 同样是战斗魔法专业，但转职成为圣光守卫的白魔法师少华子</a></li>
+<li><a href="https://blog.cyan.fit">ALLEicf Cyan。我女朋友，是个厉害的女人</a></li>
+</ul>
 ]]></content>
     </entry>
     <entry>

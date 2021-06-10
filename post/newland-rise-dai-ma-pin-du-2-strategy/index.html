@@ -1,0 +1,506 @@
+<html>
+      <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
+        <meta charset="utf-8">
+        <meta name="referrer" content="never">
+        <title>newland-rise 代码品读[2]: Goblin and Strategy | Panda Tea</title>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://www.leepanda.top/styles/main.css">
+          <script src="https://www.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
+        <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+        <script src="https://www.leepanda.top/media/scripts/script.js"></script>
+        <script >hljs.initHighlightingOnLoad();</script>
+        
+
+    </head>
+    <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
+        <header class="index-img mdui-m-b-3" >
+                          <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+                <ul class="mdui-menu" id="demo-attr-cascade">
+                
+                        <li class="mdui-menu-item">
+                          <a href="/" class="mdui-ripple">首页</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/archives" class="mdui-ripple">归档</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="/tags" class="mdui-ripple">标签</a>
+                        </li>
+                
+                        <li class="mdui-menu-item">
+                          <a href="https://www.leepanda.top/post/about" class="mdui-ripple">关于</a>
+                        </li>
+                
+                      </ul>
+
+        </header>
+        <div class="mdui-container post">
+                <div class="mdui-row">
+                        <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
+                         <article class="mdui-shadow-10 mdui-p-a-2 post-list">
+                           <div class="mdui-typo-display-1 mdui-m-b-3">newland-rise 代码品读[2]: Goblin and Strategy</div>
+                           <a  class="index-list-biaoqian ">2021-06-08</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="strategy">Strategy</h1>
+<h2 id="简介">简介</h2>
+<p>newland-rise定义了三种金融策略来管理用户的资产。newland-rise这三种Strategy均面向借钱投资场景。</p>
+<blockquote>
+<p>类似从花呗借钱买基金...</p>
+</blockquote>
+<h2 id="mdxstrategyaddtwosidesoptimal-双边最优策略">MdxStrategyAddTwoSidesOptimal 双边最优策略</h2>
+<h3 id="简介-2">简介</h3>
+<p>该Strategy继承自Piloit项目的理财策略。<br>
+理解起来比较简单，即Strategy将拥有的Token0和Token1余额进行调整。使其比例刚好是当前市场价格。以这样的比例AddLiquidity效果最佳。</p>
+<h3 id="optimaldeposit">optimalDeposit</h3>
+<p><img src="https://www.leepanda.top/post-images/1623133491186.jpeg" alt="" loading="lazy"><br>
+计算最优Deposit数量</p>
+<h3 id="calandswap">calAndSwap</h3>
+<p><img src="https://www.leepanda.top/post-images/1623134755095.jpeg" alt="" loading="lazy"><br>
+通过optimalDeposit函数获取需要调整的数量。<br>
+把strategy中所持有的t0和t1 数量进行调整，调整后的t0和t1价值相等。<br>
+如果此时addLiquidity，即是最优方案。</p>
+<blockquote>
+<p>这里价值相等的定义是Mdx交易所的pool配比。</p>
+</blockquote>
+<h3 id="safeunwrapperandallsend">safeUnWrapperAndAllSend</h3>
+<p>这个函数就是简单的转账。如果要转账的token是WHT，就先withdraw成HT再转。<br>
+HT转账的时候，调用的函数是safeTransferETH，存在重入风险。<br>
+不过所有调用了safeUnWrapperAndAllSend函数的地方都有nonReentrant修饰符。<br>
+非常强力。</p>
+<h3 id="execute-核心函数">execute 核心函数</h3>
+<p>调用execute时，输入参数如下</p>
+<ul>
+<li>user 受益人，在newland项目中，该值从Bank合约一路传下来，指的就是<code>tx.origin</code></li>
+<li>borrowToken <code>tx.origin</code>借款币种</li>
+<li>borrow <code>tx.origin</code>借款数量</li>
+<li>debt 未使用</li>
+<li>data 额外参数，解析成如下。用户想要进行理财的输入资金，和最小LPToken输出数量
+<ul>
+<li>_token0</li>
+<li>_token1</li>
+<li>token0Amount</li>
+<li>token1Amount</li>
+<li>_minLPAmount<br>
+<img src="https://www.leepanda.top/post-images/1623145673516.jpeg" alt="" loading="lazy"><br>
+函数先将用户输入的t0 t1做一次预处理，处理成ERC20token格式，使用calAndSwap函数进行调平。<br>
+调平后AddLiquidity。<br>
+最后</li>
+</ul>
+</li>
+<li>将获取的lptoken转给<code>msg.sender</code></li>
+<li>将剩余的borrowToken转给<code>msg.sender</code></li>
+<li>将剩余的另一种代币直接转给<code>user</code></li>
+</ul>
+<h2 id="mdxstrategywithdrawminimizetrading-还一部分获益一部分">MdxStrategyWithdrawMinimizeTrading 还一部分，获益一部分</h2>
+<h3 id="简介-3">简介</h3>
+<p>该策略的输入是LPToken和debt。</p>
+<ul>
+<li>LPToken 是 用户托管于Goblin的凭证</li>
+<li>debt 是用户借了多少钱来投资</li>
+</ul>
+<p>Strategy将lptoken全部removeLiquidity为token0和token1。<br>
+由于token0和token1中有一部分钱是用户借来的，还需要偿还debt。<br>
+最终剩下的token，便是用户的收益。<br>
+<img src="https://www.leepanda.top/post-images/1623210065555.gif" alt="" loading="lazy"></p>
+<h3 id="swapifneed">swapIfNeed</h3>
+<p>该函数用于判断，是否需要通过swap操作来有足够的钱偿还贷款。</p>
+<pre><code class="language-JavaScript">    /// swap if need.
+    function swapIfNeed(address borrowToken, address tokenRelative, uint256 debt) internal {
+        uint256 borrowTokenAmount = borrowToken.myBalance();
+        if (debt &gt; borrowTokenAmount) {
+            tokenRelative.safeApprove(address(router), 0);
+            tokenRelative.safeApprove(address(router), uint256(-1));
+
+            uint256 remainingDebt = debt.sub(borrowTokenAmount);
+            address[] memory path = new address[](2);
+            path[0] = tokenRelative;
+            path[1] = borrowToken;
+            router.swapTokensForExactTokens(remainingDebt, tokenRelative.myBalance(), path, address(this), now); 
+        }
+    }
+</code></pre>
+<h3 id="execute-核心函数-2">execute 核心函数</h3>
+<pre><code class="language-javascript">    /// @dev Execute worker strategy. Take LP tokens. Return debt token + token want back.
+    /// @param user User address to withdraw liquidity.
+    /// @param borrowToken The token user borrow from bank.
+    /// @param debt User's debt amount.
+    /// @param data Extra calldata information passed along to this strategy.
+    function execute(address user, address borrowToken, uint256 /* borrow */, uint256 debt, bytes calldata data)
+    external
+    override
+    payable
+    nonReentrant
+    {
+        // 1. Find out lpToken and liquidity.
+        // whichWantBack: 0:token0;1:token1;2:token what surplus.
+        (address token0, address token1, uint whichWantBack) = abi.decode(data, (address, address, uint));
+
+        // is borrowToken is ht.
+        bool isBorrowHt = borrowToken == address(0);
+        borrowToken = isBorrowHt ? wht : borrowToken;
+
+        // the relative token when token0 or token1 is ht.
+        address htRelative = address(0);
+        {
+            if (token0 == address(0)){
+                token0 = wht;
+                htRelative = token1;
+            }
+            if (token1 == address(0)){
+                token1 = wht;
+                htRelative = token0;
+            }
+        }
+        require(borrowToken == token0 || borrowToken == token1, &quot;borrowToken not token0 and token1&quot;);
+        require(whichWantBack == uint(0) || whichWantBack == uint(1) || whichWantBack == uint(2),
+            &quot;whichWantBack not in (0,1,2)&quot;);
+
+        address tokenUserWant = whichWantBack == uint(0) ? token0 : token1;
+
+        IMdexPair lpToken = IMdexPair(factory.getPair(token0, token1));
+        token0 = lpToken.token0();
+        token1 = lpToken.token1();
+
+        {
+            lpToken.approve(address(router), uint256(-1));
+            router.removeLiquidity(token0, token1, lpToken.balanceOf(address(this)), 0, 0, address(this), now);
+        }
+        {
+            address tokenRelative = borrowToken == token0 ? token1 : token0;
+
+            swapIfNeed(borrowToken, tokenRelative, debt);
+
+            if (isBorrowHt) {
+                IWHT(wht).withdraw(debt);
+                SafeToken.safeTransferETH(msg.sender, debt);
+            } else {
+                SafeToken.safeTransfer(borrowToken, msg.sender, debt);
+            }
+        }
+
+        // 2. swap remaining token to what user want.
+        if (whichWantBack != uint(2)) {
+            address tokenAnother = tokenUserWant == token0 ? token1 : token0;
+            uint256 anotherAmount = tokenAnother.myBalance();
+            if(anotherAmount &gt; 0){
+                tokenAnother.safeApprove(address(router), 0);
+                tokenAnother.safeApprove(address(router), uint256(-1));
+
+                address[] memory path = new address[](2);
+                path[0] = tokenAnother;
+                path[1] = tokenUserWant;
+                router.swapExactTokensForTokens(anotherAmount, 0, path, address(this), now);
+            }
+        }
+
+        // 3. send all tokens back.
+        if (htRelative == address(0)) {
+            token0.safeTransfer(user, token0.myBalance());
+            token1.safeTransfer(user, token1.myBalance());
+        } else {
+            safeUnWrapperAndAllSend(wht, user);
+            safeUnWrapperAndAllSend(htRelative, user);
+        }
+    }
+</code></pre>
+<p>调用execute时，输入参数如下</p>
+<ul>
+<li>user 受益人 <code>tx.origin</code></li>
+<li>borrowToken <code>tx.origin</code>借款币种</li>
+<li>borrow 未使用</li>
+<li>debt 借款借了多少</li>
+<li>data 额外参数，解析成如下。
+<ul>
+<li>_token0</li>
+<li>_token1</li>
+<li>whichWantBack (0, 1, 2) 三选一，选择0或1即只要其中某种代币；选择2就是不需要进行整合，直接分别获取token0和token1。</li>
+</ul>
+</li>
+</ul>
+<p>函数先将LPToken removeLiquidity成token0 和 token1<br>
+再通过SwapIfNeed 还清贷款。<br>
+最终将剩余的token汇总成whichWantBack token 并转给user。</p>
+<h2 id="mdxliqstrategy-全部收益拿来还钱">MdxLiqStrategy 全部收益拿来还钱</h2>
+<h3 id="简介-4">简介</h3>
+<p>MdxLiqStrategy策略是newland-rise在Pilot上新增的。<br>
+该策略与MdxStrategyWithdrawMinimizeTrading类似，输入LPToken，removeLiquidity为token0和token1。<br>
+但在MdxLiqStrategy中，Strategy将全部的token0和token1整合成borrowToken并归还Goblin。<br>
+并没有在Strategy层分发用户的收益。</p>
+<h3 id="execute-核心函数-3">execute 核心函数</h3>
+<pre><code class="language-javascript">function execute(address /* user */, address borrowToken, uint256 /* borrow */, uint256 /* debt */, bytes calldata data)
+    external
+    override
+    payable
+    nonReentrant
+    {
+        IMdexPair lpToken = IMdexPair(abi.decode(data, (address)));
+        address token0 = lpToken.token0();
+        address token1 = lpToken.token1();
+
+        // is borrowToken is ht.
+        bool isBorrowHt = borrowToken == address(0);
+        borrowToken = isBorrowHt ? wht : borrowToken;
+
+        require(borrowToken == token0 || borrowToken == token1, &quot;borrowToken not token0 and token1&quot;);
+
+        {
+            lpToken.approve(address(router), uint256(-1));
+            router.removeLiquidity(token0, token1, lpToken.balanceOf(address(this)), 0, 0, address(this), now);
+        }
+        {
+            address tokenRelative = borrowToken == token0 ? token1 : token0;
+            swapToBorrowToken(borrowToken, tokenRelative);
+            if (isBorrowHt) {
+                IWHT(wht).withdraw(borrowToken.myBalance());
+                SafeToken.safeTransferETH(msg.sender, borrowToken.myBalance());
+            } else {
+                SafeToken.safeTransfer(borrowToken, msg.sender, borrowToken.myBalance());
+            }
+        }
+    }
+</code></pre>
+<p>调用execute时，输入参数如下</p>
+<ul>
+<li>borrowToken <code>tx.origin</code>借款币种</li>
+<li>data 额外参数，解析成如下。
+<ul>
+<li>lpToken</li>
+</ul>
+</li>
+</ul>
+<p>函数先将LPToken removeLiquidity成token0 和 token1<br>
+把所有token汇总成borrowToken, 转给Goblin</p>
+<h1 id="goblin">Goblin</h1>
+<h2 id="简介-5">简介</h2>
+<p>在newland-rise项目中，只有Goblin合约调用了Strategy。<br>
+Goblin是newland-rise项目中用户资金的管理者。<br>
+用户通过Bank借钱，把借到的钱 和 自己的本金 交给Goblin进行投资。</p>
+<h2 id="health-healthoracle">health &amp;&amp; healthOracle</h2>
+<p>health和healthOracle函数，其目的都是判断用户的仓位状态是否正常，如果不正常即可被清算。</p>
+<pre><code class="language-javascript">    /// @dev Return the amount of debt token to receive if we are to liquidate the given position.
+    /// @param id The position ID to perform health check.
+    /// @param borrowToken The token this position had debt.
+    function healthOracle(uint256 id, address borrowToken) external override view returns (uint256) { // 哥布林把手里的钱计算成 borrowToken为单位的价格
+        bool isDebtHt = borrowToken == address(0);
+        require(borrowToken == token0 || borrowToken == token1 || isDebtHt, &quot;borrowToken not token0 and token1&quot;);
+
+        // 1. Get the position's LP balance and LP total supply.
+        uint256 lpBalance = posLPAmount[id];
+        uint256 lpSupply = lpToken.totalSupply();
+        // Ignore pending mintFee as it is insignificant
+        // 2. Get the pool's total supply of token0 and token1.
+        (uint256 totalAmount0, uint256 totalAmount1,) = lpToken.getReserves();
+
+        // 3. Convert the position's LP tokens to the underlying assets.
+        uint256 userToken0 = lpBalance.mul(totalAmount0).div(lpSupply);
+        uint256 userToken1 = lpBalance.mul(totalAmount1).div(lpSupply);
+        uint256 userAmtProduct = userToken0.mul(userToken1);
+
+        if (isDebtHt) {
+            borrowToken = token0 == wht ? token0 : token1;
+        }
+
+        (int token0Price,) = oracle.getPrice(token0);
+        (int token1Price,) = oracle.getPrice(token1);
+        require(token0Price &gt; 0, 'oracle token0Price invalid');
+        require(token1Price &gt; 0, 'oracle token1Price invalid');
+        uint256 priceProduct = uint(token0Price).mul(uint(token1Price));
+        uint totalAmt = Math.sqrt(userAmtProduct.mul(priceProduct)).mul(2);
+        // 4. Convert all farming tokens to debtToken and return total amount.
+        if (borrowToken == token0) {
+            return totalAmt.div(uint(token0Price));
+        } else {
+            return totalAmt.div(uint(token1Price));
+        }
+    }
+</code></pre>
+<p>Goblin先获取输入id对应的仓位里储存的LPToken</p>
+<pre><code class="language-javascript">        uint256 lpBalance = posLPAmount[id];
+        uint256 lpSupply = lpToken.totalSupply();
+</code></pre>
+<p>再将LPToken用borrowToken作为单位来计算价值。</p>
+<pre><code class="language-javascript">        // 3. Convert the position's LP tokens to the underlying assets.
+        uint256 userToken0 = lpBalance.mul(totalAmount0).div(lpSupply);
+        uint256 userToken1 = lpBalance.mul(totalAmount1).div(lpSupply);
+        uint256 userAmtProduct = userToken0.mul(userToken1);
+
+        if (isDebtHt) {
+            borrowToken = token0 == wht ? token0 : token1;
+        }
+
+        (int token0Price,) = oracle.getPrice(token0);
+        (int token1Price,) = oracle.getPrice(token1);
+        require(token0Price &gt; 0, 'oracle token0Price invalid');
+        require(token1Price &gt; 0, 'oracle token1Price invalid');
+        uint256 priceProduct = uint(token0Price).mul(uint(token1Price));
+        uint totalAmt = Math.sqrt(userAmtProduct.mul(priceProduct)).mul(2);
+        // 4. Convert all farming tokens to debtToken and return total amount.
+        if (borrowToken == token0) {
+            return totalAmt.div(uint(token0Price));
+        } else {
+            return totalAmt.div(uint(token1Price));
+        }
+</code></pre>
+<p>上述代码转化成数学公式为</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>h</mi><mi>e</mi><mi>a</mi><mi>l</mi><mi>t</mi><mi>h</mi><mi>O</mi><mi>r</mi><mi>a</mi><mi>c</mi><mi>l</mi><mi>e</mi><mo>=</mo><mfrac><mrow><mn>2</mn><msqrt><mrow><msub><mi>t</mi><mn>0</mn></msub><mo>∗</mo><msub><mi>P</mi><mn>0</mn></msub><mo>∗</mo><msub><mi>t</mi><mn>1</mn></msub><mo>∗</mo><msub><mi>P</mi><mn>1</mn></msub></mrow></msqrt></mrow><msub><mi>P</mi><mn>0</mn></msub></mfrac></mrow><annotation encoding="application/x-tex">healthOracle = \frac{2\sqrt{t_0 * P_0 * t_1 * P_1}}{P_0}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">h</span><span class="mord mathdefault">e</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">a</span><span class="mord mathdefault">c</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.3646650000000005em;vertical-align:-0.8360000000000001em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5286650000000002em;"><span style="top:-2.3139999999999996em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.851665em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord"><span class="mord mathdefault">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathdefault">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.811665em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width='400em' height='1.08em' viewBox='0 0 400000 1080' preserveAspectRatio='xMinYMin slice'><path d='M95,702c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,
+-10,-9.5,-14c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54c44.2,-33.3,65.8,
+-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10s173,378,173,378c0.7,0,
+35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429c69,-144,104.5,-217.7,106.5,
+-221c5.3,-9.3,12,-14,20,-14H400000v40H845.2724s-225.272,467,-225.272,467
+s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422
+s-65,47,-65,47z M834 80H400000v40H845z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.18833500000000003em;"><span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8360000000000001em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>可见是计算了一下</p>
+<h2 id="work函数">work函数</h2>
+<figure data-type="image" tabindex="1"><img src="https://www.leepanda.top/post-images/1623131957146.jpeg" alt="work函数" loading="lazy"></figure>
+</div>
+                              <div class="mdui-divider mdui-m-t-3"></div>
+                              <div class="mdui-row-xs-2 mdui-m-t-2">
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://www.leepanda.top/post/newland-xiang-mu-dai-ma-shen-ji-jie-shao/">newland项目代码审计介绍</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://www.leepanda.top/post/ptd-yue-du-li-jie-1/">P.td阅读理解[1]</a></div> </div>
+                                </div>
+                                <div class="mdui-divider mdui-m-t-2"></div>
+   
+ <script src="https://www.leepanda.top/media/scripts/Valine.min.js"></script>
+ <div class="comment"></div>
+
+<script>
+      new Valine({
+            el: '.comment',
+
+            app_id: 'IEi2zCTY1XD4rD7nJ4awDcpn-gzGzoHsz',
+
+
+            app_key: 'LK0B9F5PMRXfeesBEQb4G1sw',
+
+
+            placeholder: '上班累了...躺会儿吧',
+            
+            path: window.location.pathname,
+            pageSize: 30,
+            avatar:'mm', 
+       })
+
+    </script> 
+<script>
+    if(window.location.hash){
+        var checkExist = setInterval(function() {
+           if ($(window.location.hash).length) {
+              $('html, body').animate({scrollTop: $(window.location.hash).offset().top-90}, 1000);
+              clearInterval(checkExist);
+           }
+        }, 100);
+    }
+</script>
+                         </article>
+                 <div class="toc-container mdui-float-right">
+                <ul class="markdownIt-TOC">
+<li><a href="#strategy">Strategy</a>
+<ul>
+<li><a href="#%E7%AE%80%E4%BB%8B">简介</a></li>
+<li><a href="#mdxstrategyaddtwosidesoptimal-%E5%8F%8C%E8%BE%B9%E6%9C%80%E4%BC%98%E7%AD%96%E7%95%A5">MdxStrategyAddTwoSidesOptimal 双边最优策略</a>
+<ul>
+<li><a href="#%E7%AE%80%E4%BB%8B-2">简介</a></li>
+<li><a href="#optimaldeposit">optimalDeposit</a></li>
+<li><a href="#calandswap">calAndSwap</a></li>
+<li><a href="#safeunwrapperandallsend">safeUnWrapperAndAllSend</a></li>
+<li><a href="#execute-%E6%A0%B8%E5%BF%83%E5%87%BD%E6%95%B0">execute 核心函数</a></li>
+</ul>
+</li>
+<li><a href="#mdxstrategywithdrawminimizetrading-%E8%BF%98%E4%B8%80%E9%83%A8%E5%88%86%E8%8E%B7%E7%9B%8A%E4%B8%80%E9%83%A8%E5%88%86">MdxStrategyWithdrawMinimizeTrading 还一部分，获益一部分</a>
+<ul>
+<li><a href="#%E7%AE%80%E4%BB%8B-3">简介</a></li>
+<li><a href="#swapifneed">swapIfNeed</a></li>
+<li><a href="#execute-%E6%A0%B8%E5%BF%83%E5%87%BD%E6%95%B0-2">execute 核心函数</a></li>
+</ul>
+</li>
+<li><a href="#mdxliqstrategy-%E5%85%A8%E9%83%A8%E6%94%B6%E7%9B%8A%E6%8B%BF%E6%9D%A5%E8%BF%98%E9%92%B1">MdxLiqStrategy 全部收益拿来还钱</a>
+<ul>
+<li><a href="#%E7%AE%80%E4%BB%8B-4">简介</a></li>
+<li><a href="#execute-%E6%A0%B8%E5%BF%83%E5%87%BD%E6%95%B0-3">execute 核心函数</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#goblin">Goblin</a>
+<ul>
+<li><a href="#%E7%AE%80%E4%BB%8B-5">简介</a></li>
+<li><a href="#health-healthoracle">health &amp;&amp; healthOracle</a></li>
+<li><a href="#work%E5%87%BD%E6%95%B0">work函数</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+
+                        </div>
+                 </div>
+          
+        </div>
+        <script data-no-instant>
+    (function ($) {
+        $.extend({
+            adamsOverload: function () {
+                $.viewImage({
+                    'target'  : '.post-neirong img',
+                    'exclude' : '.vsmile-icons img , .song-links-item img',
+                    'delay'   : 300
+                });
+            }
+        });
+    })(jQuery);
+    jQuery.adamsOverload();
+</script>
+        <footer class="footer mdui-m-t-5 mdui-text-center">
+               <nav class="social-links">
+                      <ul>
+                      
+                            
+                           
+                            	
+                        <li class="social-link"><a href="https://twitter.com/dawenc2020" target="_blank"><i class="iconfont icon-twitter"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://github.com/PandaTea" target="_blank"><i class="iconfont icon-github"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://www.zhihu.com/people/lee-congfei" target="_blank"><i class="iconfont icon-zhihu"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="NvRVDGzkRJJn" target="_blank"><i class="iconfont icon-telegram"></i></a></li>
+                         
+                           
+                            
+                           
+                            
+                           
+                            	
+                        <li class="social-link"><a href="836475291" target="_blank"><i class="iconfont icon-qq"></i></a></li>
+                         
+                           
+                            	
+                        <li class="social-link"><a href="https://weibo.com/u/2290808041" target="_blank"><i class="iconfont icon-weibo"></i></a></li>
+                         
+                           
+                            
+                           
+                      </ul>
+                    </nav>
+                  <div class="copyright">
+                      <p>该用户隐藏了power信息，并给你一个大抱抱。</p>
+                  </div>
+              </footer>
+    </body>
+</html>

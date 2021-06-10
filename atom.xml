@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.leepanda.top</id>
     <title>Panda Tea</title>
-    <updated>2021-06-06T08:20:02.943Z</updated>
+    <updated>2021-06-10T10:04:52.980Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.leepanda.top"/>
     <link rel="self" href="https://www.leepanda.top/atom.xml"/>
@@ -10,6 +10,368 @@
     <logo>https://www.leepanda.top/images/avatar.png</logo>
     <icon>https://www.leepanda.top/favicon.ico</icon>
     <rights>All rights reserved 2021, Panda Tea</rights>
+    <entry>
+        <title type="html"><![CDATA[newland项目代码审计介绍]]></title>
+        <id>https://www.leepanda.top/post/newland-xiang-mu-dai-ma-shen-ji-jie-shao/</id>
+        <link href="https://www.leepanda.top/post/newland-xiang-mu-dai-ma-shen-ji-jie-shao/">
+        </link>
+        <updated>2021-06-08T09:05:32.000Z</updated>
+        <content type="html"><![CDATA[<p>此文章做为组内分享讲义</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[newland-rise 代码品读[2]: Goblin and Strategy]]></title>
+        <id>https://www.leepanda.top/post/newland-rise-dai-ma-pin-du-2-strategy/</id>
+        <link href="https://www.leepanda.top/post/newland-rise-dai-ma-pin-du-2-strategy/">
+        </link>
+        <updated>2021-06-08T06:05:17.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="strategy">Strategy</h1>
+<h2 id="简介">简介</h2>
+<p>newland-rise定义了三种金融策略来管理用户的资产。newland-rise这三种Strategy均面向借钱投资场景。</p>
+<blockquote>
+<p>类似从花呗借钱买基金...</p>
+</blockquote>
+<h2 id="mdxstrategyaddtwosidesoptimal-双边最优策略">MdxStrategyAddTwoSidesOptimal 双边最优策略</h2>
+<h3 id="简介-2">简介</h3>
+<p>该Strategy继承自Piloit项目的理财策略。<br>
+理解起来比较简单，即Strategy将拥有的Token0和Token1余额进行调整。使其比例刚好是当前市场价格。以这样的比例AddLiquidity效果最佳。</p>
+<h3 id="optimaldeposit">optimalDeposit</h3>
+<p><img src="https://www.leepanda.top/post-images/1623133491186.jpeg" alt="" loading="lazy"><br>
+计算最优Deposit数量</p>
+<h3 id="calandswap">calAndSwap</h3>
+<p><img src="https://www.leepanda.top/post-images/1623134755095.jpeg" alt="" loading="lazy"><br>
+通过optimalDeposit函数获取需要调整的数量。<br>
+把strategy中所持有的t0和t1 数量进行调整，调整后的t0和t1价值相等。<br>
+如果此时addLiquidity，即是最优方案。</p>
+<blockquote>
+<p>这里价值相等的定义是Mdx交易所的pool配比。</p>
+</blockquote>
+<h3 id="safeunwrapperandallsend">safeUnWrapperAndAllSend</h3>
+<p>这个函数就是简单的转账。如果要转账的token是WHT，就先withdraw成HT再转。<br>
+HT转账的时候，调用的函数是safeTransferETH，存在重入风险。<br>
+不过所有调用了safeUnWrapperAndAllSend函数的地方都有nonReentrant修饰符。<br>
+非常强力。</p>
+<h3 id="execute-核心函数">execute 核心函数</h3>
+<p>调用execute时，输入参数如下</p>
+<ul>
+<li>user 受益人，在newland项目中，该值从Bank合约一路传下来，指的就是<code>tx.origin</code></li>
+<li>borrowToken <code>tx.origin</code>借款币种</li>
+<li>borrow <code>tx.origin</code>借款数量</li>
+<li>debt 未使用</li>
+<li>data 额外参数，解析成如下。用户想要进行理财的输入资金，和最小LPToken输出数量
+<ul>
+<li>_token0</li>
+<li>_token1</li>
+<li>token0Amount</li>
+<li>token1Amount</li>
+<li>_minLPAmount<br>
+<img src="https://www.leepanda.top/post-images/1623145673516.jpeg" alt="" loading="lazy"><br>
+函数先将用户输入的t0 t1做一次预处理，处理成ERC20token格式，使用calAndSwap函数进行调平。<br>
+调平后AddLiquidity。<br>
+最后</li>
+</ul>
+</li>
+<li>将获取的lptoken转给<code>msg.sender</code></li>
+<li>将剩余的borrowToken转给<code>msg.sender</code></li>
+<li>将剩余的另一种代币直接转给<code>user</code></li>
+</ul>
+<h2 id="mdxstrategywithdrawminimizetrading-还一部分获益一部分">MdxStrategyWithdrawMinimizeTrading 还一部分，获益一部分</h2>
+<h3 id="简介-3">简介</h3>
+<p>该策略的输入是LPToken和debt。</p>
+<ul>
+<li>LPToken 是 用户托管于Goblin的凭证</li>
+<li>debt 是用户借了多少钱来投资</li>
+</ul>
+<p>Strategy将lptoken全部removeLiquidity为token0和token1。<br>
+由于token0和token1中有一部分钱是用户借来的，还需要偿还debt。<br>
+最终剩下的token，便是用户的收益。<br>
+<img src="https://www.leepanda.top/post-images/1623210065555.gif" alt="" loading="lazy"></p>
+<h3 id="swapifneed">swapIfNeed</h3>
+<p>该函数用于判断，是否需要通过swap操作来有足够的钱偿还贷款。</p>
+<pre><code class="language-JavaScript">    /// swap if need.
+    function swapIfNeed(address borrowToken, address tokenRelative, uint256 debt) internal {
+        uint256 borrowTokenAmount = borrowToken.myBalance();
+        if (debt &gt; borrowTokenAmount) {
+            tokenRelative.safeApprove(address(router), 0);
+            tokenRelative.safeApprove(address(router), uint256(-1));
+
+            uint256 remainingDebt = debt.sub(borrowTokenAmount);
+            address[] memory path = new address[](2);
+            path[0] = tokenRelative;
+            path[1] = borrowToken;
+            router.swapTokensForExactTokens(remainingDebt, tokenRelative.myBalance(), path, address(this), now); 
+        }
+    }
+</code></pre>
+<h3 id="execute-核心函数-2">execute 核心函数</h3>
+<pre><code class="language-javascript">    /// @dev Execute worker strategy. Take LP tokens. Return debt token + token want back.
+    /// @param user User address to withdraw liquidity.
+    /// @param borrowToken The token user borrow from bank.
+    /// @param debt User's debt amount.
+    /// @param data Extra calldata information passed along to this strategy.
+    function execute(address user, address borrowToken, uint256 /* borrow */, uint256 debt, bytes calldata data)
+    external
+    override
+    payable
+    nonReentrant
+    {
+        // 1. Find out lpToken and liquidity.
+        // whichWantBack: 0:token0;1:token1;2:token what surplus.
+        (address token0, address token1, uint whichWantBack) = abi.decode(data, (address, address, uint));
+
+        // is borrowToken is ht.
+        bool isBorrowHt = borrowToken == address(0);
+        borrowToken = isBorrowHt ? wht : borrowToken;
+
+        // the relative token when token0 or token1 is ht.
+        address htRelative = address(0);
+        {
+            if (token0 == address(0)){
+                token0 = wht;
+                htRelative = token1;
+            }
+            if (token1 == address(0)){
+                token1 = wht;
+                htRelative = token0;
+            }
+        }
+        require(borrowToken == token0 || borrowToken == token1, &quot;borrowToken not token0 and token1&quot;);
+        require(whichWantBack == uint(0) || whichWantBack == uint(1) || whichWantBack == uint(2),
+            &quot;whichWantBack not in (0,1,2)&quot;);
+
+        address tokenUserWant = whichWantBack == uint(0) ? token0 : token1;
+
+        IMdexPair lpToken = IMdexPair(factory.getPair(token0, token1));
+        token0 = lpToken.token0();
+        token1 = lpToken.token1();
+
+        {
+            lpToken.approve(address(router), uint256(-1));
+            router.removeLiquidity(token0, token1, lpToken.balanceOf(address(this)), 0, 0, address(this), now);
+        }
+        {
+            address tokenRelative = borrowToken == token0 ? token1 : token0;
+
+            swapIfNeed(borrowToken, tokenRelative, debt);
+
+            if (isBorrowHt) {
+                IWHT(wht).withdraw(debt);
+                SafeToken.safeTransferETH(msg.sender, debt);
+            } else {
+                SafeToken.safeTransfer(borrowToken, msg.sender, debt);
+            }
+        }
+
+        // 2. swap remaining token to what user want.
+        if (whichWantBack != uint(2)) {
+            address tokenAnother = tokenUserWant == token0 ? token1 : token0;
+            uint256 anotherAmount = tokenAnother.myBalance();
+            if(anotherAmount &gt; 0){
+                tokenAnother.safeApprove(address(router), 0);
+                tokenAnother.safeApprove(address(router), uint256(-1));
+
+                address[] memory path = new address[](2);
+                path[0] = tokenAnother;
+                path[1] = tokenUserWant;
+                router.swapExactTokensForTokens(anotherAmount, 0, path, address(this), now);
+            }
+        }
+
+        // 3. send all tokens back.
+        if (htRelative == address(0)) {
+            token0.safeTransfer(user, token0.myBalance());
+            token1.safeTransfer(user, token1.myBalance());
+        } else {
+            safeUnWrapperAndAllSend(wht, user);
+            safeUnWrapperAndAllSend(htRelative, user);
+        }
+    }
+</code></pre>
+<p>调用execute时，输入参数如下</p>
+<ul>
+<li>user 受益人 <code>tx.origin</code></li>
+<li>borrowToken <code>tx.origin</code>借款币种</li>
+<li>borrow 未使用</li>
+<li>debt 借款借了多少</li>
+<li>data 额外参数，解析成如下。
+<ul>
+<li>_token0</li>
+<li>_token1</li>
+<li>whichWantBack (0, 1, 2) 三选一，选择0或1即只要其中某种代币；选择2就是不需要进行整合，直接分别获取token0和token1。</li>
+</ul>
+</li>
+</ul>
+<p>函数先将LPToken removeLiquidity成token0 和 token1<br>
+再通过SwapIfNeed 还清贷款。<br>
+最终将剩余的token汇总成whichWantBack token 并转给user。</p>
+<h2 id="mdxliqstrategy-全部收益拿来还钱">MdxLiqStrategy 全部收益拿来还钱</h2>
+<h3 id="简介-4">简介</h3>
+<p>MdxLiqStrategy策略是newland-rise在Pilot上新增的。<br>
+该策略与MdxStrategyWithdrawMinimizeTrading类似，输入LPToken，removeLiquidity为token0和token1。<br>
+但在MdxLiqStrategy中，Strategy将全部的token0和token1整合成borrowToken并归还Goblin。<br>
+并没有在Strategy层分发用户的收益。</p>
+<h3 id="execute-核心函数-3">execute 核心函数</h3>
+<pre><code class="language-javascript">function execute(address /* user */, address borrowToken, uint256 /* borrow */, uint256 /* debt */, bytes calldata data)
+    external
+    override
+    payable
+    nonReentrant
+    {
+        IMdexPair lpToken = IMdexPair(abi.decode(data, (address)));
+        address token0 = lpToken.token0();
+        address token1 = lpToken.token1();
+
+        // is borrowToken is ht.
+        bool isBorrowHt = borrowToken == address(0);
+        borrowToken = isBorrowHt ? wht : borrowToken;
+
+        require(borrowToken == token0 || borrowToken == token1, &quot;borrowToken not token0 and token1&quot;);
+
+        {
+            lpToken.approve(address(router), uint256(-1));
+            router.removeLiquidity(token0, token1, lpToken.balanceOf(address(this)), 0, 0, address(this), now);
+        }
+        {
+            address tokenRelative = borrowToken == token0 ? token1 : token0;
+            swapToBorrowToken(borrowToken, tokenRelative);
+            if (isBorrowHt) {
+                IWHT(wht).withdraw(borrowToken.myBalance());
+                SafeToken.safeTransferETH(msg.sender, borrowToken.myBalance());
+            } else {
+                SafeToken.safeTransfer(borrowToken, msg.sender, borrowToken.myBalance());
+            }
+        }
+    }
+</code></pre>
+<p>调用execute时，输入参数如下</p>
+<ul>
+<li>borrowToken <code>tx.origin</code>借款币种</li>
+<li>data 额外参数，解析成如下。
+<ul>
+<li>lpToken</li>
+</ul>
+</li>
+</ul>
+<p>函数先将LPToken removeLiquidity成token0 和 token1<br>
+把所有token汇总成borrowToken, 转给Goblin</p>
+<h1 id="goblin">Goblin</h1>
+<h2 id="简介-5">简介</h2>
+<p>在newland-rise项目中，只有Goblin合约调用了Strategy。<br>
+Goblin是newland-rise项目中用户资金的管理者。<br>
+用户通过Bank借钱，把借到的钱 和 自己的本金 交给Goblin进行投资。</p>
+<h2 id="health-healthoracle">health &amp;&amp; healthOracle</h2>
+<p>health和healthOracle函数，其目的都是判断用户的仓位状态是否正常，如果不正常即可被清算。</p>
+<pre><code class="language-javascript">    /// @dev Return the amount of debt token to receive if we are to liquidate the given position.
+    /// @param id The position ID to perform health check.
+    /// @param borrowToken The token this position had debt.
+    function healthOracle(uint256 id, address borrowToken) external override view returns (uint256) { // 哥布林把手里的钱计算成 borrowToken为单位的价格
+        bool isDebtHt = borrowToken == address(0);
+        require(borrowToken == token0 || borrowToken == token1 || isDebtHt, &quot;borrowToken not token0 and token1&quot;);
+
+        // 1. Get the position's LP balance and LP total supply.
+        uint256 lpBalance = posLPAmount[id];
+        uint256 lpSupply = lpToken.totalSupply();
+        // Ignore pending mintFee as it is insignificant
+        // 2. Get the pool's total supply of token0 and token1.
+        (uint256 totalAmount0, uint256 totalAmount1,) = lpToken.getReserves();
+
+        // 3. Convert the position's LP tokens to the underlying assets.
+        uint256 userToken0 = lpBalance.mul(totalAmount0).div(lpSupply);
+        uint256 userToken1 = lpBalance.mul(totalAmount1).div(lpSupply);
+        uint256 userAmtProduct = userToken0.mul(userToken1);
+
+        if (isDebtHt) {
+            borrowToken = token0 == wht ? token0 : token1;
+        }
+
+        (int token0Price,) = oracle.getPrice(token0);
+        (int token1Price,) = oracle.getPrice(token1);
+        require(token0Price &gt; 0, 'oracle token0Price invalid');
+        require(token1Price &gt; 0, 'oracle token1Price invalid');
+        uint256 priceProduct = uint(token0Price).mul(uint(token1Price));
+        uint totalAmt = Math.sqrt(userAmtProduct.mul(priceProduct)).mul(2);
+        // 4. Convert all farming tokens to debtToken and return total amount.
+        if (borrowToken == token0) {
+            return totalAmt.div(uint(token0Price));
+        } else {
+            return totalAmt.div(uint(token1Price));
+        }
+    }
+</code></pre>
+<p>Goblin先获取输入id对应的仓位里储存的LPToken</p>
+<pre><code class="language-javascript">        uint256 lpBalance = posLPAmount[id];
+        uint256 lpSupply = lpToken.totalSupply();
+</code></pre>
+<p>再将LPToken用borrowToken作为单位来计算价值。</p>
+<pre><code class="language-javascript">        // 3. Convert the position's LP tokens to the underlying assets.
+        uint256 userToken0 = lpBalance.mul(totalAmount0).div(lpSupply);
+        uint256 userToken1 = lpBalance.mul(totalAmount1).div(lpSupply);
+        uint256 userAmtProduct = userToken0.mul(userToken1);
+
+        if (isDebtHt) {
+            borrowToken = token0 == wht ? token0 : token1;
+        }
+
+        (int token0Price,) = oracle.getPrice(token0);
+        (int token1Price,) = oracle.getPrice(token1);
+        require(token0Price &gt; 0, 'oracle token0Price invalid');
+        require(token1Price &gt; 0, 'oracle token1Price invalid');
+        uint256 priceProduct = uint(token0Price).mul(uint(token1Price));
+        uint totalAmt = Math.sqrt(userAmtProduct.mul(priceProduct)).mul(2);
+        // 4. Convert all farming tokens to debtToken and return total amount.
+        if (borrowToken == token0) {
+            return totalAmt.div(uint(token0Price));
+        } else {
+            return totalAmt.div(uint(token1Price));
+        }
+</code></pre>
+<p>上述代码转化成数学公式为</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>h</mi><mi>e</mi><mi>a</mi><mi>l</mi><mi>t</mi><mi>h</mi><mi>O</mi><mi>r</mi><mi>a</mi><mi>c</mi><mi>l</mi><mi>e</mi><mo>=</mo><mfrac><mrow><mn>2</mn><msqrt><mrow><msub><mi>t</mi><mn>0</mn></msub><mo>∗</mo><msub><mi>P</mi><mn>0</mn></msub><mo>∗</mo><msub><mi>t</mi><mn>1</mn></msub><mo>∗</mo><msub><mi>P</mi><mn>1</mn></msub></mrow></msqrt></mrow><msub><mi>P</mi><mn>0</mn></msub></mfrac></mrow><annotation encoding="application/x-tex">healthOracle = \frac{2\sqrt{t_0 * P_0 * t_1 * P_1}}{P_0}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">h</span><span class="mord mathdefault">e</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">a</span><span class="mord mathdefault">c</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.3646650000000005em;vertical-align:-0.8360000000000001em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5286650000000002em;"><span style="top:-2.3139999999999996em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.851665em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord"><span class="mord mathdefault">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathdefault">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.811665em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width='400em' height='1.08em' viewBox='0 0 400000 1080' preserveAspectRatio='xMinYMin slice'><path d='M95,702c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,
+-10,-9.5,-14c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54c44.2,-33.3,65.8,
+-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10s173,378,173,378c0.7,0,
+35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429c69,-144,104.5,-217.7,106.5,
+-221c5.3,-9.3,12,-14,20,-14H400000v40H845.2724s-225.272,467,-225.272,467
+s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422
+s-65,47,-65,47z M834 80H400000v40H845z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.18833500000000003em;"><span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8360000000000001em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>可见是计算了一下</p>
+<h2 id="work函数">work函数</h2>
+<figure data-type="image" tabindex="1"><img src="https://www.leepanda.top/post-images/1623131957146.jpeg" alt="work函数" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[P.td阅读理解[1]]]></title>
+        <id>https://www.leepanda.top/post/ptd-yue-du-li-jie-1/</id>
+        <link href="https://www.leepanda.top/post/ptd-yue-du-li-jie-1/">
+        </link>
+        <updated>2021-06-07T13:54:05.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="pilot">Pilot</h1>
+<h3 id="介绍">介绍</h3>
+<p>Pilot是Heco Chain上的一个Lending Protocol, 实现了类似Compound的超额抵押贷款。<br>
+不过相比于Compound，Pilot的代码更简单易懂一些。同时还实现了Farming、三倍杠杆等功能。<br>
+这两天审计了一个Pilot的二开项目，顺便学习了一下这个框架。这里做一个记录。</p>
+<h3 id="关键参数">关键参数</h3>
+<p>Compound 等Lending Protocol, 都会有一些Factor用于自动化的管理Bank。<br>
+比如 抵押因子，清算因子等。<br>
+Pilot的<a href="https://pilot-1.gitbook.io/pilot-detailed-introduction/5.-key-parameters">关键参数</a>列举如下:</p>
+<h4 id="minimum-debt-size">Minimum debt size</h4>
+<ul>
+<li>value: 0.1<br>
+如果你想要开一个仓位，最小需要开这么大的仓。<br>
+最少需要</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[newland-rise 代码品读[1]: Goblin]]></title>
+        <id>https://www.leepanda.top/post/newland-rise-dai-ma-pin-du/</id>
+        <link href="https://www.leepanda.top/post/newland-rise-dai-ma-pin-du/">
+        </link>
+        <updated>2021-06-07T01:57:24.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="work函数">work函数</h3>
+<figure data-type="image" tabindex="1"><img src="https://www.leepanda.top/post-images/1623131957146.jpeg" alt="work函数" loading="lazy"></figure>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[胖达和他的朋友们]]></title>
         <id>https://www.leepanda.top/post/about/</id>
@@ -29,7 +391,7 @@
 <ul>
 <li><a href="https://www.boringboys.top">BoringBoys 同样是战斗魔法专业的涛涛子</a></li>
 <li><a href="https://xchens.cn/index">xchens 同样是战斗魔法专业，但转职成为圣光守卫的白魔法师少华子</a></li>
-<li><a href="https://blog.cyan.fit">ALLEicf Cyan。我女朋友，是个厉害的女人</a></li>
+<li><a href="https://blog.cyan.fit">ALLEicf Cyan。我女朋友，一个厉害(有点可怕)的女人</a></li>
 </ul>
 ]]></content>
     </entry>
@@ -1187,609 +1549,6 @@ Curve交易池添加流动性的过程如下图所示:<br>
 相比于上述研究，本文的做出的贡献主要是提出了更为通解的Pool模型。</p>
 <h2 id="6-后期工作">6 后期工作</h2>
 <p>本文中，我们使用形式化验证的方法，总结出了Defi Protocol应满足的5个约束。在未来的工作中，我们将致力于丰富约束内容，并将模型的使用场景向加密金融和其他Defi项目进行适配。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[随想：记忆与时间]]></title>
-        <id>https://www.leepanda.top/post/sui-xiang-ji-yi-yu-shi-jian/</id>
-        <link href="https://www.leepanda.top/post/sui-xiang-ji-yi-yu-shi-jian/">
-        </link>
-        <updated>2021-05-29T11:22:38.000Z</updated>
-        <content type="html"><![CDATA[<p>被软件推广忽悠一次后 ，开始反思自己买过、下载过的软件中，使用率最高、最值的是哪一个？<br>
-印象笔记。<br>
-大学的时候，开始使用CSDN做学习笔记、Chrome收藏来记录精彩文章、IPad记录思考过程和琐碎Tips 大量使用<code>磁质媒介</code>记录信息 可以说，从高中毕业之后，我就很少主动使用大脑去记忆了。<br>
-直到我忘记昨天同事做了项目分享</p>
-<h3 id="大脑应该记住啥">大脑应该记住啥</h3>
-<blockquote>
-<p>《白夜追凶》中一个经验尚浅的罪犯，面对警方的盘问，说出了准备良久的生活足迹。 警方反而以此确认了他的嫌疑  因为没有一个正常人会记得自己上周二下午4点在干啥。</p>
-</blockquote>
-<p>它想说，遗忘是人之常情...<br>
-...但是，所有遗忘都情有可原吗</p>
-<ul>
-<li>
-<p>特定内容<br>
-与重要之人的互动、父母和朋友的生日<br>
-昨天为啥觉得自己是个傻逼，女朋友不开心的原因<br>
-工作中遇到的一个可优化点<br>
-这些都不应该忘记</p>
-</li>
-<li>
-<p>较宽松的清晰度<br>
-如果说回忆上周二下午4点这种精准时间难度太大，<br>
-那么去年4季度我干了啥这种段时间的大事记<br>
-是否也容许答不上来</p>
-</li>
-<li>
-<p>记忆和时间的关系是什么？<br>
-我尝试在大脑里寻找这个月的回忆，<br>
-发现它们已经十分模糊、碎成了渣。</p>
-</li>
-</ul>
-<ol>
-<li>
-<p>和她一起跨年的夜晚，走到膝盖疼。天桥上看着她的眼睛，在车流声和冬夜微风中吃咖喱盒饭。</p>
-</li>
-<li>
-<p>我的研究有了巨大突破，极乐冲击着大脑。血脉贲张<br>
-研究成果上报后，却发现它已经被发现时的失落。</p>
-</li>
-<li>
-<p>少华的EZ居然能丝血反杀</p>
-</li>
-<li>
-<p>一整天都花在通勤上的周五。飞机降落时，耳膜的痛苦。</p>
-</li>
-<li>
-<p>运维项目时的期待。修缮源码时的无奈。</p>
-</li>
-<li>
-<p>蹲起后肌肉拉伸时，令人昏厥的快感<br>
-就这些了...<br>
-除此之外，我竟想不起这个月其他事情。<br>
-所以我是度过了一个月，还是度过了这6个片段？<br>
-...<br>
-我大胆猜想<br>
-如果拿掉 年、月、日，小时、分钟、秒 这些<br>
-人类通过协商共识  创造的 统一度量衡。<br>
-真正属于我自己的计时单位，会是什么<br>
-是 脑内记忆片段。<br>
-是 能回忆起来的 感觉。<br>
-客观上,以人类公认计时法，从1月1日 到 1月27日，间隔27天。<br>
-但对于我自己，只间隔 6片记忆。<br>
-如何利用该方法论<br>
-&quot;生命的意义在于获得时间&quot; ---- 《超体》</p>
-</li>
-</ol>
-<p>人类社会现行时间计法，以 秒作为基本单位，<br>
-其他单位年、月、日 均是从秒定义而来<br>
-而秒的定义本身则是<br>
-铯133原子基态的两个超精细能阶之间跃迁时所辐射的电磁波的周期的9,192,631,770倍的时间。<br>
-只要我们等待铯133原子跃迁更多次，<br>
-就能获取 人类文明现行时间计法 下，更多的时间。</p>
-<p>那么，对应到主观感觉计时法<br>
-我们需要怎么做，才能获得更多时间呢...</p>
-<p>很明显就不是等待了<br>
-而是要 主动经历、主动生成并体会感觉<br>
-我们需要愤怒、需要焦虑<br>
-需要欢悦、需要乐极而悲<br>
-需要 主动去追逐 新鲜的体验， 尽力用大脑记住这些精彩的感觉。</p>
-<p>比如说</p>
-<blockquote>
-<p>现在，凌晨三点半<br>
-我很困<br>
-半死不活地摊在椅子上<br>
-疑惑且小害怕——身上的痘痘怎么变多了<br>
-晃着腿<br>
-写着一些胡说八道、不清楚的东西，<br>
-希望发到知乎上得到共鸣，但又怕别人说我中二。<br>
-但其实根本没啥人看<br>
-同时还有点口渴<br>
-只要记住上述 压抑且混乱的 感觉，<br>
-我度过的时间就变长了。<br>
-从 6片记忆 延长到了 7片记忆</p>
-</blockquote>
-<h3 id="总结与疑问">总结与疑问</h3>
-<p>总而言之，我猜想，<br>
-通过用大脑而非印象笔记来记忆感觉<br>
-会在主观上，延长时间<br>
-同时在文章最后引出疑问：<br>
-阅读、看视频、听音乐 等。从艺术作品中，得到的感觉，会让时间变长么<br>
-反刍之前体会过的感觉，这个回忆行为本身，能延长时间么</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[机器学习[2]:模型评估]]></title>
-        <id>https://www.leepanda.top/post/ji-qi-xue-xi-2mo-xing-ping-gu/</id>
-        <link href="https://www.leepanda.top/post/ji-qi-xue-xi-2mo-xing-ping-gu/">
-        </link>
-        <updated>2021-05-29T11:21:06.000Z</updated>
-        <content type="html"><![CDATA[<p>对生成的模型进行比较，以得到最好的训练结果。需要使用评估算法进行评估。</p>
-<h3 id="评估算法">评估算法</h3>
-<ul>
-<li>分离训练数据集和评估数据集
-<ul>
-<li>66.7% + 33.3%</li>
-</ul>
-</li>
-<li>K折交叉验证分离
-<ul>
-<li>把data分为K组，每组都单独做一次 validation_data</li>
-</ul>
-</li>
-<li>弃一交叉验证分离
-<ul>
-<li>data中的每一个数据，都做一次validation</li>
-</ul>
-</li>
-<li>重复随机评估
-<ul>
-<li>随机分组，作validation</li>
-</ul>
-</li>
-</ul>
-<h3 id="混淆矩阵相关">混淆矩阵相关</h3>
-<h4 id="图形分类">图形分类</h4>
-<ul>
-<li>错误率</li>
-<li>Accurancy</li>
-<li>Precision</li>
-<li>Recall</li>
-<li>F1-Score</li>
-<li>TPR</li>
-<li>FPR</li>
-<li>PRC曲线
-<ul>
-<li>Precision作Y，Recall作X</li>
-<li>曲线下方面积为1时，性能最理想。</li>
-</ul>
-</li>
-<li>ROC曲线
-<ul>
-<li>TPR作Y，FPR作X</li>
-<li>AUC曲线的Y值为ROC曲线下方的面积</li>
-<li>曲线越靠左上，性能越好</li>
-</ul>
-</li>
-</ul>
-<h4 id="目标检测">目标检测</h4>
-<ul>
-<li>IOU</li>
-<li>AP</li>
-<li>mAP</li>
-</ul>
-<h4 id="回归类型">回归类型</h4>
-<ul>
-<li>MAE</li>
-<li>RMSE</li>
-</ul>
-<h3 id="reference">Reference</h3>
-<ul>
-<li><a href="https://zhuanlan.zhihu.com/p/74493056">常见的模型算法评估指标 - 人工智能技术干货的文章 - 知乎</a></li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[机器学习[1]:特征选择]]></title>
-        <id>https://www.leepanda.top/post/ji-qi-xue-xi-1te-zheng-xuan-ze/</id>
-        <link href="https://www.leepanda.top/post/ji-qi-xue-xi-1te-zheng-xuan-ze/">
-        </link>
-        <updated>2021-05-29T11:19:34.000Z</updated>
-        <content type="html"><![CDATA[<p>数据和特征 限定了机器学习性能的上限，优化 模型和算法 来逼近这个上限</p>
-<h3 id="特征处理">特征处理</h3>
-<ul>
-<li>预处理</li>
-<li>特征选择</li>
-<li>降维</li>
-</ul>
-<h3 id="特征选择的意义">特征选择的意义</h3>
-<ul>
-<li>降低拟合度</li>
-<li>预测结果更精确</li>
-<li>减少模型训练时间</li>
-</ul>
-<p>无关的特征会降低魔性的额准确度，尤其是线性算法(线性回归算法、逻辑回归算法)</p>
-<h3 id="特征选择的方法">特征选择的方法</h3>
-<ul>
-<li>单变量特征选择</li>
-<li>递归特征消除 RFE</li>
-<li>主要成分分析 PCA</li>
-<li>特征重要性</li>
-</ul>
-<h3 id="单变量特征选择">单变量特征选择</h3>
-<ul>
-<li>卡方检验法</li>
-<li>相关系数法</li>
-<li>互信息法</li>
-</ul>
-<p>卡方检验法代码</p>
-<pre><code class="language-python">#coding=utf-8
-from pandas import read_csv
-from numpy import set_printoptions
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import chi2
-
-# 导入数据
-filename = 'iris.data'
-names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
-data = read_csv(filename, names=names)
-array = data.values
-
-X = array[:, 0:4] # 输入数据
-Y = array[:,4] # 输出结果
-
-ret=SelectKBest(score_func=chi2, k=2).fit(X,Y)
-print(ret.scores_) # 分数最高的那个属性 就是 最有决定性的特征
-features = ret.transform(X)
-print(features) # 查看分数最高的那K个属性 对应的数据
-#print(fit.scores_)
-</code></pre>
-<h3 id="递归特征消除">递归特征消除</h3>
-<ul>
-<li>线性回归</li>
-<li>逻辑回归</li>
-</ul>
-<p>逻辑回归法代码</p>
-<pre><code class="language-python">from pandas import read_csv
-from sklearn.feature_selection import RFE 
-from sklearn.linear_model import LogisticRegression
-
-filename = &quot;./iris.data&quot;
-names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
-array = read_csv(filename, names=names).values
-
-X=array[:,0:4]
-Y=array[:,4]
-
-model=LogisticRegression()
-fit = RFE(model, 1).fit(X,Y)
-print(&quot;所有特征:&quot;)
-print(fit.n_features_)
-print(&quot;被选中的特征:&quot;)
-print(fit.support_)
-print(&quot;特征排名&quot;)
-print(fit.ranking_)
-</code></pre>
-<h3 id="主要成分分析">主要成分分析</h3>
-<ul>
-<li>PCA</li>
-<li>LDA</li>
-</ul>
-<p>PCA算法代码</p>
-<pre><code>from pandas import read_csv
-from sklearn.decomposition import PCA
-
-filename = &quot;./iris.data&quot;
-names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
-array = read_csv(filename,names=names).values
-
-X = array[:,0:4]
-Y = array[:,4]
-
-fit = PCA(n_components=1).fit(X)
-print(fit.components_)
-</code></pre>
-<h3 id="特征重要性">特征重要性</h3>
-<ul>
-<li>袋装决策树算法</li>
-<li>随机森林算法</li>
-<li>极端随机树算法</li>
-</ul>
-<p>极端随机树算法代码</p>
-<pre><code class="language-python">from pandas import read_csv
-from sklearn.ensemble import ExtraTreesClassifier
-
-filename = &quot;./iris.data&quot;
-names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
-array = read_csv(filename, names=names).values
-
-X=array[:,0:4]
-Y=array[:,4]
-
-fit = ExtraTreesClassifier().fit(X,Y)
-print(fit.feature_importances_)
-</code></pre>
-<h3 id="总结">总结</h3>
-<p>上述代码都可以评估出，蝴蝶花的花瓣长度 是最能确定蝴蝶花种类的属性。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[软件工程备考简答题总结]]></title>
-        <id>https://www.leepanda.top/post/ruan-jian-gong-cheng-bei-kao-jian-da-ti-zong-jie/</id>
-        <link href="https://www.leepanda.top/post/ruan-jian-gong-cheng-bei-kao-jian-da-ti-zong-jie/">
-        </link>
-        <updated>2021-05-29T11:17:48.000Z</updated>
-        <content type="html"><![CDATA[<p>此版本复习提纲仅适用于 江苏大学陈雷老师班</p>
-<h3 id="第一章-软件工程概述">第一章 软件工程概述</h3>
-<ul>
-<li>
-<p>软件的特点</p>
-<ul>
-<li>无法观察物理形态</li>
-<li>在软件的开发过程、工程管理过程中渗透了大量的脑力劳动</li>
-<li>无磨损、老化</li>
-<li>需要在特定的计算机系统环境下运行</li>
-<li>有复用性</li>
-</ul>
-</li>
-<li>
-<p>软件工程的提出目的是:</p>
-<ul>
-<li>解决软件危机带来的诸多弊端
-<ul>
-<li>控制开发成本在预期范围内</li>
-<li>交付满足用户需求的软件</li>
-<li>软件的功能可靠</li>
-<li>软件的品质优秀</li>
-<li>控制软件的开发时间</li>
-<li>软件易于维护</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>目标、过程、原则</p>
-<ul>
-<li>目标：低成本、高品质、及时交付软件</li>
-<li>过程：基本过程、支持过程、组织过程</li>
-<li>原则：
-<ul>
-<li>适宜的开发泛型</li>
-<li>适宜的设计方法</li>
-<li>高品质的工程支持</li>
-<li>开发过程的管理</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="第二章-开发模型">第二章 开发模型</h3>
-<ul>
-<li>
-<p>四种开发模型的对比</p>
-<ul>
-<li>瀑布模型
-<ul>
-<li>顺序执行、不可回退</li>
-</ul>
-</li>
-<li>快速原型模型
-<ul>
-<li>快速获取用户的需求</li>
-</ul>
-</li>
-<li>增量模型
-<ul>
-<li>产品灵活可以变更需求</li>
-</ul>
-</li>
-<li>螺旋模型
-<ul>
-<li>在 快速原型模型 和 增量模型的基础上 添加了 风险管理</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>XP模型</p>
-<ul>
-<li>客户参与、适应变化、测试驱动、以代码为核心</li>
-</ul>
-</li>
-<li>
-<p>敏捷思想的核心价值观</p>
-<ul>
-<li>注重个人和交互</li>
-<li>注重能工作的软件</li>
-<li>提高客户的参与程度</li>
-<li>以积极的心态响应需求变化</li>
-</ul>
-</li>
-</ul>
-<h3 id="第三章-需求分析">第三章 需求分析</h3>
-<ul>
-<li>
-<p>结构化的具体步骤如下:</p>
-<ul>
-<li>建立当前系统的具体模型</li>
-<li>生成当前系统的逻辑模型</li>
-<li>建立目标系统的逻辑模型</li>
-</ul>
-</li>
-<li>
-<p>需求分析的过程：</p>
-<ul>
-<li>需求获取:调查软件需求</li>
-<li>需求分析:分析建模、对现实世界进行抽象</li>
-<li>需求说明:编写需求文档</li>
-<li>需求验证:需求评审</li>
-</ul>
-</li>
-<li>
-<p>人们对事物的认识是不断深化的，因此需求迭代是一个过程。</p>
-<ul>
-<li>这种迭代存在风险，会使上一次迭代因为需求不足而被推翻</li>
-<li>软件分析师应意识到迭代中风险的必然性。积极面对需求变更</li>
-</ul>
-</li>
-<li>
-<p>评审的作用</p>
-<ul>
-<li>作用:为了尽早消除需求中的错误，确保需求说明的准确、完整</li>
-<li>必要性:需求说明书中都是自然语言，需要确定语言的准确</li>
-</ul>
-</li>
-<li>
-<p>数据流图的作用</p>
-<ul>
-<li>抽象的表示系统和软件</li>
-<li>从信息加工的角度，自顶向下、逐步求精的表示功能细节</li>
-<li>提供了功能建模的机制 、 信息流建模的机制</li>
-<li>建立起系统或软件的功能模型</li>
-</ul>
-</li>
-</ul>
-<h3 id="第四章-软件设计">第四章 软件设计</h3>
-<ul>
-<li>
-<p>软件设计</p>
-<ul>
-<li>输入：需求规格说明书</li>
-<li>输出：设计规格说明书</li>
-<li>目标：需求模型转设计模型</li>
-<li>过程：层层分解、逐步求精</li>
-</ul>
-</li>
-<li>
-<p>软件设计是对软件需求进行：</p>
-<ul>
-<li>数据设计</li>
-<li>体系结构设计</li>
-<li>接口设计</li>
-<li>构件设计</li>
-<li>部署设计</li>
-</ul>
-</li>
-<li>
-<p>软件设计优化的准则如下:</p>
-<ul>
-<li>相关的各部分放到一起、不相关的不放到一起</li>
-<li>模块的大小要适中</li>
-<li>模块的接口简明扼要</li>
-<li>作用范围在控制范围内</li>
-<li>软件的深度、宽度、扇入扇出要适当</li>
-<li>单入口、单出口</li>
-<li>可预测模块的划分</li>
-</ul>
-</li>
-</ul>
-<h3 id="第五章-测试">第五章 测试</h3>
-<ul>
-<li>
-<p>测试和调试的不同</p>
-<ul>
-<li>测试：尽可能发现错误</li>
-<li>调试：尽可能修复错误</li>
-</ul>
-</li>
-<li>
-<p>静态测试和动态测试的不同</p>
-<ul>
-<li>静态测试：人工审计、仔细阅读文档、检查软件的执行情况是否与设计规格说明书一致</li>
-<li>动态测试：依赖软件的执行、测试用例来判断是否符合设计规格说明书</li>
-</ul>
-</li>
-<li>
-<p>软件测试分为：</p>
-<ul>
-<li>单元测试</li>
-<li>集成测试</li>
-<li>系统测试</li>
-<li>验收测试</li>
-</ul>
-</li>
-<li>
-<p>每一个测试活动有5个过程：</p>
-<ul>
-<li>测试计划制定、测试设计、测试样例生成、测试实施、测试报告</li>
-</ul>
-</li>
-</ul>
-<h3 id="第七章-需求分析方法">第七章 需求分析方法</h3>
-<ul>
-<li>
-<p>类的外部关联有3中关系</p>
-<ul>
-<li>关联</li>
-<li>继承</li>
-<li>依赖</li>
-</ul>
-</li>
-<li>
-<p>事件跟踪图</p>
-<ul>
-<li>表示事件顺序和事件和对象的关系</li>
-<li>时间从上到下递增</li>
-</ul>
-</li>
-</ul>
-<h3 id="第十一章-软件项目管理方法">第十一章 软件项目管理方法</h3>
-<ul>
-<li>
-<p>软件项目管理和软件工程的区别和关系：</p>
-<ul>
-<li>目标相同：都是围绕软件产品开发的管理</li>
-<li>作用不同：软件工程是软件开发的方法论，软件项目管理是生产管理形式。</li>
-<li>关联：软件项目管理是软件工程的载体</li>
-</ul>
-</li>
-<li>
-<p>度量方法</p>
-<ul>
-<li>代码行度量</li>
-<li>功能点度量</li>
-</ul>
-</li>
-</ul>
-<h3 id="第十三章-软件配置">第十三章 软件配置</h3>
-<ul>
-<li>
-<p>风险识别3步：</p>
-<ul>
-<li>资料收集</li>
-<li>估计项目风险形式</li>
-<li>识别风险</li>
-</ul>
-</li>
-<li>
-<p>软件质量：</p>
-<ul>
-<li>提供的软件产品满足用户的明确和隐含需求的能力特性总和。</li>
-</ul>
-</li>
-<li>
-<p>软件配置管理中的基本单元：软件配置项</p>
-<ul>
-<li>软件的文档、程序、数据进行整合
-<ul>
-<li>以利于软件的定义、标识、跟踪、管理，使其成为受控的软件版本产品</li>
-<li>这一过程成为软件配置管理</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="第十四章-软件维护">第十四章 软件维护</h3>
-<ul>
-<li>
-<p>软件维护的工作程序与软件开发的工作程序相仿</p>
-<ul>
-<li>维护的需求分析</li>
-<li>维护的设计</li>
-<li>修改程序代码</li>
-<li>维护后的测试</li>
-<li>维护后的试运行</li>
-<li>维护后的正式运行</li>
-<li>维护过程的评审和审计</li>
-</ul>
-</li>
-<li>
-<p>面向缺陷维护的内容</p>
-<ul>
-<li>该产品正常运行，但是个别地方存在缺陷。</li>
-<li>用户不满意，克服缺陷的方法是修改程序。</li>
-<li>修改程序而不修改结构</li>
-</ul>
-</li>
-<li>
-<p>文档是指记录数据的媒体和数据本身。</p>
-<ul>
-<li>永久性</li>
-<li>描述人工可读的东西</li>
-<li>表述活动、需求、过程或结果的描述、定义、规定或认证。</li>
-<li>规定了实现的细节。</li>
-</ul>
-</li>
-</ul>
 ]]></content>
     </entry>
 </feed>

@@ -3,7 +3,7 @@
         <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no" />
         <meta charset="utf-8">
         <meta name="referrer" content="never">
-        <title>胖达和他的朋友们 | Panda Tea</title>
+        <title>P.td阅读理解[1] | Panda Tea</title>
         <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
         <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://www.leepanda.top/styles/main.css">
@@ -17,7 +17,7 @@
 
     </head>
     <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
-        <header class="index-img mdui-m-b-3"  style="background-image: url(https://www.leepanda.top/post-images/about.jpg);" >
+        <header class="index-img mdui-m-b-3" >
                           <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
                 <ul class="mdui-menu" id="demo-attr-cascade">
                 
@@ -44,28 +44,28 @@
                 <div class="mdui-row">
                         <div class="mdui-col-md-8 mdui-col-offset-md-2 ">
                          <article class="mdui-shadow-10 mdui-p-a-2 post-list">
-                           <div class="mdui-typo-display-1 mdui-m-b-3">胖达和他的朋友们</div>
-                           <a  class="index-list-biaoqian ">2021-06-06</a>
-                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h3 id="关于我">关于我</h3>
-<p>ID 是 Panda，读作&quot;胖达&quot;<br>
-指的是这只温柔可爱的熊猫子！(´▽`ʃ♡ƪ)<br>
-<img src="https://www.leepanda.top/post-images/1622961691974.png" alt="熊熊遇见你！" width="200" height="200" loading="lazy"></p>
-<blockquote>
-<p>图片来自超可爱的动画片《熊熊遇见你》<br>
-<s>没看过的，快去看！</s></p>
-</blockquote>
-<p>江苏大学 战斗魔法系毕业，又叫网络空间安全系。</p>
-<h3 id="好朋友们">好朋友们！</h3>
+                           <div class="mdui-typo-display-1 mdui-m-b-3">P.td阅读理解[1]</div>
+                           <a  class="index-list-biaoqian ">2021-06-07</a>
+                           <div class="mdui-typo mdui-m-t-3 post-neirong"><h1 id="pilot">Pilot</h1>
+<h3 id="介绍">介绍</h3>
+<p>Pilot是Heco Chain上的一个Lending Protocol, 实现了类似Compound的超额抵押贷款。<br>
+不过相比于Compound，Pilot的代码更简单易懂一些。同时还实现了Farming、三倍杠杆等功能。<br>
+这两天审计了一个Pilot的二开项目，顺便学习了一下这个框架。这里做一个记录。</p>
+<h3 id="关键参数">关键参数</h3>
+<p>Compound 等Lending Protocol, 都会有一些Factor用于自动化的管理Bank。<br>
+比如 抵押因子，清算因子等。<br>
+Pilot的<a href="https://pilot-1.gitbook.io/pilot-detailed-introduction/5.-key-parameters">关键参数</a>列举如下:</p>
+<h4 id="minimum-debt-size">Minimum debt size</h4>
 <ul>
-<li><a href="https://www.boringboys.top">BoringBoys 同样是战斗魔法专业的涛涛子</a></li>
-<li><a href="https://xchens.cn/index">xchens 同样是战斗魔法专业，但转职成为圣光守卫的白魔法师少华子</a></li>
-<li><a href="https://blog.cyan.fit">ALLEicf Cyan。我女朋友，一个厉害(有点可怕)的女人</a></li>
+<li>value: 0.1<br>
+如果你想要开一个仓位，最小需要开这么大的仓。<br>
+最少需要</li>
 </ul>
 </div>
                               <div class="mdui-divider mdui-m-t-3"></div>
                               <div class="mdui-row-xs-2 mdui-m-t-2">
-  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://www.leepanda.top/post/newland-rise-dai-ma-pin-du/">newland-rise 代码品读[1]: Goblin</a></div></div>
- <div class="mdui-col"><div class="mdui-text-right "><a href="https://www.leepanda.top/post/202161-nian-zhong-hui-gu/">无力感 + 人格塑造失败</a></div> </div>
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://www.leepanda.top/post/newland-rise-dai-ma-pin-du-2-strategy/">newland-rise 代码品读[2]: Goblin and Strategy</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://www.leepanda.top/post/newland-rise-dai-ma-pin-du/">newland-rise 代码品读[1]: Goblin</a></div> </div>
                                 </div>
                                 <div class="mdui-divider mdui-m-t-2"></div>
    
@@ -103,12 +103,13 @@
                          </article>
                  <div class="toc-container mdui-float-right">
                 <ul class="markdownIt-TOC">
-<li>
+<li><a href="#pilot">Pilot</a><br>
+*
 <ul>
-<li>
+<li><a href="#%E4%BB%8B%E7%BB%8D">介绍</a></li>
+<li><a href="#%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0">关键参数</a>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%88%91">关于我</a></li>
-<li><a href="#%E5%A5%BD%E6%9C%8B%E5%8F%8B%E4%BB%AC">好朋友们！</a></li>
+<li><a href="#minimum-debt-size">Minimum debt size</a></li>
 </ul>
 </li>
 </ul>

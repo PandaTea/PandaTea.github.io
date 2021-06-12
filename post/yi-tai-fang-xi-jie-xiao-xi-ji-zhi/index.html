@@ -6,12 +6,12 @@
         <title>以太坊细节[1]:消息机制 | PandaTea</title>
         <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
         <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://www.leepanda.top/styles/main.css">
-          <script src="https://www.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://pandatea.life/styles/main.css">
+          <script src="https://pandatea.life/media/scripts/mdui.min.js"></script>
         <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
         <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
         <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-        <script src="https://www.leepanda.top/media/scripts/script.js"></script>
+        <script src="https://pandatea.life/media/scripts/script.js"></script>
         <script >hljs.initHighlightingOnLoad();</script>
         
 
@@ -25,7 +25,7 @@
 
     </head>
     <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
-        <header class="index-img mdui-m-b-3"  style="background-image: url(https://www.leepanda.top/post-images/yi-tai-fang-xi-jie-xiao-xi-ji-zhi.png);" >
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://pandatea.life/post-images/yi-tai-fang-xi-jie-xiao-xi-ji-zhi.png);" >
                           <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
                 <ul class="mdui-menu" id="demo-attr-cascade">
                 
@@ -66,7 +66,7 @@
 <h3 id="protocolmanagerhandemsg-中的转发逻辑">ProtocolManager.handeMsg 中的转发逻辑</h3>
 <p>在ProtocolManager.handleMsg中把所有消息的触发关系梳理了一遍。<br>
 内容如下<br>
-<img src="https://www.leepanda.top/post-images/1622283633054.png" alt="" loading="lazy"></p>
+<img src="https://pandatea.life/post-images/1622283633054.png" alt="" loading="lazy"></p>
 <h4 id="举例-getblockheadersmsg">举例 GetBlockHeadersMsg</h4>
 <p>在共识过程中，如果节点收到了区块头的消息。<br>
 会触发消息监听中的GetBlockHeadersMsg事件。<br>
@@ -95,12 +95,12 @@ return p.SendBlockHeaders(headers)
 <p>其他msg分析过程同上。</p>
 <h3 id="serverhandlerhandlemsg">serverHandler.handleMsg</h3>
 <p>serverHandler的监听中，所有消息触发情况如下图。<br>
-<img src="https://www.leepanda.top/post-images/1622283858463.png" alt="" loading="lazy"></p>
+<img src="https://pandatea.life/post-images/1622283858463.png" alt="" loading="lazy"></p>
 <p><s>哭了，没有消息闭环。</s></p>
 <h3 id="clienthandlerhandlemsg">clientHandler.handleMsg</h3>
 <p>clientHandler的监听，作用是对Server返回的结果进行对应的处理<br>
 收到的消息及其对应关系如下。<br>
-<img src="https://www.leepanda.top/post-images/1622283887920.png" alt="" loading="lazy"></p>
+<img src="https://pandatea.life/post-images/1622283887920.png" alt="" loading="lazy"></p>
 <h2 id="寻找广播点">寻找广播点</h2>
 <p>广播的底层在于peer类的boardcast函数</p>
 <pre><code>func (p *peer) broadcast() {
@@ -164,7 +164,7 @@ https://github.com/ethereum/wiki/wiki/[中文]-以太坊白皮书<br>
 BitMEX 研究推出以太坊节点指标网站——Nodestats.org</p>
 <p>https://blog.bitmex.com/zh_cn-bitmex-research-launches-ethereum-node-monitoring-website-nodestats-org/</p>
 <p>从中我们可以找到一些geth的节点带宽要求<br>
-<img src="https://www.leepanda.top/post-images/1622284074484.png" alt="" loading="lazy"></p>
+<img src="https://pandatea.life/post-images/1622284074484.png" alt="" loading="lazy"></p>
 <p>Geth的上行带宽 要求 4kb/s<br>
 Geth的下行带宽 要求 60kb/s</p>
 <h3 id="代码中的限制">代码中的限制</h3>
@@ -175,12 +175,12 @@ Geth的下行带宽 要求 60kb/s</p>
 </div>
                               <div class="mdui-divider mdui-m-t-3"></div>
                               <div class="mdui-row-xs-2 mdui-m-t-2">
-  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://www.leepanda.top/post/he-yue-an-quan-1balancer-zhong-tong-huo-jin-suo-huo-bi-de-tao-li-gong-ji-xiang-jie/">合约安全[1] Balancer中通货紧缩货币的套利攻击详解</a></div></div>
- <div class="mdui-col"><div class="mdui-text-right "><a href="https://www.leepanda.top/post/xuan-ze-nei-juan/">我要内卷</a></div> </div>
+  <div class="mdui-col"> <div class="mdui-text-left"><a href="https://pandatea.life/post/he-yue-an-quan-1balancer-zhong-tong-huo-jin-suo-huo-bi-de-tao-li-gong-ji-xiang-jie/">合约安全[1] Balancer中通货紧缩货币的套利攻击详解</a></div></div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://pandatea.life/post/xuan-ze-nei-juan/">我要内卷</a></div> </div>
                                 </div>
                                 <div class="mdui-divider mdui-m-t-2"></div>
    
- <script src="https://www.leepanda.top/media/scripts/Valine.min.js"></script>
+ <script src="https://pandatea.life/media/scripts/Valine.min.js"></script>
  <div class="comment"></div>
 
 <script>

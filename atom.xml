@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://www.leepanda.top</id>
+    <id>https://pandatea.life</id>
     <title>PandaTea</title>
-    <updated>2021-06-12T04:50:34.399Z</updated>
+    <updated>2021-06-12T05:00:42.574Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://www.leepanda.top"/>
-    <link rel="self" href="https://www.leepanda.top/atom.xml"/>
+    <link rel="alternate" href="https://pandatea.life"/>
+    <link rel="self" href="https://pandatea.life/atom.xml"/>
     <subtitle>一个贫穷的黑魔法师，一事无成，但朋友们爱我。</subtitle>
-    <logo>https://www.leepanda.top/images/avatar.png</logo>
-    <icon>https://www.leepanda.top/favicon.ico</icon>
+    <logo>https://pandatea.life/images/avatar.png</logo>
+    <icon>https://pandatea.life/favicon.ico</icon>
     <rights>All rights reserved 2021, PandaTea</rights>
     <entry>
         <title type="html"><![CDATA[newland-rise 关键契约: Goblin and Strategy]]></title>
-        <id>https://www.leepanda.top/post/newland-rise-dai-ma-pin-du-2-strategy/</id>
-        <link href="https://www.leepanda.top/post/newland-rise-dai-ma-pin-du-2-strategy/">
+        <id>https://pandatea.life/post/newland-rise-dai-ma-pin-du-2-strategy/</id>
+        <link href="https://pandatea.life/post/newland-rise-dai-ma-pin-du-2-strategy/">
         </link>
         <updated>2021-06-08T06:05:17.000Z</updated>
         <content type="html"><![CDATA[<h1 id="strategy">Strategy</h1>
@@ -27,10 +27,10 @@
 <p>该Strategy继承自Piloit项目的理财策略。<br>
 理解起来比较简单，即Strategy将拥有的Token0和Token1余额进行调整。使其比例刚好是当前市场价格。以这样的比例AddLiquidity效果最佳。</p>
 <h3 id="optimaldeposit">optimalDeposit</h3>
-<p><img src="https://www.leepanda.top/post-images/1623133491186.jpeg" alt="" loading="lazy"><br>
+<p><img src="https://pandatea.life/post-images/1623133491186.jpeg" alt="" loading="lazy"><br>
 计算最优Deposit数量</p>
 <h3 id="calandswap">calAndSwap</h3>
-<p><img src="https://www.leepanda.top/post-images/1623134755095.jpeg" alt="" loading="lazy"><br>
+<p><img src="https://pandatea.life/post-images/1623134755095.jpeg" alt="" loading="lazy"><br>
 通过optimalDeposit函数获取需要调整的数量。<br>
 把strategy中所持有的t0和t1 数量进行调整，调整后的t0和t1价值相等。<br>
 如果此时addLiquidity，即是最优方案。</p>
@@ -56,7 +56,7 @@ HT转账的时候，调用的函数是safeTransferETH，存在重入风险。<br
 <li>token0Amount</li>
 <li>token1Amount</li>
 <li>_minLPAmount<br>
-<img src="https://www.leepanda.top/post-images/1623145673516.jpeg" alt="" loading="lazy"><br>
+<img src="https://pandatea.life/post-images/1623145673516.jpeg" alt="" loading="lazy"><br>
 函数先将用户输入的t0 t1做一次预处理，处理成ERC20token格式，使用calAndSwap函数进行调平。<br>
 调平后AddLiquidity。<br>
 最后</li>
@@ -76,7 +76,7 @@ HT转账的时候，调用的函数是safeTransferETH，存在重入风险。<br
 <p>Strategy将lptoken全部removeLiquidity为token0和token1。<br>
 由于token0和token1中有一部分钱是用户借来的，还需要偿还debt。<br>
 最终剩下的token，便是用户的收益。<br>
-<img src="https://www.leepanda.top/post-images/1623210065555.gif" alt="" loading="lazy"></p>
+<img src="https://pandatea.life/post-images/1623210065555.gif" alt="" loading="lazy"></p>
 <h3 id="swapifneed">swapIfNeed</h3>
 <p>该函数用于判断，是否需要通过swap操作来有足够的钱偿还贷款。</p>
 <pre><code class="language-JavaScript">    /// swap if need.
@@ -327,21 +327,21 @@ s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422
 s-65,47,-65,47z M834 80H400000v40H845z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.18833500000000003em;"><span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8360000000000001em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
 <p>可见是计算了一下几何平均数，几何平均数相对于算数平均数更加安全。因为它将t0和t1相乘，即得到K。又由于K值守恒，使攻击者无法通过闪电贷等方法操纵t0和t1的比例，进而无法操纵币价。</p>
 <h2 id="work函数">work函数</h2>
-<p><img src="https://www.leepanda.top/post-images/1623131957146.jpeg" alt="work函数" loading="lazy"><br>
+<p><img src="https://pandatea.life/post-images/1623131957146.jpeg" alt="work函数" loading="lazy"><br>
 Goblin接受Bank的指令，调取Strategy进行相关动作。把收到的borrowToken向上层传递。<br>
 如果是加仓操作，Goblin会跟Chef进行交互，实现farming同时存farming凭证的功能。</p>
 ]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[胖达和他的朋友们]]></title>
-        <id>https://www.leepanda.top/post/about/</id>
-        <link href="https://www.leepanda.top/post/about/">
+        <id>https://pandatea.life/post/about/</id>
+        <link href="https://pandatea.life/post/about/">
         </link>
         <updated>2021-06-06T06:19:02.000Z</updated>
         <content type="html"><![CDATA[<h3 id="关于我">关于我</h3>
 <p>ID 是 Panda，读作&quot;胖达&quot;<br>
 指的是这只温柔可爱的熊猫子！(´▽`ʃ♡ƪ)<br>
-<img src="https://www.leepanda.top/post-images/1622961691974.png" alt="熊熊遇见你！" width="200" height="200" loading="lazy"></p>
+<img src="https://pandatea.life/post-images/1622961691974.png" alt="熊熊遇见你！" width="200" height="200" loading="lazy"></p>
 <blockquote>
 <p>图片来自超可爱的动画片《熊熊遇见你》<br>
 <s>没看过的，快去看！</s></p>
@@ -357,8 +357,8 @@ Goblin接受Bank的指令，调取Strategy进行相关动作。把收到的borro
     </entry>
     <entry>
         <title type="html"><![CDATA[无力感 + 人格塑造失败]]></title>
-        <id>https://www.leepanda.top/post/202161-nian-zhong-hui-gu/</id>
-        <link href="https://www.leepanda.top/post/202161-nian-zhong-hui-gu/">
+        <id>https://pandatea.life/post/202161-nian-zhong-hui-gu/</id>
+        <link href="https://pandatea.life/post/202161-nian-zhong-hui-gu/">
         </link>
         <updated>2021-06-01T14:53:45.000Z</updated>
         <content type="html"><![CDATA[<p>我有一段时间没有锻炼身体了，血压又降了下来。<br>
@@ -369,22 +369,22 @@ Goblin接受Bank的指令，调取Strategy进行相关动作。把收到的borro
 从我上学到毕业4年了，这家宾馆没有任何升级、进步。也许这就是二三线城市的缩影。岁月静好。如果我沉迷于类似的舒适圈，大概也会像这个宾馆一样，没有变化。如果我在二三线城市，倒也正常。悠闲地翻着日历，抚摸流逝的时间。倒也是我想要的生活。悠哉悠哉，适合想在下雨天躺在家里欣赏雷暴天气的低血压患者。但命运之河将我漂流到了北京这种奢华，昂贵的地方。由俭入奢易，由奢入俭难。我怕是回不去了。<br>
 只能选择竞争,不断地逼迫弱小的自己。</p>
 <p>少华的仙人掌失踪了。<br>
-<img src="https://www.leepanda.top/post-images/1622563149647.png" alt="仙人掌原貌" loading="lazy"><br>
+<img src="https://pandatea.life/post-images/1622563149647.png" alt="仙人掌原貌" loading="lazy"><br>
 只留下了空空的栏杆。<br>
-<img src="https://www.leepanda.top/post-images/1622563169610.png" alt="空空的栏杆" loading="lazy"><br>
+<img src="https://pandatea.life/post-images/1622563169610.png" alt="空空的栏杆" loading="lazy"><br>
 泥泞中有被丢弃的皮靴，零食的盒子。就是没有陪伴4年的仙人掌。<br>
 除了仙人掌，还有很多东西，随着大学毕业离我而去。比如知友网咖门口站了四年的凯特琳同志，经受不住疫情的考验，失业了。<br>
-<img src="https://www.leepanda.top/post-images/1622563313845.png" alt="消失的凯特琳" loading="lazy"></p>
+<img src="https://pandatea.life/post-images/1622563313845.png" alt="消失的凯特琳" loading="lazy"></p>
 <p>看着我吐槽了4年的红绿灯（东西向共有两条人行道，两条人行道的红绿灯不同步），<br>
-<img src="https://www.leepanda.top/post-images/1622563538232.png" alt="阴间红绿灯" loading="lazy"><br>
+<img src="https://pandatea.life/post-images/1622563538232.png" alt="阴间红绿灯" loading="lazy"><br>
 无论是我失去的还是我厌恶的，都无法改变。<br>
 太弱小了！这就是因为我们没有力量……<br>
-<img src="https://www.leepanda.top/post-images/1622563952626.jpg" alt="太弱小了" loading="lazy"></p>
+<img src="https://pandatea.life/post-images/1622563952626.jpg" alt="太弱小了" loading="lazy"></p>
 <h3 id="失败的人格">失败的人格</h3>
 <p>公司wiki上开了一个page，来记录一些 <code>稍后研究</code> 的项目。然而就写了那一次。市场部给我的文章、翻译等工作不少奖金，但我没有坚持投稿。健身房办了两年的卡，一次又一次的借口，到现在也鸽了许久。尝试认真地打英雄联盟上分，也没有成功。<br>
-<img src="https://www.leepanda.top/post-images/1622564644102.jpg" alt="" loading="lazy"><br>
+<img src="https://pandatea.life/post-images/1622564644102.jpg" alt="" loading="lazy"><br>
 意外的发现，项目中的积累在现实世界中有回报。可惜不是正茬儿。一个利用后便会获利百万的机会摆在我面前。浸润在极乐中，感受心跳。甚至计划好后路，找来备用的身份，不断的演练。<br>
-<img src="https://www.leepanda.top/post-images/1622564386360.png" alt="演戏计划" loading="lazy"><br>
+<img src="https://pandatea.life/post-images/1622564386360.png" alt="演戏计划" loading="lazy"><br>
 最终变成一纸issue，没有回音。尝试新建一个漏洞挖掘项目，<code>赶海拾贝</code>。也徐徐没有成果。<br>
 微信读书，书架整得花里胡哨，但没有一本好好读完过。</p>
 <p>年初我就意识到用大脑记东西和记笔记的不同了。人脑记忆本身就是对时间的主观定义。可惜的是这半年来我还是很少有意识地用大脑记住一些有用的东西。对印象笔记等生产力工具的依赖反而更加严重了。</p>
@@ -395,16 +395,16 @@ Goblin接受Bank的指令，调取Strategy进行相关动作。把收到的borro
 <p>这半年里，我失去了前进的动力。忘记了是什么驱动着我的身体。愈发的懒惰、放纵。<br>
 新年夜时，甚至绝望于茕茕孑立感。</p>
 <p>但雨庭莅临了我的生活，孤独感不再连续和窒息。在凄凉的内蒙古草原工业荒地中，我找到了同行的依靠。<br>
-<img src="https://www.leepanda.top/post-images/1622562144646.png" alt="雨庭之章" loading="lazy"></p>
+<img src="https://pandatea.life/post-images/1622562144646.png" alt="雨庭之章" loading="lazy"></p>
 <p>我不需要领导的认可了，也不需要同事的赞美，不在乎B站的初中生教我怎么做人。<br>
 只有我爱的人，才能左右我。<br>
-<img src="https://www.leepanda.top/post-images/1622567377648.png" alt="所爱" loading="lazy"></p>
+<img src="https://pandatea.life/post-images/1622567377648.png" alt="所爱" loading="lazy"></p>
 ]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[Defcon 2019 Qualify: redacted puzzle Writeup]]></title>
-        <id>https://www.leepanda.top/post/defcon-2019-qualify-redacted-puzzle-writeup/</id>
-        <link href="https://www.leepanda.top/post/defcon-2019-qualify-redacted-puzzle-writeup/">
+        <id>https://pandatea.life/post/defcon-2019-qualify-redacted-puzzle-writeup/</id>
+        <link href="https://pandatea.life/post/defcon-2019-qualify-redacted-puzzle-writeup/">
         </link>
         <updated>2021-05-29T11:38:26.000Z</updated>
         <content type="html"><![CDATA[<p><ul class="markdownIt-TOC">
@@ -590,8 +590,8 @@ Writeup可以看这篇<a href="https://www.xiaozzz.xyz/2020/05/22/Defcon-CTF-Qua
     </entry>
     <entry>
         <title type="html"><![CDATA[Defcon 2018 Qualify: Easy Pisy writeup]]></title>
-        <id>https://www.leepanda.top/post/defcon-2018-qualify-easy-pisy-writeup/</id>
-        <link href="https://www.leepanda.top/post/defcon-2018-qualify-easy-pisy-writeup/">
+        <id>https://pandatea.life/post/defcon-2018-qualify-easy-pisy-writeup/</id>
+        <link href="https://pandatea.life/post/defcon-2018-qualify-easy-pisy-writeup/">
         </link>
         <updated>2021-05-29T11:37:23.000Z</updated>
         <content type="html"><![CDATA[<p><ul class="markdownIt-TOC">
@@ -1295,8 +1295,8 @@ jan.masarik先生将这些可能存储敏感信息的bucket name汇总成了 下
     </entry>
     <entry>
         <title type="html"><![CDATA[Real Wolrd CTF 3rd Writeup | Easy Defi]]></title>
-        <id>https://www.leepanda.top/post/real-wolrd-ctf-3rd-writeup-or-easy-defi/</id>
-        <link href="https://www.leepanda.top/post/real-wolrd-ctf-3rd-writeup-or-easy-defi/">
+        <id>https://pandatea.life/post/real-wolrd-ctf-3rd-writeup-or-easy-defi/</id>
+        <link href="https://pandatea.life/post/real-wolrd-ctf-3rd-writeup-or-easy-defi/">
         </link>
         <updated>2021-05-29T11:36:27.000Z</updated>
         <content type="html"><![CDATA[<h3 id="题目环境架构">题目环境架构</h3>
@@ -1388,8 +1388,8 @@ Uniswap的K值守恒是用大于等于号检查的，这个比较神奇，可以
     </entry>
     <entry>
         <title type="html"><![CDATA[《Formal Analysis of Composable DeFi Protocols》组合型DeFi项目的形式化验证]]></title>
-        <id>https://www.leepanda.top/post/lesslessformal-analysis-of-composable-defi-protocolsgreatergreater-zu-he-xing-defi-xiang-mu-de-xing-shi-hua-yan-zheng/</id>
-        <link href="https://www.leepanda.top/post/lesslessformal-analysis-of-composable-defi-protocolsgreatergreater-zu-he-xing-defi-xiang-mu-de-xing-shi-hua-yan-zheng/">
+        <id>https://pandatea.life/post/lesslessformal-analysis-of-composable-defi-protocolsgreatergreater-zu-he-xing-defi-xiang-mu-de-xing-shi-hua-yan-zheng/</id>
+        <link href="https://pandatea.life/post/lesslessformal-analysis-of-composable-defi-protocolsgreatergreater-zu-he-xing-defi-xiang-mu-de-xing-shi-hua-yan-zheng/">
         </link>
         <updated>2021-05-29T11:35:28.000Z</updated>
         <content type="html"><![CDATA[<h3 id="前言">前言</h3>
@@ -1513,8 +1513,8 @@ Curve交易池添加流动性的过程如下图所示:<br>
     </entry>
     <entry>
         <title type="html"><![CDATA[随想：记忆与时间]]></title>
-        <id>https://www.leepanda.top/post/sui-xiang-ji-yi-yu-shi-jian/</id>
-        <link href="https://www.leepanda.top/post/sui-xiang-ji-yi-yu-shi-jian/">
+        <id>https://pandatea.life/post/sui-xiang-ji-yi-yu-shi-jian/</id>
+        <link href="https://pandatea.life/post/sui-xiang-ji-yi-yu-shi-jian/">
         </link>
         <updated>2021-05-29T11:22:38.000Z</updated>
         <content type="html"><![CDATA[<p>被软件推广忽悠一次后 ，开始反思自己买过、下载过的软件中，使用率最高、最值的是哪一个？<br>
@@ -1621,8 +1621,8 @@ Curve交易池添加流动性的过程如下图所示:<br>
     </entry>
     <entry>
         <title type="html"><![CDATA[机器学习[2]:模型评估]]></title>
-        <id>https://www.leepanda.top/post/ji-qi-xue-xi-2mo-xing-ping-gu/</id>
-        <link href="https://www.leepanda.top/post/ji-qi-xue-xi-2mo-xing-ping-gu/">
+        <id>https://pandatea.life/post/ji-qi-xue-xi-2mo-xing-ping-gu/</id>
+        <link href="https://pandatea.life/post/ji-qi-xue-xi-2mo-xing-ping-gu/">
         </link>
         <updated>2021-05-29T11:21:06.000Z</updated>
         <content type="html"><![CDATA[<p>对生成的模型进行比较，以得到最好的训练结果。需要使用评估算法进行评估。</p>
@@ -1692,8 +1692,8 @@ Curve交易池添加流动性的过程如下图所示:<br>
     </entry>
     <entry>
         <title type="html"><![CDATA[机器学习[1]:特征选择]]></title>
-        <id>https://www.leepanda.top/post/ji-qi-xue-xi-1te-zheng-xuan-ze/</id>
-        <link href="https://www.leepanda.top/post/ji-qi-xue-xi-1te-zheng-xuan-ze/">
+        <id>https://pandatea.life/post/ji-qi-xue-xi-1te-zheng-xuan-ze/</id>
+        <link href="https://pandatea.life/post/ji-qi-xue-xi-1te-zheng-xuan-ze/">
         </link>
         <updated>2021-05-29T11:19:34.000Z</updated>
         <content type="html"><![CDATA[<p>数据和特征 限定了机器学习性能的上限，优化 模型和算法 来逼近这个上限</p>

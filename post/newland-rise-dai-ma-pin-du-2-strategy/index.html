@@ -6,12 +6,12 @@
         <title>newland-rise 关键契约: Goblin and Strategy | PandaTea</title>
         <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.11.1/katex.min.css">
         <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://www.leepanda.top/styles/main.css">
-          <script src="https://www.leepanda.top/media/scripts/mdui.min.js"></script>
+        <link rel="stylesheet" href="https://pandatea.life/styles/main.css">
+          <script src="https://pandatea.life/media/scripts/mdui.min.js"></script>
         <link rel="stylesheet" href="https://at.alicdn.com/t/font_1306644_jwtuc2zzbrd.css">
         <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Ma+Shan+Zheng&display=swap" rel="stylesheet">
         <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
-        <script src="https://www.leepanda.top/media/scripts/script.js"></script>
+        <script src="https://pandatea.life/media/scripts/script.js"></script>
         <script >hljs.initHighlightingOnLoad();</script>
         
 
@@ -25,7 +25,7 @@
 
     </head>
     <body class="mdui-theme-primary-purple mdui-theme-accent-purple">
-        <header class="index-img mdui-m-b-3"  style="background-image: url(https://www.leepanda.top/post-images/newland-rise-dai-ma-pin-du-2-strategy.png);" >
+        <header class="index-img mdui-m-b-3"  style="background-image: url(https://pandatea.life/post-images/newland-rise-dai-ma-pin-du-2-strategy.png);" >
                           <button class="mdui-btn  mdui-btn-icon mdui-btn-dense mdui-color-theme-500 mdui-ripple yinying mdui-m-t-1 mdui-m-l-1" mdui-menu="{target: '#demo-attr-cascade'}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
                 <ul class="mdui-menu" id="demo-attr-cascade">
                 
@@ -65,10 +65,10 @@
 <p>该Strategy继承自Piloit项目的理财策略。<br>
 理解起来比较简单，即Strategy将拥有的Token0和Token1余额进行调整。使其比例刚好是当前市场价格。以这样的比例AddLiquidity效果最佳。</p>
 <h3 id="optimaldeposit">optimalDeposit</h3>
-<p><img src="https://www.leepanda.top/post-images/1623133491186.jpeg" alt="" loading="lazy"><br>
+<p><img src="https://pandatea.life/post-images/1623133491186.jpeg" alt="" loading="lazy"><br>
 计算最优Deposit数量</p>
 <h3 id="calandswap">calAndSwap</h3>
-<p><img src="https://www.leepanda.top/post-images/1623134755095.jpeg" alt="" loading="lazy"><br>
+<p><img src="https://pandatea.life/post-images/1623134755095.jpeg" alt="" loading="lazy"><br>
 通过optimalDeposit函数获取需要调整的数量。<br>
 把strategy中所持有的t0和t1 数量进行调整，调整后的t0和t1价值相等。<br>
 如果此时addLiquidity，即是最优方案。</p>
@@ -94,7 +94,7 @@ HT转账的时候，调用的函数是safeTransferETH，存在重入风险。<br
 <li>token0Amount</li>
 <li>token1Amount</li>
 <li>_minLPAmount<br>
-<img src="https://www.leepanda.top/post-images/1623145673516.jpeg" alt="" loading="lazy"><br>
+<img src="https://pandatea.life/post-images/1623145673516.jpeg" alt="" loading="lazy"><br>
 函数先将用户输入的t0 t1做一次预处理，处理成ERC20token格式，使用calAndSwap函数进行调平。<br>
 调平后AddLiquidity。<br>
 最后</li>
@@ -114,7 +114,7 @@ HT转账的时候，调用的函数是safeTransferETH，存在重入风险。<br
 <p>Strategy将lptoken全部removeLiquidity为token0和token1。<br>
 由于token0和token1中有一部分钱是用户借来的，还需要偿还debt。<br>
 最终剩下的token，便是用户的收益。<br>
-<img src="https://www.leepanda.top/post-images/1623210065555.gif" alt="" loading="lazy"></p>
+<img src="https://pandatea.life/post-images/1623210065555.gif" alt="" loading="lazy"></p>
 <h3 id="swapifneed">swapIfNeed</h3>
 <p>该函数用于判断，是否需要通过swap操作来有足够的钱偿还贷款。</p>
 <pre><code class="language-JavaScript">    /// swap if need.
@@ -365,18 +365,18 @@ s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422
 s-65,47,-65,47z M834 80H400000v40H845z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.18833500000000003em;"><span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8360000000000001em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
 <p>可见是计算了一下几何平均数，几何平均数相对于算数平均数更加安全。因为它将t0和t1相乘，即得到K。又由于K值守恒，使攻击者无法通过闪电贷等方法操纵t0和t1的比例，进而无法操纵币价。</p>
 <h2 id="work函数">work函数</h2>
-<p><img src="https://www.leepanda.top/post-images/1623131957146.jpeg" alt="work函数" loading="lazy"><br>
+<p><img src="https://pandatea.life/post-images/1623131957146.jpeg" alt="work函数" loading="lazy"><br>
 Goblin接受Bank的指令，调取Strategy进行相关动作。把收到的borrowToken向上层传递。<br>
 如果是加仓操作，Goblin会跟Chef进行交互，实现farming同时存farming凭证的功能。</p>
 </div>
                               <div class="mdui-divider mdui-m-t-3"></div>
                               <div class="mdui-row-xs-2 mdui-m-t-2">
   <div class="mdui-col"> </div>
- <div class="mdui-col"><div class="mdui-text-right "><a href="https://www.leepanda.top/post/about/">胖达和他的朋友们</a></div> </div>
+ <div class="mdui-col"><div class="mdui-text-right "><a href="https://pandatea.life/post/about/">胖达和他的朋友们</a></div> </div>
                                 </div>
                                 <div class="mdui-divider mdui-m-t-2"></div>
    
- <script src="https://www.leepanda.top/media/scripts/Valine.min.js"></script>
+ <script src="https://pandatea.life/media/scripts/Valine.min.js"></script>
  <div class="comment"></div>
 
 <script>

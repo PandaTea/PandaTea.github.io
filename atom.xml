@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://pandatea.life</id>
     <title>PandaTea</title>
-    <updated>2021-06-14T13:16:28.064Z</updated>
+    <updated>2021-06-14T13:22:08.838Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://pandatea.life"/>
     <link rel="self" href="https://pandatea.life/atom.xml"/>
@@ -24,8 +24,8 @@
 除总决赛会淘汰至最后一人吃鸡外，其他三轮仅淘汰半数玩家。<br>
 每轮比赛前，玩家ban选赛道，同时选择一个buff(学名叫<code>无限芯片</code>)，该buff将加入玩家的<code>bufflist</code>,<code>bufflist</code>将在玩家被淘汰时clear。</p>
 <h1 id="无限芯片">无限芯片</h1>
-<p>共有16种<code>基础芯片</code>，8种<code>终极芯片</code>。</p>
-<figure data-type="image" tabindex="1"><img src="https://pandatea.life/post-images/1623664934222.jpg" alt="" loading="lazy"></figure>
+<p>共有16种<code>基础芯片</code>，8种<code>终极芯片</code>。<br>
+<img src="https://pandatea.life/post-images/1623676669438.jpg" alt="" loading="lazy"></p>
 <ul>
 <li><font color=#0099ff>终极集气</font>：漂移过程中集气满立刻生成氮气，每秒自动集气4.5%
 <ul>
@@ -52,7 +52,7 @@
 </ul>
 </li>
 </ul>
-<figure data-type="image" tabindex="2"><img src="https://pandatea.life/post-images/1623664926566.jpg" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://pandatea.life/post-images/1623676680806.jpg" alt="" loading="lazy"></figure>
 <ul>
 <li><font color=#0099ff>终极集气极速</font>：每9次使用小喷，8秒内基础最高速度+6km/h。每秒自动集气5%。
 <ul>

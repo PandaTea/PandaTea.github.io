@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://pandatea.life</id>
     <title>PandaTea</title>
-    <updated>2021-06-12T05:07:52.549Z</updated>
+    <updated>2021-06-14T13:10:23.368Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://pandatea.life"/>
     <link rel="self" href="https://pandatea.life/atom.xml"/>
@@ -10,6 +10,128 @@
     <logo>https://pandatea.life/images/avatar.png</logo>
     <icon>https://pandatea.life/favicon.ico</icon>
     <rights>All rights reserved 2021, PandaTea</rights>
+    <entry>
+        <title type="html"><![CDATA[QQ飞车 无限芯片图鉴]]></title>
+        <id>https://pandatea.life/post/qq-flycar-wu-xian-xin-pian-tu-jian/</id>
+        <link href="https://pandatea.life/post/qq-flycar-wu-xian-xin-pian-tu-jian/">
+        </link>
+        <updated>2021-06-14T09:47:43.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="简介">简介</h1>
+<p>QQ飞车 排位赛 新淘汰赛模式，该模式仅限 <code>钻石2</code> 及以下段位玩家参与。<s>没错，就是老子！</s><br>
+<img src="https://pandatea.life/post-images/1623671446320.jpeg" alt="" width="200" height="200" loading="lazy"><br>
+该模式一局游戏将进行 4轮比赛。<br>
+48-&gt;24、24-&gt;12、12-&gt;6、6-&gt;1。<br>
+除总决赛会淘汰至最后一人吃鸡外，其他三轮仅淘汰半数玩家。<br>
+每轮比赛前，玩家ban选赛道，同时选择一个buff(学名叫<code>无限芯片</code>)，该buff将加入玩家的<code>bufflist</code>,<code>bufflist</code>将在玩家被淘汰时clear。</p>
+<h1 id="无限芯片">无限芯片</h1>
+<p>共有16种<code>基础芯片</code>，8种<code>终极芯片</code>。</p>
+<figure data-type="image" tabindex="1"><img src="https://pandatea.life/post-images/1623664934222.jpeg" alt="" loading="lazy"></figure>
+<ul>
+<li><font color=#0099ff>终极集气</font>：漂移过程中集气满立刻生成氮气，每秒自动集气4.5%
+<ul>
+<li><font color=#0099ff>出漂集气</font>：每次结束漂移，立刻获得8%集气。</li>
+<li><font color=#0099ff>自动集气</font>：每秒自动集气3%</li>
+</ul>
+</li>
+<li><font color=#AF7AC5>终极起步加速</font>：起步30秒内，氮气最高速度+5km/h，氮气动力+8。开局第一次使用双喷后，立刻获得一个氮气。
+<ul>
+<li><font color=#AF7AC5>起步加成</font>：起步30秒内，氮气最高速度+5km/h, 小喷动力+8。</li>
+<li><font color=#AF7AC5>起步集气</font>：起步获得60%集气。</li>
+</ul>
+</li>
+<li><font color=#E74C3C>终极氮气极速</font>：开局使用第一个氮气时，额外获得1个氮气。每4次进入漂移，7秒内氮气动力+18%。氮气最高速度+4km/h。
+<ul>
+<li><font color=#E74C3C>氮气极速</font>：每次进入漂移，有48%概率，氮气最高速度+5km/h。</li>
+<li><font color=#E74C3C>额外氮气</font>：开局使用第三个氮气时，额外获得一个氮气。</li>
+</ul>
+</li>
+<li><font color=#27AE60>终极转向提升</font>：转向灵敏度提升至最高，转向不减速，基础最高速+2km/h。
+<ul>
+<li><font color=#27AE60>额外小喷</font>：每次使用氮气，60%概率8秒内小喷最高速度+5km/h，小喷时长+0.06s。</li>
+<li><font color=#27AE60>转向提升</font>：转向灵敏度提升至最高。</li>
+</ul>
+</li>
+</ul>
+<figure data-type="image" tabindex="2"><img src="https://pandatea.life/post-images/1623664926566.jpeg" alt="" loading="lazy"></figure>
+<ul>
+<li><font color=#0099ff>终极集气极速</font>：每9次使用小喷，8秒内基础最高速度+6km/h。每秒自动集气5%。
+<ul>
+<li><font color=#0099ff>三秒集气</font>：每3秒自动增加9%氮气。</li>
+<li><font color=#0099ff>基础急速</font>：每9次使用小喷，7秒内基础最高速度+5km/h。</li>
+</ul>
+</li>
+<li><font color=#AF7AC5>终极腾空加强</font>：小喷时长+0.15s，且小喷动力+5。CWW后首个小喷可额外提升最高速。
+<ul>
+<li><font color=#AF7AC5>腾空急速</font>：每次腾空，5s内基础最高速度+6km/h。</li>
+<li><font color=#AF7AC5>小喷强化</font>：小喷时长+0.12s，且小喷动力+2。</li>
+</ul>
+</li>
+<li><font color=#E74C3C>终极后追补偿</font>：落后第1名时，基础最高速度+3km/h。小喷动力+9且每秒获得4%集气。
+<ul>
+<li><font color=#E74C3C>后追动力</font>：落后第1名时，基础最高速度+3km/h。小喷动力+6（成为第一名2秒后，效果结束）</li>
+<li><font color=#E74C3C>实战急速</font>：超越或被超越时，65%概率9秒内小喷最高速+6km/h。</li>
+</ul>
+</li>
+<li><font color=#27AE60>终极极速集气</font>：每次使用小喷，获得4.5%集气。且每3次集气满，7秒内基础最高速度+9km/h，小喷动力+10%。
+<ul>
+<li><font color=#27AE60>小喷集气</font>：每次使用小喷获得4.5%集气。</li>
+<li><font color=#27AE60>动力急速</font>：每3次集气满，7秒内基础最高速度+9km/h，小喷动力+10%。</li>
+</ul>
+</li>
+</ul>
+<h1 id="一点想法">一点想法</h1>
+<ul>
+<li>
+<p><font color=#0099ff>终极集气</font>：好感度 <code>3</code><br>
+合成成功后会有一个集气满直接生成氮气的效果，消除了漂移时没有加速效果的空窗期。同时<font color=#0099ff>出漂集气</font>和<font color=#0099ff>自动集气</font>都是被动触发的特效。它不像其他需要小喷和氮气来触发的特效，一旦过弯失误就无法触发效果。<br>
+总之<font color=#0099ff>终极集气</font>的三个芯片都容易触发且效果喜人。</p>
+</li>
+<li>
+<p><font color=#AF7AC5>终极起步加速</font>：好感度 <code>-2</code><br>
+起跑线上领先别人唯一的意义在于第一个弯道，不用人挤人。过于拥堵的弯道容易碰撞，整局比赛的氮气节奏可能被打破。<br>
+不过真的有必要花两张芯片的槽位，来保障第一个弯道安全通过吗？过了第一个弯道，<font color=#AF7AC5>起步芯片</font>可就一点用都没了哦。<br>
+<img src="https://pandatea.life/post-images/1623674736372.png" alt="" width="150" height="150" loading="lazy"></p>
+</li>
+<li>
+<p><font color=#E74C3C>终极氮气急速</font>：好感度 <code>-1</code><br>
+<font color=#E74C3C>终极氮气急速</font>比较平均地提升了基础面板，但是还稍微有<code>开局</code>羁绊。同时两张基础芯片和终极芯片效果差距很大，基本是三张特效没啥关系的芯片。用起来会有手感差异。<br>
+两个基础卡牌<font color=#E74C3C>额外氮气</font>仅仅开局有效果，没啥用；<font color=#E74C3C>氮气极速</font>概率触发，不稳定。</p>
+</li>
+<li>
+<p><font color=#27AE60>终极转向提升</font>：好感度 <code>2</code><br>
+<code>转向灵敏度提升至最高，转向不减速</code> 这个效果听上去太强了。某些A车(如<code>金色黄蜂</code>)转向能力还不如D级练习车。可以用这个芯片抢救一下。<br>
+另外其基础芯片<font color=#27AE60>额外小喷</font>使用氮气加速即可触发，CWW漂移还可以额外触发一次小喷效果增幅。但是对技巧要求较高。<br>
+如果对自己的过弯技术比较自信，可以尝试驾驭这个芯片。<br>
+<img src="https://pandatea.life/post-images/1623674872593.png" alt="" width="150" height="150" loading="lazy"></p>
+</li>
+<li>
+<p><font color=#0099ff>终极集气极速</font> 好感度 <code>3</code><br>
+相比于另一套紫色芯片<font color=#0099ff>终极集气</font>，这一套虽然触发难度有所提升，且没有强力的<code>气满即氮气</code>效果。但是基础面板会有所提升，并且集气加成有一个0.5%/s的提升。</p>
+</li>
+<li>
+<p><font color=#AF7AC5>终极腾空加强</font> 好感度 <code>-5</code><br>
+腾空加基础面板，跟赛道关系太大...就图一乐。<br>
+<img src="https://pandatea.life/post-images/1623674562706.jpeg" alt="" width="150" height="150" loading="lazy"></p>
+</li>
+<li>
+<p><font color=#E74C3C>终极后追补偿</font> 好感度 <code>5</code><br>
+排位赛是为了赢，不是为了破纪录。没有什么比拿第一更重要了。该特效的触发效果为<code>只要不是第一</code>。<br>
+不需要集气，不需要技巧，不需要考虑触发机制。只要不是第一，就有一个稳定的基础面板加成。<br>
+无脑地跑就完事了，过一会儿莫名其妙就是第一了。<br>
+<img src="https://pandatea.life/post-images/1623674363795.jpg" alt="" width="150" height="150" loading="lazy"></p>
+</li>
+<li>
+<p><font color=#27AE60>终极极速集气</font> 好感度 <code>3</code><br>
+小喷集气，技巧熟练的选手可以多使用WCW来更好的利用这个特效。需要3次集气满才可触发基础面板的加成，所以过弯时不能磕碰。<br>
+总之需要对赛道熟悉一些，技术优秀的选手可以尝试驾驭这套芯片。<br>
+<img src="https://pandatea.life/post-images/1623674891026.png" alt="" width="150" height="150" loading="lazy"></p>
+</li>
+</ul>
+<h1 id="final">Final</h1>
+<p>最后祝自己能整个星耀以上段位嘚瑟嘚瑟。<br>
+<img src="https://pandatea.life/post-images/1623675246132.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[newland-rise 关键契约: Goblin and Strategy]]></title>
         <id>https://pandatea.life/post/newland-rise-dai-ma-pin-du-2-strategy/</id>
@@ -1688,130 +1810,6 @@ Curve交易池添加流动性的过程如下图所示:<br>
 <ul>
 <li><a href="https://zhuanlan.zhihu.com/p/74493056">常见的模型算法评估指标 - 人工智能技术干货的文章 - 知乎</a></li>
 </ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[机器学习[1]:特征选择]]></title>
-        <id>https://pandatea.life/post/ji-qi-xue-xi-1te-zheng-xuan-ze/</id>
-        <link href="https://pandatea.life/post/ji-qi-xue-xi-1te-zheng-xuan-ze/">
-        </link>
-        <updated>2021-05-29T11:19:34.000Z</updated>
-        <content type="html"><![CDATA[<p>数据和特征 限定了机器学习性能的上限，优化 模型和算法 来逼近这个上限</p>
-<h3 id="特征处理">特征处理</h3>
-<ul>
-<li>预处理</li>
-<li>特征选择</li>
-<li>降维</li>
-</ul>
-<h3 id="特征选择的意义">特征选择的意义</h3>
-<ul>
-<li>降低拟合度</li>
-<li>预测结果更精确</li>
-<li>减少模型训练时间</li>
-</ul>
-<p>无关的特征会降低魔性的额准确度，尤其是线性算法(线性回归算法、逻辑回归算法)</p>
-<h3 id="特征选择的方法">特征选择的方法</h3>
-<ul>
-<li>单变量特征选择</li>
-<li>递归特征消除 RFE</li>
-<li>主要成分分析 PCA</li>
-<li>特征重要性</li>
-</ul>
-<h3 id="单变量特征选择">单变量特征选择</h3>
-<ul>
-<li>卡方检验法</li>
-<li>相关系数法</li>
-<li>互信息法</li>
-</ul>
-<p>卡方检验法代码</p>
-<pre><code class="language-python">#coding=utf-8
-from pandas import read_csv
-from numpy import set_printoptions
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import chi2
-
-# 导入数据
-filename = 'iris.data'
-names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
-data = read_csv(filename, names=names)
-array = data.values
-
-X = array[:, 0:4] # 输入数据
-Y = array[:,4] # 输出结果
-
-ret=SelectKBest(score_func=chi2, k=2).fit(X,Y)
-print(ret.scores_) # 分数最高的那个属性 就是 最有决定性的特征
-features = ret.transform(X)
-print(features) # 查看分数最高的那K个属性 对应的数据
-#print(fit.scores_)
-</code></pre>
-<h3 id="递归特征消除">递归特征消除</h3>
-<ul>
-<li>线性回归</li>
-<li>逻辑回归</li>
-</ul>
-<p>逻辑回归法代码</p>
-<pre><code class="language-python">from pandas import read_csv
-from sklearn.feature_selection import RFE 
-from sklearn.linear_model import LogisticRegression
-
-filename = &quot;./iris.data&quot;
-names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
-array = read_csv(filename, names=names).values
-
-X=array[:,0:4]
-Y=array[:,4]
-
-model=LogisticRegression()
-fit = RFE(model, 1).fit(X,Y)
-print(&quot;所有特征:&quot;)
-print(fit.n_features_)
-print(&quot;被选中的特征:&quot;)
-print(fit.support_)
-print(&quot;特征排名&quot;)
-print(fit.ranking_)
-</code></pre>
-<h3 id="主要成分分析">主要成分分析</h3>
-<ul>
-<li>PCA</li>
-<li>LDA</li>
-</ul>
-<p>PCA算法代码</p>
-<pre><code>from pandas import read_csv
-from sklearn.decomposition import PCA
-
-filename = &quot;./iris.data&quot;
-names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
-array = read_csv(filename,names=names).values
-
-X = array[:,0:4]
-Y = array[:,4]
-
-fit = PCA(n_components=1).fit(X)
-print(fit.components_)
-</code></pre>
-<h3 id="特征重要性">特征重要性</h3>
-<ul>
-<li>袋装决策树算法</li>
-<li>随机森林算法</li>
-<li>极端随机树算法</li>
-</ul>
-<p>极端随机树算法代码</p>
-<pre><code class="language-python">from pandas import read_csv
-from sklearn.ensemble import ExtraTreesClassifier
-
-filename = &quot;./iris.data&quot;
-names = ['separ-length', 'separ-width', 'petal-length', 'petal-width', 'class']
-array = read_csv(filename, names=names).values
-
-X=array[:,0:4]
-Y=array[:,4]
-
-fit = ExtraTreesClassifier().fit(X,Y)
-print(fit.feature_importances_)
-</code></pre>
-<h3 id="总结">总结</h3>
-<p>上述代码都可以评估出，蝴蝶花的花瓣长度 是最能确定蝴蝶花种类的属性。</p>
 ]]></content>
     </entry>
 </feed>

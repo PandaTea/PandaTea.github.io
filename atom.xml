@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://pandatea.life</id>
     <title>PandaTea</title>
-    <updated>2021-06-14T13:22:08.838Z</updated>
+    <updated>2021-06-15T18:58:07.084Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://pandatea.life"/>
     <link rel="self" href="https://pandatea.life/atom.xml"/>
@@ -10,6 +10,68 @@
     <logo>https://pandatea.life/images/avatar.png</logo>
     <icon>https://pandatea.life/favicon.ico</icon>
     <rights>All rights reserved 2021, PandaTea</rights>
+    <entry>
+        <title type="html"><![CDATA[求是求真之随想]]></title>
+        <id>https://pandatea.life/post/qiu-shi-qiu-zhen-zhi-sui-xiang/</id>
+        <link href="https://pandatea.life/post/qiu-shi-qiu-zhen-zhi-sui-xiang/">
+        </link>
+        <updated>2021-06-15T16:41:47.000Z</updated>
+        <content type="html"><![CDATA[<p>毕业快一年了，把江大发的毕业礼品小印章拿出来盘了盘。<br>
+除了正面的校训“博学 求是 明德”以外，背面还刻着“自强 厚德 实干 求真”的“江大精神”。<br>
+<img src="https://pandatea.life/post-images/1623776254703.jpeg" alt="" width="270" height="480" loading="lazy"></p>
+<p>私以为，<br>
+作为一个靠知识吃饭的魔法师，博学 即 自强。<br>
+厚德 和 明德 也重复了。<br>
+求是 和 求真 也差不多一个意思。<br>
+江大精神似乎是把校训换了几个词又说一遍。<br>
+（ 如果是因为印章垂直的四面想不到该刻点啥，我建议整个官网二维码。</p>
+<blockquote>
+<p>至于江大精神中的<code>实干</code>，倒是深有体会。美其名曰 用知识解决实际问题，与实际产业相结合。<br>
+说的不好听了，就是没有学术气息，大家都在想着怎么搞钱。</p>
+</blockquote>
+<h1 id="求是求真">求是求真</h1>
+<h2 id="需求分析">需求分析</h2>
+<p>首席说自己是竞争偏好型选手，这使得仰慕他的我有一些遗憾。因为我有点厌恶竞争。<br>
+学习比不上年级第一，搞音乐比不上邻班同学，打游戏比不上小伙伴，谈恋爱也没有人喜欢我。<br>
+中学的我在各个方向都能找到比自己强的人。<br>
+上了大学唯一的不同就是所谓的“各个方向”变多了。<br>
+我依然干啥啥不行。竞争更多会让我感觉到努力的疲倦和挫败感的痛苦。</p>
+<p>倒也不是彻底不行。但是往往只能拿个90分，无法做到完美。<br>
+总是在达到那个“正常人做到这个水平就很不错了”的阈值后，失去热情。<br>
+这使得我总不是最强的。我总是跟在别人身后的小弟，不是说话最算数的那个人。（ 这个是我要解决的问题</p>
+<p>我过去的反思思路一直是，是不是自己的性格有某种欠缺。比如说我气质偏温和柔软可爱，不强硬。<br>
+我的思考方式更偏防守，缺少了卡特曼这种进攻性和斗争性。</p>
+<blockquote>
+<p>如《南方公园》中的桥段：卡特曼在厕所超大声打电话，凯尔被吵到爆炸。当凯尔生气地diss卡特曼时，卡特曼没有愧疚，反而质问凯子怎么偷听别人电话。</p>
+</blockquote>
+<p>然而，我遇到了同样平和温柔，却强大清醒的首席、杨博、一博、明政、军先、子航...<br>
+“进攻性性格 决定 影响力”的论调渐渐站不住脚了。</p>
+<h2 id="自己的路之存在性">自己的路之存在性</h2>
+<p>最近和女朋友聊“内卷”的时候，得到了一些点拨。<br>
+化解内卷的方法，是老生常谈的“不要跟别人比，多跟自己比”。</p>
+<p>相同的智力，相同时间精力的付出。本就是会比先驱们迟一点点。<br>
+类似的，如果我是开创了某个思路的人。只要我一直走下去，正常来说，也没人赶得上我。<br>
+不必惆怅于自己没有跟上先行者的脚步。只要确保自己的道路是正确的即可。<br>
+我需要一个主心骨。</p>
+<h2 id="确保道路正确">确保道路正确</h2>
+<p>当跑的快慢不是问题后，需要解决的便是方向问题。<br>
+可以根据当前道路上是否存在先驱者，来分为两个子问题:</p>
+<ul>
+<li>先驱做出的选择我是否认同，是否要跟随。</li>
+<li>自己前行的道路是否需要修正，如何修正。</li>
+</ul>
+<p>求解的过程无非就是</p>
+<ul>
+<li>判断当前选择是否为最优解，</li>
+<li>（若不是）是否存在最优解，</li>
+<li>（若存在）最优解是否可求，</li>
+<li>（若可求）求最优解。</li>
+</ul>
+<p>这个过程即为校训的“求是”了吧。（ <s>点题</s> =v=*</p>
+<h1 id="总结">总结</h1>
+<p>无法掌握方向盘的诅咒，其解法便是要有自己的主线。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[QQ飞车 无限芯片图鉴]]></title>
         <id>https://pandatea.life/post/qq-flycar-wu-xian-xin-pian-tu-jian/</id>
@@ -1739,77 +1801,6 @@ Curve交易池添加流动性的过程如下图所示:<br>
 同时在文章最后引出疑问：<br>
 阅读、看视频、听音乐 等。从艺术作品中，得到的感觉，会让时间变长么<br>
 反刍之前体会过的感觉，这个回忆行为本身，能延长时间么</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[机器学习[2]:模型评估]]></title>
-        <id>https://pandatea.life/post/ji-qi-xue-xi-2mo-xing-ping-gu/</id>
-        <link href="https://pandatea.life/post/ji-qi-xue-xi-2mo-xing-ping-gu/">
-        </link>
-        <updated>2021-05-29T11:21:06.000Z</updated>
-        <content type="html"><![CDATA[<p>对生成的模型进行比较，以得到最好的训练结果。需要使用评估算法进行评估。</p>
-<h3 id="评估算法">评估算法</h3>
-<ul>
-<li>分离训练数据集和评估数据集
-<ul>
-<li>66.7% + 33.3%</li>
-</ul>
-</li>
-<li>K折交叉验证分离
-<ul>
-<li>把data分为K组，每组都单独做一次 validation_data</li>
-</ul>
-</li>
-<li>弃一交叉验证分离
-<ul>
-<li>data中的每一个数据，都做一次validation</li>
-</ul>
-</li>
-<li>重复随机评估
-<ul>
-<li>随机分组，作validation</li>
-</ul>
-</li>
-</ul>
-<h3 id="混淆矩阵相关">混淆矩阵相关</h3>
-<h4 id="图形分类">图形分类</h4>
-<ul>
-<li>错误率</li>
-<li>Accurancy</li>
-<li>Precision</li>
-<li>Recall</li>
-<li>F1-Score</li>
-<li>TPR</li>
-<li>FPR</li>
-<li>PRC曲线
-<ul>
-<li>Precision作Y，Recall作X</li>
-<li>曲线下方面积为1时，性能最理想。</li>
-</ul>
-</li>
-<li>ROC曲线
-<ul>
-<li>TPR作Y，FPR作X</li>
-<li>AUC曲线的Y值为ROC曲线下方的面积</li>
-<li>曲线越靠左上，性能越好</li>
-</ul>
-</li>
-</ul>
-<h4 id="目标检测">目标检测</h4>
-<ul>
-<li>IOU</li>
-<li>AP</li>
-<li>mAP</li>
-</ul>
-<h4 id="回归类型">回归类型</h4>
-<ul>
-<li>MAE</li>
-<li>RMSE</li>
-</ul>
-<h3 id="reference">Reference</h3>
-<ul>
-<li><a href="https://zhuanlan.zhihu.com/p/74493056">常见的模型算法评估指标 - 人工智能技术干货的文章 - 知乎</a></li>
-</ul>
 ]]></content>
     </entry>
 </feed>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://pandatea.life</id>
     <title>PandaTea</title>
-    <updated>2021-07-12T05:49:24.095Z</updated>
+    <updated>2021-07-13T15:20:11.068Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://pandatea.life"/>
     <link rel="self" href="https://pandatea.life/atom.xml"/>
@@ -39,6 +39,10 @@ Godwoken作为CKB的扩容方案，提供了一个账户模型的Layer2网络。
 <h1 id="海淀雷暴天气">海淀雷暴天气</h1>
 <p>这几天晚上大雨伴随雷暴天气<br>
 <img src="https://pandatea.life/post-images/1626065881239.gif" alt="" loading="lazy"></p>
+<script src="https://unpkg.com/embeddable-nfts/dist/nft-card.min.js"></script>
+<p><nft-card
+contractAddress="0x495f947276749ce646f68ac8c248420045cb7b5e"
+tokenId="54176533048551743526319395374104511941302363578495892190718056192814694268929"></nft-card></p>
 ]]></content>
     </entry>
     <entry>

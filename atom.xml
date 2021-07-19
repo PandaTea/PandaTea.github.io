@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://pandatea.life</id>
     <title>PandaTea</title>
-    <updated>2021-07-13T15:31:23.020Z</updated>
+    <updated>2021-07-19T10:44:07.567Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://pandatea.life"/>
     <link rel="self" href="https://pandatea.life/atom.xml"/>
@@ -10,6 +10,81 @@
     <logo>https://pandatea.life/images/avatar.png</logo>
     <icon>https://pandatea.life/favicon.ico</icon>
     <rights>All rights reserved 2021, PandaTea</rights>
+    <entry>
+        <title type="html"><![CDATA[见闻周记[3]]]></title>
+        <id>https://pandatea.life/post/jian-wen-zhou-ji-3/</id>
+        <link href="https://pandatea.life/post/jian-wen-zhou-ji-3/">
+        </link>
+        <updated>2021-07-19T06:15:58.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="有钱人有什么不一样"><a href="https://book.douban.com/subject/33447341/">《有钱人有什么不一样》</a></h1>
+<p><a href="http://keithcameronsmith.com">基斯·卡麦隆·史密斯</a>本职工作就是金融演说家。这本书看起来会有点像财商鸡汤。<br>
+文中反复强调的是6个内容；</p>
+<ul>
+<li>有钱人会做一些长远规划</li>
+<li>谈论想法、How 而非 人物的品格八卦等。</li>
+<li>多用赞美、积极的词语。
+<ul>
+<li>多用我要、我想搞一个xxx 的语式，而非 我应该 我被迫 我别无选择...</li>
+<li>多以生命将逝的心态去思考。（ 干，我明天如果就要死了，那我现在不去整一个NFT发卡平台就会很亏</li>
+</ul>
+</li>
+<li>书籍和导师的力量
+<ul>
+<li>这一点 <a href="https://www.geekonomics10000.com">万维钢老师</a>的《学习究竟是什么》也有讲。大学中提供的主要是书籍，这种知识。但是有及时反馈的训练还是需要有导师监控。</li>
+</ul>
+</li>
+<li>一些比钱更重要的事情
+<ul>
+<li>人际关系的和睦，你的好朋友、家人跟你在一起不会觉得膈应</li>
+<li>自由地创作和输出</li>
+<li>自由本身</li>
+</ul>
+</li>
+<li>要想摆脱激烈的竞争，唯一的方法就是冒险。
+<ul>
+<li>克服恐惧， 对于成功的欲望 大于 被认可的欲望</li>
+</ul>
+</li>
+</ul>
+<h1 id="clash"><a href="https://github.com/Dreamacro/clash/releases/">Clash</a> Linux科学上网</h1>
+<p>为了给树莓派改善一下网速，连上了公司的EAP-TLS 认证的办公网。<br>
+之前在arm64的VPS上翻墙的时候使用ssr就很顺利。可能是换成了Aarch64，很多client运行不了。<br>
+于是换成了<a href="https://github.com/Dreamacro/clash/releases/">Clash</a>走V2ray Server来翻墙。麻烦的一批。<br>
+还把隔壁空工位的显示器拿来用了一下。三个显示器体验极好。<br>
+<img src="https://pandatea.life/post-images/1626677841011.jpg" alt="" loading="lazy"></p>
+<h1 id="hexo-blog-encrypt"><a href="https://github.com/D0n9X1n/hexo-blog-encrypt">hexo blog encrypt</a></h1>
+<p>前几天还在跟少华涛涛吐槽一个通过前端加密文章来收钱的博客。<br>
+如今遇到了一个使blog文章加密的小组件，好神奇。有空追追代码...希望不是简单的把密码发给后台校验balabala。<br>
+<img src="https://pandatea.life/post-images/1626678196659.png" alt="" loading="lazy"></p>
+<h1 id="蜜猿"><a href="https://www.cryptape.com">蜜猿</a>冷钱包解剖</h1>
+<p><a href="https://www.cryptape.com">蜜猿科技</a>很久以前送给<a href="http://xhyumiracle.com/">首席</a>一个小摆件。<br>
+<img src="https://pandatea.life/post-images/1626678489996.jpg" alt="" loading="lazy"><br>
+据说这是一个冷钱包，里面有Nervos的CKB空投。而且钱还在里面。<br>
+经过对小猴子的一通肢解，得到了其本质 <code>Cryptape Cipher v2.2</code><br>
+<img src="https://pandatea.life/post-images/1626679327802.png" alt="" loading="lazy"><br>
+<code>Type-C</code>接口转了一个 <code>Nano Card</code> 槽位。Adapter是Nano Sim Card 那种7个触头的6PIN socket接口。<br>
+<img src="https://pandatea.life/post-images/1626680206797.png" alt="" loading="lazy"></p>
+<p>一开始我盲猜这张卡是HUAWEI的 <code>Name Memory Card</code><br>
+但是连接到电脑之后<code>lsusb</code>没有任何变化，也检测不到卡片插入。<br>
+另一种可能是 <code>Nano SIM Card</code>，我问了下移动组的一峰师傅，他说这可能是物联网卡。那应该确认了是<code>Nano SIM Card</code>。</p>
+<p>本来想用<a href="https://github.com/yisraeldov/pySimReader-Serial-src-v2">PySIMReader库</a> 来读一下SIM卡内容。<br>
+玩儿到一半难受得一批，难道我还得先读一遍《通信原理》吗？<br>
+还好Nervos社区的<a href="https://talk.nervos.org/u/stwith/summary">史迪仔</a>老师及时出现制止了我...<br>
+Nervos社区之前是有Cryptape Chiper使用教程的，想要连接这个冷钱包，需要一个激活码...<br>
+然而相关帖子都已经删了，秘猿官网也找不到Cipher了。初始化应该是很难了....</p>
+<p>这两天要是有空，继续追一下pySimReader这条思路。</p>
+<h1 id="bash-base64">Bash Base64</h1>
+<p>这两天在复现<a href="https://zhuanlan.zhihu.com/p/33532884">JBoss 12149</a>的时候，发现自己去Base64编码shell的结果是不能执行的。后来才发现Runtime.exec需要大括号来搂住<code>argv[0]</code>和<code>argv[1]</code>。<br>
+于是自己本地执行 如果是这个亚子</p>
+<pre><code class="language-sh">bash -c echo,dG91Y2ggdGVzdA== | base64 , -d | bash -i
+</code></pre>
+<p>JBoss那边收到的String 需要是这个亚子</p>
+<pre><code class="language-sh">bash -c {echo,dG91Y2ggdGVzdA==}|{base64,-d}|{bash,-i}
+</code></pre>
+<p>全自动编码加大括号脚本<a href="http://www.jackson-t.ca/runtime-exec-payloads.html">链接</a><br>
+Java 所有库 Source Code 查询<a href="http://www.docjar.com/">链接</a></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[见闻周记[2]]]></title>
         <id>https://pandatea.life/post/jian-wen-zhou-ji-2/</id>
@@ -1559,99 +1634,6 @@ jan.masarik先生将这些可能存储敏感信息的bucket name汇总成了 下
 <li>nneonneo (Robert Xiao): <strong>ios逆向</strong>(RE)</li>
 <li>Marc Stevens: <strong>基于VDF的去中心化时间戳</strong>(BLOCKCHAIN)</li>
 <li>Elie Bursztein (Google): <strong>AES旁路攻击</strong>(CRYPTO)</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Real Wolrd CTF 3rd Writeup | Easy Defi]]></title>
-        <id>https://pandatea.life/post/real-wolrd-ctf-3rd-writeup-or-easy-defi/</id>
-        <link href="https://pandatea.life/post/real-wolrd-ctf-3rd-writeup-or-easy-defi/">
-        </link>
-        <updated>2021-05-29T11:36:27.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="题目环境架构">题目环境架构</h3>
-<p>EasyDefi是一道面向去中心化金融服务的智能合约题目。<br>
-题目代码通过<a href="https://github.com/chaitin/Real-World-CTF-3rd-Challenge-Attachments/tree/main/Easy%20Defi">附件</a>的形式给出。<br>
-<img src="https://img-blog.csdnimg.cn/20210324162404145.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></p>
-<p>同时我们可以通过题目描述了解到<br>
-ChaitinSwap的逻辑和Uniswap基本类似，只是更改了手续费比例。<br>
-<img src="https://img-blog.csdnimg.cn/20210324162415188.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
-<p>ChaitinBank听上去是某种提供了借贷服务的Defi项目，<br>
-我们看一下代码:<br>
-<img src="https://img-blog.csdnimg.cn/20210324162424480.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"><br>
-Bank仅提供了两个功能接口，一个用FeiCoin换Flag，另一个使用Flag换FeiCoin。<br>
-但是这个FeiCoin又是个啥？我们到ERC20.sol里面确认一下：<br>
-<img src="https://img-blog.csdnimg.cn/2021033012521262.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
-<p>可见这里Panda币的合约名称叫FeiToken，看来FeiCoin和PandaToken是一个东西:</p>
-<p>至此我们可以得到题目大概的组织框架如下:<br>
-<img src="https://img-blog.csdnimg.cn/20210324162439372.png" alt="在这里插入图片描述" loading="lazy"></p>
-<p>一共存在三种代币: 长亭币、Panda币和FLAG<br>
-在ChaitinSwap中，长亭币 和 Panda币可以互换<br>
-在ChaitinBank中，Panda币和FLAG可以互换</p>
-<h3 id="代码审计">代码审计</h3>
-<h4 id="vuln1-k值不守恒">vuln1 K值不守恒</h4>
-<p>我们来审计合约代码，根据题目描述中的提示。<br>
-chaitinSwap和uniswap的区别主要在手续费。<br>
-chaitinSwap仅收取0.25%的手续费。<br>
-所以我们来看定义手续费附近的代码<br>
-<img src="https://img-blog.csdnimg.cn/20210324162450985.png" alt="在这里插入图片描述" loading="lazy"></p>
-<p>这里getAmountIn/Out函数中，有对0.25%的描述。<br>
-除此之外，在Factory合约的swap中也有相关描述。<br>
-<img src="https://img-blog.csdnimg.cn/202103241624587.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
-<p>于是我们发现了第一个漏洞点，这个ChaitinSwap的K值 不守恒。<br>
-为了表示0.25%的手续费，除数从1000改成了10000。<br>
-但是在377行进行比较时， 还是和Uniswap代码中原本的<code>1000**2</code>进行比较。<br>
-这导致最后的这个K值守恒的检查，很容易通过。<br>
-Uniswap的K值守恒是用大于等于号检查的，这个比较神奇，可以阅读这篇文章来详细分析一下。<code>https://zhuanlan.zhihu.com/p/272241656</code></p>
-<p>这里我们需要做的只是让amount1In或者amount0In为正数。我们稍稍向合约中转账(比如题目给我们准备的1个长亭币)就可以满足此限制。<br>
-之后我们将取出的amount0Out和amount1Out写得大一些，只要balance0Ajusted和balance1Adjusted相乘不要过小即可。</p>
-<p>这样我们就可以用1个长亭币换出了大量的PandaToken和长亭币。</p>
-<p>具体操作如下，<br>
-第一步把1 个长亭币转到chaitinToken-feiToken pair 合约中<br>
-<img src="https://img-blog.csdnimg.cn/20210324162514165.png" alt="" loading="lazy"></p>
-<p>第二步 调用pair合约的swap函数，把钱从流通池里掏出来<br>
-<img src="https://img-blog.csdnimg.cn/20210324162523406.png" alt="" loading="lazy"></p>
-<p>至此， 我们成功从交易所中 盗取了90个PandaToken和 88个长亭币</p>
-<h4 id="vuln2-bank没有用预言机可以操纵币价">vuln2 Bank没有用预言机，可以操纵币价</h4>
-<p>然而题目要求我们搞到80个Flag币<br>
-<img src="https://img-blog.csdnimg.cn/20210324162535783.png" alt="" loading="lazy"></p>
-<p>我们知道能得到FLAG的地方只有，BANK合约<br>
-<img src="https://img-blog.csdnimg.cn/20210324162544286.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
-<p>而且我们可以看到，用户能得到多少个flag币，和存入的PandaToken的币价有关系<br>
-<img src="https://img-blog.csdnimg.cn/20210324162551258.png" alt="在这里插入图片描述" loading="lazy"></p>
-<p>所以PandaToken价格越高，我们能得到的Flag越多。<br>
-此时的PandaToken币价为 11<br>
-<img src="https://img-blog.csdnimg.cn/20210324162557978.png" alt="在这里插入图片描述" loading="lazy"></p>
-<p>阅读代码我们发现，这里Bank合约没有使用预言机来防止恶意操纵币价。<br>
-所以很明显这里便是第二个漏洞点。<br>
-攻击者可以通过恶意操纵市场，来抬高PandaToken的币价。<br>
-我们通过Router合约可以实现该目的。</p>
-<p>具体操作如下:<br>
-这里先Approve给Router全部的长亭币<br>
-<img src="https://img-blog.csdnimg.cn/20210324162609945.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
-<p>然后调用Router.swapExactTokensForTokens 函数来拉动币价。<br>
-我们使用长亭币疯狂购买PandaToken，从而抬高PandaToken的币价。<br>
-<img src="https://img-blog.csdnimg.cn/20210324162620177.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></p>
-<p>接着我们来到Bank合约，查看PandaToken的价格<br>
-<img src="https://img-blog.csdnimg.cn/20210324162627944.png" alt="" loading="lazy"></p>
-<p>发现PandaToken的币价已经高达829了</p>
-<p>看到这么高的币价， 我们直接<br>
-调用depositFeiCointoFlag函数， 用手中全部的PandaToken来换取Flag<br>
-<img src="https://img-blog.csdnimg.cn/20210324162648561.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
-<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20210324162656142.png" alt="在这里插入图片描述" loading="lazy"></figure>
-<p>接下来，我们看看自己有多少个FlagToken<br>
-<img src="https://img-blog.csdnimg.cn/2021032416270331.png" alt="" loading="lazy"></p>
-<p>82.9个FLAG，满足题目要求。</p>
-<h3 id="获取flag">获取FLAG</h3>
-<p>最后我们回到命令行界面，选择option3 并输入token<br>
-<img src="https://img-blog.csdnimg.cn/20210324162714503.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NlbWFvNDU0OA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" loading="lazy"></p>
-<p>得到FLAG<br>
-<code>rwctf{axelytxtdznhahsebhk}</code></p>
-<h3 id="相关链接">相关链接</h3>
-<ul>
-<li>题目介绍和附件 https://github.com/chaitin/Real-World-CTF-3rd-Challenge-Attachments/tree/main/Easy%20Defi</li>
-<li>为什么说Uniswap的K值不那么守恒 https://zhuanlan.zhihu.com/p/272241656</li>
-<li>Uniswap文档 https://uniswap.org/docs/v2/</li>
-<li>AMM自动做市商原理 https://www.jianshu.com/p/5bb44a9cd220</li>
 </ul>
 ]]></content>
     </entry>
